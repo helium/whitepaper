@@ -1,0 +1,195 @@
+\documentclass[a4paper,12pt]{article}
+\usepackage{graphicx}
+\usepackage{color}% http://ctan.org/pkg/color
+\usepackage[backref=section, linkbordercolor={1 1 1}, urlbordercolor={1 1 1}, citebordercolor={1 1 1}]{hyperref}% http://ctan.org/pkg/hyperref
+\usepackage{cite}
+\usepackage{float}
+\graphicspath{ {images/} }
+
+\begin{document}
+
+\title{Helium - A Decentralized Wireless Network}
+\author{Helium Systems, Inc}
+\date{\today}
+\maketitle
+
+{\large \textbf{Abstract}}\newline
+
+Mission statement, why  intent of document go here.\newpage
+
+\tableofcontents
+\newpage
+
+\section{Introduction}
+
+Paragraph explanation of what Helium is.
+
+\subsection{Key Components}
+
+List out the $\mathcal{n}$ key components of the Helium system and that they are. Address that this is a new wireless protocol on top of the existing internet layers. Address that this is a from-scratch blockchain not an existing solution (Eth, etc). Address novel consensus mechanism. Address hardware aka the "physical implementation".
+
+\subsection{System Overview}
+
+4-5 bullets explaining roughly how the protocol works.\newline
+
+A "sketch" of the Protocol should live here outlining, in text, what each component of the system is doing or capable of doing at a given time.\newline
+
+We should also include a diagram of how the system works in protocol-level detail.
+
+\section{\textit{Proof-of-Synchronization} and \textit{Proof-of-Coverage}}
+
+Paragraph about what purpose these proofs serve in the system, ie. "storage providers must convince their clients that they stored the data they were paid to store".
+
+\subsection{Motivation}
+
+Why no existing PoW/PoS scheme makes sense and we had to build our own system.
+
+\subsection{\textit{Proof-of-Synchronization}}
+
+Intro to what PoS is and why we need it, then details on how it works.
+
+\subsection{\textit{Proof-of-Coverage}}
+
+Intro to what PoC is and why we need it, then details on how it works.
+
+\subsection{Usage in Helium}
+
+Explain how we combine these things to actually be used, along with a text description of the flow.
+
+\section{The Helium DWN}
+
+What it is, ie. "a decentralized storage network that is auditable, publicly verifiable and designed on incentives".
+
+\subsection{Participants}
+
+Talk about Clients, Miners and Routers (?)
+
+\subsection{Network}
+
+Detail about the p2p network and the role that full nodes play.
+
+\subsection{Blockchain}
+
+Detail about our specific instantiation of a ledger, how it is structured, uncles, transactions, etc
+
+\subsection{Protocol}
+
+Intro that explains we will now give an overview of how the protocol works.
+
+\subsubsection{Client Cycle}
+
+The flow of a Client (Device?) using the network.
+
+\subsubsection{Mining Cycle}
+
+The mining flow.
+
+\subsubsection{Routing Cycle}
+
+Where routing fits and it's relationship to people getting paid?
+
+\section{Smart Contracts}
+
+Talk about the basic 'smart contract' primitives our blockchain provides, such as address generation, location assertion, network joining, etc
+
+\subsection{Primitives in Helium}
+
+\section{Physical Implementation}
+
+Intro to the physical components of the network.
+
+\subsection{Gateways}
+
+\subsection{Devices}
+
+\subsection{Routers}
+
+\subsection{Geolocation}
+
+\section{Future Work}
+
+Smart Contracts, better proofs, etc
+
+\newpage
+
+\section{Acknowledgements}
+
+This document is the result of collaborative work by multiple members of the Helium team, and would not have been possible without the help, feedback, and review of the board, advisors, and collaborators of Helium. Particularly: Andrew Allen wrote the original draft of a whitepaper, laying the groundwork and thinking for this eventual project and whitepaper document; Andrew Thompson devised the critical \textit{Proof-of-Coverage} implementation, drove much of the early development and built the first simulator of this system; Marc Nijdam implemented and structured the development efforts on both the hardware and software; Mark Phillips added continuous review, feedback and sanity checking of this document; Jay Kickliter built the earliest hardware testing apparatus that proved much of the physical implementation was possible; Peter Main created the various illustrations and artwork, as well as providing valuable review; and Amir Haleem wrote much of the structure and prose around these various concepts.\newline
+
+We would like to extend our deepest thanks to Jeremy Rubin of the MIT Digital Currency Initiative, and the Blockchain at Berkeley team for their help and detailed review of this paper.\newline
+
+We would also like to acknowledge many of the prior works and inventions that have allowed us to create this project, most notably Bitcoin \cite{bitcoin} and Ethereum \cite{ethereum}. We would also like to extend our appreciation to Protocol Labs \cite{protocol} and Filecoin \cite{filecoin} who demonstrated a path for regulatory-compliant sales of protocols under development and pioneered work around the SAFT, which we have borrowed from heavily.
+\newpage
+
+\begin{thebibliography}{9}
+
+\bibitem{mckinsey}
+	James Manyika, Michael Chui, Peter Bisson, Jonathan Woetzel, Richard Dobbs, Jacques Bughin, Dan Aharon
+		\textit{Unlocking the potential of the Internet of Things}, \\
+		\url{https://www.mckinsey.com/business-functions/digital-mckinsey/our-insights/the-internet-of-things-the-value-of-digitizing-the-physical-world}
+
+\bibitem{ghost}
+	Yonatan Sompolinsky,
+		\textit{Secure High-Rate Transaction Processing in Bitcoin}, \\
+		\url{http://www.cs.huji.ac.il/\%7Eyoni\_sompo/pubs/15/btc\_scalability\_full.pdf}
+
+\bibitem{ethereum}
+	Vitalik Buterin,
+		\textit{Ethereum},\\
+		\url{http://www.ethereum.org/}
+
+\bibitem{bitcoin}
+	Satoshi Nakamoto,
+		\textit{Bitcoin}, \\
+		\url{https://bitcoin.org/bitcoin.pdf}
+
+\bibitem{roughtime}
+	Adam Langley, Google,
+		\textit{Roughtime}, \\
+		\url{https://roughtime.googlesource.com/roughtime}
+
+\bibitem{lightning}
+	Joseph Poon, Thaddeus Dryja,
+		\textit{The Bitcoin Lightning Network}, \\
+		\url{https://lightning.network/lightning-network-paper.pdf}
+
+\bibitem{tdoa}
+	Regina Kaune, Julian Horst, Wolfgang Koch
+		\textit{Accuracy Analysis for TDOA Localization in Sensor Networks}, \\
+		\url{http://fusion.isif.org/proceedings/Fusion_2011/data/papers/217.pdf}	
+
+\bibitem{state-channels}
+	Jeff Coleman
+		\textit{State Channels}, \\
+		\url{http://www.jeffcoleman.ca/state-channels/}
+
+\bibitem{ecc}
+	Microchip
+		\textit{ATECC508A}, \\
+		\url{http://www.microchip.com/wwwproducts/en/ATECC508A}
+
+\bibitem{azure}
+	Microsoft
+		\textit{Azure IoT Hub}, \\
+		\url{https://azure.microsoft.com/en-us/services/iot-hub/}
+
+\bibitem{merkle}
+	Wikipedia
+		\textit{Merkle Trees}, \\
+		\url{https://en.wikipedia.org/wiki/Merkle_tree}
+
+\bibitem{alliance}
+	Helium Alliance, \\
+		\url{https://helium-alliance.org}
+
+\bibitem{protocol}
+	Protocol Labs, \\
+		\url{https://protocol.ai}
+
+\bibitem{filecoin}
+	Filecoin, \\
+		\url{https://filecoin.io}
+
+\end{thebibliography}
+
+\end{document}
