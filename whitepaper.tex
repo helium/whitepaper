@@ -1,4 +1,4 @@
-\documentclass[a4paper,12pt]{article}
+\documentclass[letterpaper,11pt]{report}
 \usepackage{graphicx}
 \usepackage{color}% http://ctan.org/pkg/color
 \usepackage[backref=section, linkbordercolor={1 1 1}, urlbordercolor={1 1 1}, citebordercolor={1 1 1}]{hyperref}% http://ctan.org/pkg/hyperref
@@ -15,26 +15,44 @@
 
 {\large \textbf{Abstract}}\newline
 
-Mission statement, why  intent of document go here.\newpage
+The world is becoming decentralized. A multitude of platforms, technologies, and services are moving from centralized proprietary systems to decentralized open ones. Peer-to-peer networks such as Napster \cite{napster} (created by Helium founder Shawn Fanning) and BitTorrent paved the way for blockchain networks and crypto-currencies to be built. Now Bitcoin, Ethereum, and other blockchain networks have proven the utility of decentralized transaction ledgers. Existing internet services such as file storage, identity verification, and the domain name system are being replaced by modern algorithmic versions. While software-level decentralization has moved quickly, physical networks are taking longer to affect. These networks are more complicated to decentralize as often specialized and expensive hardware is required in order for these systems to function.\newline
+\newline
+Helium is a \textit{decentralized wireless network} that creates wireless internet coverage for Internet of Things devices using an entirely new open-source wireless radio protocol. The network runs on a blockchain with a native protocol token (simply called Helium) which miners earn by providing wireless internet access, via cost-effective open-source hardware, to devices. Devices use the Helium wireless protocol and spend Helium by paying miners to send data to and from the internet, and to geolocate themselves in physical space. As in Bitcoin miners compete to create new blocks in the blockchain, mining, for substantial rewards. Helium mining power is gained by providing wireless network coverage. This is far more useful than Bitcoin and provides a directly useful service to devices; mining Helium is not computationally expensive and consumes a minimal amount of power, resulting in a system which provides a tremendous incentive for miners to grow the network. Devices using Helium are able to send and receive data to and from the internet several miles from the nearest miner, and devices within range of several miners can pay to geolocate themselves without needing any additional GPS hardware. Devices last for several years on small commodity batteries, and contain hardware private key stores which are used to securely authenticate against the corresponding public key in the Helium ledger. Data sent from devices is encrypted end to end, and has a cryptographic fingerprint stored in the blockchain to create a tamper-proof data trail. 
+\newline\newline
+Helium has a huge variety of uses in a wide variety of sensing and location tracking applications and is the first decentralized wide area network of its kind.
+
+\newpage
 
 \tableofcontents
 \newpage
 
 \section{Introduction}
 
-Paragraph explanation of what Helium is.
+Helium is a wide-area wireless networking system, a blockchain and a protocol token. The blockchain runs on a new kind of proof, called \textit{Proof-of-Coverage}, where blocks are created by miners who are providing wireless network coverage in a cryptographically verified physical location and time. The Helium protocol provides a bi-directional data transfer system between wireless devices and the Internet via a network of independent providers that does not rely on a single coordinator, where: (1) devices pay to send \& receive data to the internet and geolocate themselves, (2) miners earn tokens for providing network coverage, and (3) miners earn fees from transactions, and for validating the integrity of the network.\newline
 
 \subsection{Key Components}
 
-List out the $\mathcal{n}$ key components of the Helium system and that they are. Address that this is a new wireless protocol on top of the existing internet layers. Address that this is a from-scratch blockchain not an existing solution (Eth, etc). Address novel consensus mechanism. Address hardware aka the "physical implementation".
+Helium is built around the following key components:
+
+\begin{enumerate}
+	\item \textbf{Wireless Protocol}: we introduce a new open-source and standards-compliant wireless network protocol designed for low power devices over extremely wide areas. This protocol is designed to run on existing commodity radio chips availble from dozens of manufacturers with no proprietary technologies or modulation schemes required.
+	\item \textbf{Blockchain Network}: we demonstrate an entirely new purpose-built blockchain network built to service the \textit{Wireless Protocol} and provide a system for authenticating and identifying devices, providing cryptographic guarantees of data transmission and authenticity, offer transaction primitives designed around the wireless protocol, and more.	
+	\item \textbf{Innovative Proofs}: we present a set of computationally-inexpensive \textit{Proofs}: (1) \textit{Proof-of-Coverage} allows network providers to prove they are capable of providing wireless network coverage; (2) \textit{Proof-of-Spectrum} allows providers to prove they are in the approximate location claimed via a combination of interactive techniques; and (3) \textit{Proof-of-Serialization} allows network providers to prove they are accurately representing time relative to others on the network in a crytographically secure way. 	
+	\item \textbf{Geolocation}: we outline a system for interpreting the physical \textit{geolocation} of a device using the \textit{Wireless Protocol} without the need for expensive and power-hungry satellite location hardware. Devices are able to make immutable, secure, and verifiable claims about their location at a given moment in time which are recorded in the blockchain.
+\end{enumerate}
 
 \subsection{System Overview}
 
-4-5 bullets explaining roughly how the protocol works.\newline
-
-A "sketch" of the Protocol should live here outlining, in text, what each component of the system is doing or capable of doing at a given time.\newline
-
-We should also include a diagram of how the system works in protocol-level detail.
+\begin{itemize}
+	\item The Helium protocol is a \textit{Decentralized Wireless Network} system built around a new wireless protocol on a purpose-built blockchain with a native token. 
+	\item Devices take the form of hardware containing a radio chip and firmware compatible with the wireless protocol, and spend tokens by paying miners to send data to and from the internet. 
+	\item Miners earn tokens by providing wireless network coverage via purpose-built hardware which provides a bridge between the Helium wireless protocol and the Internet.
+	\item Devices store their private keys in commodity key-storage hardware and participate in the network only when authenticated against their public key stored in the blockchain.
+	\item Miners join the network by asserting their satellite-derived location, a special type of transaction in the blockchain, and staking a fixed deposit.
+	\item Miners specify the price they're willing to accept for data transport and geolocation, and devices specify the price they are willing to pay. Miners are paid once they prove they have delivered data to the devices' specified internet endpoint.
+	\item Miners can particpate in the creation of new blocks in the blockchain, for which they are rewarded newly minted Helium. A miners probability of mining the next block is approximately equal to the amount of wireless network coverage being provided.
+	\item The blockchain employs \textit{Proof-of-Coverage}, \textit{Proof-of-Spectrum} and \textit{Proof-of-Serialization} to guarantee that miners are correctly representing the amount of wireless network coverage being created.
+\end{itemize}
 
 \section{\textit{Proof-of-Synchronization} and \textit{Proof-of-Coverage}}
 
@@ -88,9 +106,9 @@ The mining flow.
 
 Where routing fits and it's relationship to people getting paid?
 
-\section{Smart Contracts}
+\section{Transactions}
 
-Talk about the basic 'smart contract' primitives our blockchain provides, such as address generation, location assertion, network joining, etc
+Talk about the basic transaction primitives our blockchain provides, such as address generation, location assertion, network joining, etc as well as our big-blocker mentality.
 
 \subsection{Primitives in Helium}
 
@@ -122,6 +140,10 @@ We would also like to acknowledge many of the prior works and inventions that ha
 \newpage
 
 \begin{thebibliography}{9}
+
+\bibitem{napster}
+	Napster, \\
+		\url{https://en.wikipedia.org/wiki/Napster}
 
 \bibitem{mckinsey}
 	James Manyika, Michael Chui, Peter Bisson, Jonathan Woetzel, Richard Dobbs, Jacques Bughin, Dan Aharon
