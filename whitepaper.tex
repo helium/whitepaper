@@ -4,6 +4,8 @@
 \usepackage[backref=section, linkbordercolor={1 1 1}, urlbordercolor={1 1 1}, citebordercolor={1 1 1}]{hyperref}% http://ctan.org/pkg/hyperref
 \usepackage{cite}
 \usepackage{float}
+\usepackage{dutchcal}
+\usepackage{algorithm2e}
 \graphicspath{ {images/} }
 
 \begin{document}
@@ -37,7 +39,7 @@ Helium is built around the following key components:
 \begin{enumerate}
 	\item \textbf{Wireless Protocol}: we introduce a new open-source and standards-compliant wireless network protocol designed for low power devices over extremely wide areas. This protocol is designed to run on existing commodity radio chips availble from dozens of manufacturers with no proprietary technologies or modulation schemes required.
 	\item \textbf{Blockchain Network}: we demonstrate an entirely new purpose-built blockchain network built to service the \textit{Wireless Protocol} and provide a system for authenticating and identifying devices, providing cryptographic guarantees of data transmission and authenticity, offer transaction primitives designed around the wireless protocol, and more.	
-	\item \textbf{Innovative Proofs}: we present a set of computationally-inexpensive \textit{Proofs}: (1) \textit{Proof-of-Coverage} allows network providers to prove they are capable of providing wireless network coverage; (2) \textit{Proof-of-Spectrum} allows providers to prove they are in the approximate location claimed via a combination of interactive techniques; and (3) \textit{Proof-of-Serialization} allows network providers to prove they are accurately representing time relative to others on the network in a crytographically secure way. 	
+	\item \textbf{Proof-of-Coverage}: we present a set of computationally-inexpensive \textit{Proof-of-Coverage} that allows network providers to prove they are capable of providing wireless network coverage. We anchor these proofs using a \textit{Proof-of-Serialization} that allows network providers to prove they are accurately representing time relative to others on the network in a crytographically secure way. 	
 	\item \textbf{Geolocation}: we outline a system for interpreting the physical \textit{geolocation} of a device using the \textit{Wireless Protocol} without the need for expensive and power-hungry satellite location hardware. Devices are able to make immutable, secure, and verifiable claims about their location at a given moment in time which are recorded in the blockchain.
 \end{enumerate}
 
@@ -51,36 +53,68 @@ Helium is built around the following key components:
 	\item Miners join the network by asserting their satellite-derived location, a special type of transaction in the blockchain, and staking a fixed deposit.
 	\item Miners specify the price they're willing to accept for data transport and geolocation, and devices specify the price they are willing to pay. Miners are paid once they prove they have delivered data to the devices' specified internet endpoint.
 	\item Miners can particpate in the creation of new blocks in the blockchain, for which they are rewarded newly minted Helium. A miners probability of mining the next block is approximately equal to the amount of wireless network coverage being provided.
-	\item The blockchain employs \textit{Proof-of-Coverage}, \textit{Proof-of-Spectrum} and \textit{Proof-of-Serialization} to guarantee that miners are correctly representing the amount of wireless network coverage being created.
+	\item The blockchain employs \textit{Proof-of-Coverage} to guarantee that miners are correctly representing the amount of wireless network coverage being created.
 \end{itemize}
 
-\section{\textit{Proof-of-Synchronization} and \textit{Proof-of-Coverage}}
+DIAGRAM OF THE SYSTEM HERE
 
-Paragraph about what purpose these proofs serve in the system, ie. "storage providers must convince their clients that they stored the data they were paid to store".
+\section{\textit{Proof-of-Coverage}}
+
+In the Helium protocol, miners must prove that they are providing wireless network coverage that devices are able to use to communicate with the internet. Miners do this by generating \textit{Proofs-of-Coverage} that the blockchain network and other miners verify.\newline
+
+In this section we outline the implementation for \textit{Proof-of-Coverage}.
 
 \subsection{Motivation}
 
-Why no existing PoW/PoS scheme makes sense and we had to build our own system.
+Most existing blockchain networks such as Bitcoin \cite{bitcoin} and Ethereum \cite{ethereum} use a \textit{Proof-of-Work} system that relies on a algorithmic puzzle that is asymmetric in nature. These proofs are extremely difficult to generate, but simple for an external verifier to prove. Security and consensus on these networks is achieved by knowing that the amount of computing power required to generate a valid proof is difficult to forge, and as subsequent blocks are added, the cumulative difficulty of the chain becomes realistically impossible to fabricate. \newline
 
-\subsection{\textit{Proof-of-Synchronization}}
+These proofs are, however, not otherwise \textit{useful} to the network. We define useful as work that is valuable to the network beyond securing the blockchain. While there have been attempts in other networks to turn mining power into something useful, such as Ethereum executing small programs with the mining power, the majority of the work is not useful or reusable. The mining process is also extremely wasteful, as the determining factor in the mining work is typically computational power which consumes massive amounts of power and hardware to execute.\newline
 
-Intro to what PoS is and why we need it, then details on how it works.
+The proofs used in Helium must be resistant to \textit{Sybil Attacks} in which dishonest miners create pseudonymous identities and use them to subvert the network and gain access to block rewards to which they should not be entitled. This is a particularly difficult attack vector to manage in a physical network like Helium. We must also be resistant to a new attack vector: \textit{Alternate Reality Attacks} exist where a dishonest group of miners are able to simluate that wireless network coverage exists in the physical world when it in fact does not. An example of this would be running the mining software on a set of virtual machines and simulating GPS coordinates and RF networking.\newline
+
+We propose a consensus protocol that uses \textit{Proof-of-Coverage} to both secure the blockchain and provide an extremely useful service to the network; providing wireless network coverage that devices can use to send data to and from the internet. 
 
 \subsection{\textit{Proof-of-Coverage}}
 
-Intro to what PoC is and why we need it, then details on how it works.
+\textit{Proof-of-Coverage} (\verb|PoC|) is an innovative proof which allows a miner, the prover $\mathcal{P}$, to convince a verifier $\mathcal{V}$ that wireless network coverage $\mathcal{W_p}$ is being made available to a given device on the network $\mathcal{D}$. \verb|PoC| is an interactive protocol where prover $\mathcal{P}$ asserts that they are creating wireless network coverage $\mathcal{W_p}$ in a specific GPS location $\mathcal{L_p}$ and then convinces a verifier $\mathcal{V}$ that $\mathcal{P}$ is in fact creating $\mathcal{W_p}$ via a challenge mechanism over the wireless network. \verb|PoC| is the first such protocol that attempts to prove the veracity of miners in a physical space, and then use it to achieve consensus on a blockchain network.\newline
 
-\subsection{Usage in Helium}
+We aim to solve for the following:
 
-Explain how we combine these things to actually be used, along with a text description of the flow.
+\begin{itemize}
+	\item Our goal is to prove that miners are operating radio frequency (RF) hardware and firmware compatible with the wireless protocol	
+	\item Our goal is to prove that miners are located in the geography they claim by having them communicate via RF
+	\item Our goal is to correctly identify which reality is honest when there is a conflict
+\end{itemize}
+
+\subsection{Constructing \textit{Proof-of-Coverage}}
+
+This section describes the construction of the \textit{Proof-of-Coverage} protocol.\newline
+
+\textbf{Selecting the Verifier}. Because Helium is a physical wireless network, we aim to create a proof that the prover $\mathcal{P}$ is creating wireless network coverage. To do this we must identify a verifier $\mathcal{V}$ that is within \textit{geographic proximity} to $\mathcal{P}$. We define geographic proximity as a miner present within $\mathcal{A}$ = $\mathcal{\pi}$$\mathcal{r^2}$; geographic proximity is required to confirm $\mathcal{P}$ and $\mathcal{V}$ are able to communicate via the RF wireless protocol. As each miners location is recorded in the blockchain via the \verb|assert_location| transaction (see Section \ref{transactions}) we select $\mathcal{V}$ by pseudo-random selection from miners located within $\mathcal{A}$ = $\mathcal{\pi}$$\mathcal{r^2}$ of $\mathcal{P}$, where $\mathcal{r}$ is approximately 1.5 miles from $\mathcal{P}$.\newline
+
+ALGORITHM TYPE REPRESENTATION HERE\newline
+
+\textbf{Creating the Proof}. ETC ETC ETC\newline
+
+TEXT AND ALGORITHM TYPE REPRESENTATION HERE\newline
+
+\textbf{Verifying the Proof}.\newline
+
+TEXT AND ALGORITHM TYPE REPRESENTATION HERE
 
 \section{The Helium DWN}
 
-What it is, ie. "a decentralized storage network that is auditable, publicly verifiable and designed on incentives".
+We introduce the Helium Decentralized Wireless Network (\verb|DWN|). The \verb|DWN| provides wireless access to the internet for devices by way of multiple independent miners, and outlines a network and wireless protocol specification by which participants in the network should conform. Devices pay this network of miners for sending data to and from the internet, and miners are paid for continously providing network coverage and delivering device data to the internet. 
 
 \subsection{Participants}
 
-Talk about Clients, Miners and Routers (?)
+Any user can participate as a Device, a Miner, or a Router.\newline
+
+\begin{itemize}
+	\item \textit{Devices} pay to send encrypted data to and from the internet via the \verb|DWN| using hardware compatible with the wireless protocol. In geographies with a sufficient number of miners, devices can pay several miners to geolocate themselves without needing satellite location hardware. Data sent from devices is \textit{fingerprinted}, and that fingerprint stored in the blockchain. 
+	\item \textit{Miners} provide wireless network coverage to the network via purpose-built hardware which provides a long range bridge between the wireless protocol and the internet. Users join the network as miners by purchasing or building mining hardware that conforms to the wireless protocol, and \textit{staking} a deposit inversely proportional to the density of existing miners at their physical location. Miners generate \textit{Proofs-of-Coverage} and submit them to the blockchain to prove that they are continuously providing wireless network coverage that devices can use. Miners join the network with a \textit{score} that diminishes as blocks pass without valid proofs being submitted; once a miners score drops below a threshold they are penalized and lose some or all of their deposit. Miners are eligible to mine new blocks in the blockchain, and receive the block reward and transaction fees for any transactions included in the block once mined.
+	\item \textit{Routers} are internet applications that receive encrypted device data from miners. Routers are the termination point for device data encryption, and devices record to which router(s) miners should send their data into the blockchain. Routers are responsible for confirming to the network that device data was delivered to the correct place, and that the miner should be paid for their service.
+\end{itemize}
 
 \subsection{Network}
 
