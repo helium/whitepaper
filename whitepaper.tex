@@ -8,6 +8,13 @@
 \usepackage{algorithm2e}
 \graphicspath{ {images/} }
 
+
+\newcommand{\prover}{$\mathcal{P}$}
+\newcommand{\verifier}{$\mathcal{V}$}
+\newcommand{\coverage}{$\mathcal{W_p}$}
+\newcommand{\device}{$\mathcal{D}$}
+\newcommand{\location}{$\mathcal{L_p}$}
+
 \begin{document}
 
 \title{Helium - A Decentralized Wireless Network}
@@ -76,7 +83,7 @@ We propose a consensus protocol that uses \textit{Proof-of-Coverage} to both sec
 
 \subsection{\textit{Proof-of-Coverage}}
 
-\textit{Proof-of-Coverage} (\verb|PoC|) is an innovative proof which allows a miner, the prover $\mathcal{P}$, to convince a verifier $\mathcal{V}$ that wireless network coverage $\mathcal{W_p}$ is being made available to a given device on the network $\mathcal{D}$. \verb|PoC| is an interactive protocol where prover $\mathcal{P}$ asserts that they are creating wireless network coverage $\mathcal{W_p}$ in a specific GPS location $\mathcal{L_p}$ and then convinces a verifier $\mathcal{V}$ that $\mathcal{P}$ is in fact creating $\mathcal{W_p}$ via a challenge mechanism over the wireless network. \verb|PoC| is the first such protocol that attempts to prove the veracity of miners in a physical space, and then use it to achieve consensus on a blockchain network.\newline
+\textit{Proof-of-Coverage} (\verb|PoC|) is an innovative proof which allows a miner, the prover \prover, to convince a verifier \verifier that wireless network coverage \coverage is being made available to a given device on the network \device. \verb|PoC| is an interactive protocol where prover \prover asserts that they are creating wireless network coverage \coverage in a specific GPS location \location and then convinces a verifier \verifier that \prover is in fact creating \coverage via a challenge mechanism over the wireless network. \verb|PoC| is the first such protocol that attempts to prove the veracity of miners in a physical space, and then use it to achieve consensus on a blockchain network.\newline
 
 We aim to solve for the following:
 
@@ -90,7 +97,7 @@ We aim to solve for the following:
 
 This section describes the construction of the \textit{Proof-of-Coverage} protocol.\newline
 
-\textbf{Selecting the Verifier}. Because Helium is a physical wireless network, we aim to create a proof that the prover $\mathcal{P}$ is creating wireless network coverage. To do this we must identify a verifier $\mathcal{V}$ that is within \textit{geographic proximity} to $\mathcal{P}$. We define geographic proximity as a miner present within $\mathcal{A}$ = $\mathcal{\pi}$$\mathcal{r^2}$; geographic proximity is required to confirm $\mathcal{P}$ and $\mathcal{V}$ are able to communicate via the RF wireless protocol. As each miners location is recorded in the blockchain via the \verb|assert_location| transaction (see Section \ref{transactions}) we select $\mathcal{V}$ by pseudo-random selection from miners located within $\mathcal{A}$ = $\mathcal{\pi}$$\mathcal{r^2}$ of $\mathcal{P}$, where $\mathcal{r}$ is approximately 1.5 miles from $\mathcal{P}$.\newline
+\textbf{Selecting the Verifier}. Because Helium is a physical wireless network, we aim to create a proof that the prover \prover is creating wireless network coverage. To do this we must identify a verifier \verifier that is within \textit{geographic proximity} to \prover. We define geographic proximity as a miner present within $\mathcal{A}$ = $\mathcal{\pi}$$\mathcal{r^2}$; geographic proximity is required to confirm \prover and \verifier are able to communicate via the RF wireless protocol. As each miners location is recorded in the blockchain via the \verb|assert_location| transaction (see Section \ref{transactions}) we select \verifier by pseudo-random selection from miners located within $\mathcal{A}$ = $\mathcal{\pi}$$\mathcal{r^2}$ of \prover, where $\mathcal{r}$ is approximately 1.5 miles from \prover.\newline
 
 ALGORITHM TYPE REPRESENTATION HERE\newline
 
