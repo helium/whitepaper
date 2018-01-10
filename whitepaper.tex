@@ -14,6 +14,7 @@
 \newcommand{\coverage}{$\mathcal{W_p}$}
 \newcommand{\device}{$\mathcal{D}$}
 \newcommand{\location}{$\mathcal{L_p}$}
+\newcommand{\proofofcoverage}{\textit{Proof-of-Coverage}}
 
 \begin{document}
 
@@ -37,7 +38,7 @@ Helium has a huge variety of uses in a wide variety of sensing and location trac
 
 \section{Introduction}
 
-Helium is a wide-area wireless networking system, a blockchain and a protocol token. The blockchain runs on a new kind of proof, called \textit{Proof-of-Coverage}, where blocks are created by miners who are providing wireless network coverage in a cryptographically verified physical location and time. The Helium protocol provides a bi-directional data transfer system between wireless devices and the Internet via a network of independent providers that does not rely on a single coordinator, where: (1) devices pay to send \& receive data to the internet and geolocate themselves, (2) miners earn tokens for providing network coverage, and (3) miners earn fees from transactions, and for validating the integrity of the network.\newline
+Helium is a wide-area wireless networking system, a blockchain and a protocol token. The blockchain runs on a new kind of proof, called \proofofcoverage, where blocks are created by miners who are providing wireless network coverage in a cryptographically verified physical location and time. The Helium protocol provides a bi-directional data transfer system between wireless devices and the Internet via a network of independent providers that does not rely on a single coordinator, where: (1) devices pay to send \& receive data to the internet and geolocate themselves, (2) miners earn tokens for providing network coverage, and (3) miners earn fees from transactions, and for validating the integrity of the network.\newline
 
 \subsection{Key Components}
 
@@ -46,7 +47,7 @@ Helium is built around the following key components:
 \begin{enumerate}
 	\item \textbf{Wireless Protocol}: we introduce a new open-source and standards-compliant wireless network protocol designed for low power devices over extremely wide areas. This protocol is designed to run on existing commodity radio chips availble from dozens of manufacturers with no proprietary technologies or modulation schemes required.
 	\item \textbf{Blockchain Network}: we demonstrate an entirely new purpose-built blockchain network built to service the \textit{Wireless Protocol} and provide a system for authenticating and identifying devices, providing cryptographic guarantees of data transmission and authenticity, offer transaction primitives designed around the wireless protocol, and more.	
-	\item \textbf{Proof-of-Coverage}: we present a set of computationally-inexpensive \textit{Proof-of-Coverage} that allows network providers to prove they are capable of providing wireless network coverage. We anchor these proofs using a \textit{Proof-of-Serialization} that allows network providers to prove they are accurately representing time relative to others on the network in a crytographically secure way. 	
+	\item \textbf{\proofofcoverage}: we present a set of computationally-inexpensive \proofofcoverage that allows network providers to prove they are capable of providing wireless network coverage. We anchor these proofs using a \textit{Proof-of-Serialization} that allows network providers to prove they are accurately representing time relative to others on the network in a crytographically secure way. 	
 	\item \textbf{Geolocation}: we outline a system for interpreting the physical \textit{geolocation} of a device using the \textit{Wireless Protocol} without the need for expensive and power-hungry satellite location hardware. Devices are able to make immutable, secure, and verifiable claims about their location at a given moment in time which are recorded in the blockchain.
 \end{enumerate}
 
@@ -60,16 +61,16 @@ Helium is built around the following key components:
 	\item Miners join the network by asserting their satellite-derived location, a special type of transaction in the blockchain, and staking a fixed deposit.
 	\item Miners specify the price they're willing to accept for data transport and geolocation, and devices specify the price they are willing to pay. Miners are paid once they prove they have delivered data to the devices' specified internet endpoint.
 	\item Miners can particpate in the creation of new blocks in the blockchain, for which they are rewarded newly minted Helium. A miners probability of mining the next block is approximately equal to the amount of wireless network coverage being provided.
-	\item The blockchain employs \textit{Proof-of-Coverage} to guarantee that miners are correctly representing the amount of wireless network coverage being created.
+	\item The blockchain employs \proofofcoverage to guarantee that miners are correctly representing the amount of wireless network coverage being created.
 \end{itemize}
 
 DIAGRAM OF THE SYSTEM HERE
 
-\section{\textit{Proof-of-Coverage}}
+\section{\proofofcoverage}
 
 In the Helium protocol, miners must prove that they are providing wireless network coverage that devices are able to use to communicate with the internet. Miners do this by generating \textit{Proofs-of-Coverage} that the blockchain network and other miners verify.\newline
 
-In this section we outline the implementation for \textit{Proof-of-Coverage}.
+In this section we outline the implementation for \proofofcoverage.
 
 \subsection{Motivation}
 
@@ -79,11 +80,11 @@ These proofs are, however, not otherwise \textit{useful} to the network. We defi
 
 The proofs used in Helium must be resistant to \textit{Sybil Attacks} in which dishonest miners create pseudonymous identities and use them to subvert the network and gain access to block rewards to which they should not be entitled. This is a particularly difficult attack vector to manage in a physical network like Helium. We must also be resistant to a new attack vector: \textit{Alternate Reality Attacks} exist where a dishonest group of miners are able to simluate that wireless network coverage exists in the physical world when it in fact does not. An example of this would be running the mining software on a set of virtual machines and simulating GPS coordinates and RF networking.\newline
 
-We propose a consensus protocol that uses \textit{Proof-of-Coverage} to both secure the blockchain and provide an extremely useful service to the network; providing wireless network coverage that devices can use to send data to and from the internet. 
+We propose a consensus protocol that uses \proofofcoverage to both secure the blockchain and provide an extremely useful service to the network; providing wireless network coverage that devices can use to send data to and from the internet. 
 
-\subsection{\textit{Proof-of-Coverage}}
+\subsection{\proofofcoverage}
 
-\textit{Proof-of-Coverage} (\verb|PoC|) is an innovative proof which allows a miner, the prover \prover, to convince a verifier \verifier that wireless network coverage \coverage is being made available to a given device on the network \device. \verb|PoC| is an interactive protocol where prover \prover asserts that they are creating wireless network coverage \coverage in a specific GPS location \location and then convinces a verifier \verifier that \prover is in fact creating \coverage via a challenge mechanism over the wireless network. \verb|PoC| is the first such protocol that attempts to prove the veracity of miners in a physical space, and then use it to achieve consensus on a blockchain network.\newline
+\proofofcoverage (\verb|PoC|) is an innovative proof which allows a miner, the prover \prover, to convince a verifier \verifier that wireless network coverage \coverage is being made available to a given device on the network \device. \verb|PoC| is an interactive protocol where prover \prover asserts that they are creating wireless network coverage \coverage in a specific GPS location \location and then convinces a verifier \verifier that \prover is in fact creating \coverage via a challenge mechanism over the wireless network. \verb|PoC| is the first such protocol that attempts to prove the veracity of miners in a physical space, and then use it to achieve consensus on a blockchain network.\newline
 
 We aim to solve for the following:
 
@@ -93,9 +94,9 @@ We aim to solve for the following:
 	\item Our goal is to correctly identify which reality is honest when there is a conflict
 \end{itemize}
 
-\subsection{Constructing \textit{Proof-of-Coverage}}
+\subsection{Constructing \proofofcoverage}
 
-This section describes the construction of the \textit{Proof-of-Coverage} protocol.\newline
+This section describes the construction of the \proofofcoverage protocol.\newline
 
 \textbf{Selecting the Verifier}. Because Helium is a physical wireless network, we aim to create a proof that the prover \prover is creating wireless network coverage. To do this we must identify a verifier \verifier that is within \textit{geographic proximity} to \prover. We define geographic proximity as a miner present within $\mathcal{A}$ = $\mathcal{\pi}$$\mathcal{r^2}$; geographic proximity is required to confirm \prover and \verifier are able to communicate via the RF wireless protocol. As each miners location is recorded in the blockchain via the \verb|assert_location| transaction (see Section \ref{transactions}) we select \verifier by pseudo-random selection from miners located within $\mathcal{A}$ = $\mathcal{\pi}$$\mathcal{r^2}$ of \prover, where $\mathcal{r}$ is approximately 1.5 miles from \prover.\newline
 
@@ -173,7 +174,7 @@ Smart Contracts, better proofs, etc
 
 \section{Acknowledgements}
 
-This document is the result of collaborative work by multiple members of the Helium team, and would not have been possible without the help, feedback, and review of the board, advisors, and collaborators of Helium. Particularly: Andrew Allen wrote the original draft of a whitepaper, laying the groundwork and thinking for this eventual project and whitepaper document; Andrew Thompson devised the critical \textit{Proof-of-Coverage} implementation, drove much of the early development and built the first simulator of this system; Marc Nijdam implemented and structured the development efforts on both the hardware and software; Mark Phillips added continuous review, feedback and sanity checking of this document; Jay Kickliter built the earliest hardware testing apparatus that proved much of the physical implementation was possible; Peter Main created the various illustrations and artwork, as well as providing valuable review; and Amir Haleem wrote much of the structure and prose around these various concepts.\newline
+This document is the result of collaborative work by multiple members of the Helium team, and would not have been possible without the help, feedback, and review of the board, advisors, and collaborators of Helium. Particularly: Andrew Allen wrote the original draft of a whitepaper, laying the groundwork and thinking for this eventual project and whitepaper document; Andrew Thompson devised the critical \proofofcoverage implementation, drove much of the early development and built the first simulator of this system; Marc Nijdam implemented and structured the development efforts on both the hardware and software; Mark Phillips added continuous review, feedback and sanity checking of this document; Jay Kickliter built the earliest hardware testing apparatus that proved much of the physical implementation was possible; Peter Main created the various illustrations and artwork, as well as providing valuable review; and Amir Haleem wrote much of the structure and prose around these various concepts.\newline
 
 We would like to extend our deepest thanks to Jeremy Rubin of the MIT Digital Currency Initiative, and the Blockchain at Berkeley team for their help and detailed review of this paper.\newline
 
