@@ -1,5 +1,5 @@
 \documentclass[letterpaper,11pt]{article}
-\hbadness 10000
+%\hbadness 10000
 \usepackage{graphicx}
 \usepackage{color}% http://ctan.org/pkg/color
 \usepackage[backref=section, linkbordercolor={1 1 1}, urlbordercolor={1 1 1}, citebordercolor={1 1 1}]{hyperref}% http://ctan.org/pkg/hyperref
@@ -58,10 +58,10 @@ Helium is built around the following key components:
 \begin{itemize}
 	\item The Helium protocol is a \textit{Decentralized Wireless Network} system built around a new wireless protocol on a purpose-built blockchain with a native token. 
 	\item Devices take the form of hardware containing a radio chip and firmware compatible with the wireless protocol, and spend tokens by paying miners to send data to and from the internet. 
-	\item Miners earn tokens by providing wireless network coverage via purpose-built hardware which provides a bridge between the Helium wireless protocol and the Internet.
+	\item Miners earn tokens by providing wireless network coverage via purpose-built hardware which provides a bridge between the Helium wireless protocol and Routers, which live on the Internet.
 	\item Devices store their private keys in commodity key-storage hardware and participate in the network only when authenticated against their public key stored in the blockchain.
 	\item Miners join the network by asserting their satellite-derived location, a special type of transaction in the blockchain, and staking a fixed deposit.
-	\item Miners specify the price they're willing to accept for data transport and geolocation, and devices specify the price they are willing to pay. Miners are paid once they prove they have delivered data to the devices' specified internet endpoint.
+	\item Miners specify the price they're willing to accept for data transport and geolocation, and devices specify the price they are willing to pay. Miners are paid once they prove they have delivered data to the devices' specified router.
 	\item Miners can particpate in the creation of new blocks in the blockchain, for which they are rewarded newly minted Helium. A miners probability of mining the next block is approximately equal to the amount of wireless network coverage being provided.
 	\item The blockchain employs \proofofcoverage to guarantee that miners are correctly representing the amount of wireless network coverage being created.
 \end{itemize}
@@ -118,19 +118,19 @@ We introduce the Helium Decentralized Wireless Network (\verb|DWN|). The \verb|D
 
 \subsection{Participants}
 
-Any user can participate as a Device, a Miner, or a Router.\newline
+Any user can participate as a Device, a Miner, or a Router.
 
 \begin{itemize}
 	\item \textit{Devices} pay to send encrypted data to and from the internet via the \verb|DWN| using hardware compatible with the wireless protocol. In geographies with a sufficient number of miners, devices can pay several miners to geolocate themselves without needing satellite location hardware. Data sent from devices is \textit{fingerprinted}, and that fingerprint stored in the blockchain. 
 	\item \textit{Miners} provide wireless network coverage to the network via purpose-built hardware which provides a long range bridge between the wireless protocol and the internet. Users join the network as miners by purchasing or building mining hardware that conforms to the wireless protocol, and \textit{staking} a deposit inversely proportional to the density of existing miners at their physical location. Miners generate \textit{Proofs-of-Coverage} and submit them to the blockchain to prove that they are continuously providing wireless network coverage that devices can use. Miners join the network with a \textit{score} that diminishes as blocks pass without valid proofs being submitted; once a miners score drops below a threshold they are penalized and lose some or all of their deposit. Miners are eligible to mine new blocks in the blockchain, and receive the block reward and transaction fees for any transactions included in the block once mined.
-	\item \textit{Routers} are internet applications that receive encrypted device data from miners. Routers are the termination point for device data encryption. Devices record to the blockchain which router(s) miners should send their data. Routers are responsible for confirming to the network that device data was delivered to the correct destination and that the miner should be paid for their service.
+	\item \textit{Routers} are internet applications that receive encrypted device data from miners. Routers are the termination point for device data encryption. Devices record to the blockchain which router(s) miners should send their data, via a special transaction called the \verb|routing_transaction| [\ref{transactions}]. Routers are responsible for confirming to the network that device data was delivered to the correct destination and that the miner should be paid for their service.
 \end{itemize}
 
 \subsection{Blockchain}
 
-The Helium blockchain is a new type of ledger designed to provide a cost-effective way to run application logic core to the operation of a \verb|DWN|, store immutable device data fingerprints, and furnish a transaction system. We will refer to this as the $\mathcal{Blockchain}$, $\mathcal{B}$. $\mathcal{B}$ is an immutable append-only list of transactions that achieves consensus by verifying \textit{Proofs-of-Coverage} \ref{poc}. Users internal and external to the \verb|DWN| have access to $\mathcal{B}$.\newline
+The Helium blockchain is a new type of ledger designed to provide a cost-effective way to run application logic core to the operation of a \verb|DWN|, store immutable device data fingerprints, and furnish a transaction system. We will refer to this as the Blockchain, $\mathcal{B}$. $\mathcal{B}$ is an immutable append-only list of transactions that achieves consensus by verifying \textit{Proofs-of-Coverage} \ref{poc}. Users internal and external to the \verb|DWN| have access to $\mathcal{B}$.\newline
 
-$\mathcal{B}$ consists of blocks $\mathcal{b^n}$, which contain a header and a list of transactions. There are several kinds of transactions, outlined in [\ref{transactions}].\newline
+$\mathcal{B}$ consists of blocks $\mathcal{b^n}$, which contain a header and a list of transactions. There are several kinds of transactions, outlined in [\ref{transactions}]. Although the blocks in chain can be linearly ordered, its data structure is a direct acyclic graph.\newline
 
 As in other implementations, $\mathcal{b^n}$ in $\mathcal{B}$ consist of a hash of the previous block in the chain, a set of transactions, and a \textit{proof}. At a given epoch $\mathcal{t}$ a block $\mathcal{b^t}$ in $\mathcal{B}$ consists of the following:
 
@@ -149,6 +149,8 @@ As in other implementations, $\mathcal{b^n}$ in $\mathcal{B}$ consist of a hash 
 		 \hline
 	\end{tabular}
 \end{center}
+
+As the \textit{Proof-of-Coverage} is valuable to the network, we store as many $\mathcal{b^n}$ and their associated proof to $\mathcal{B}$ as \textit{Uncle Blocks}, $\mathcal{Ub^n}$. $\mathcal{Ub^n}$, as described in the \textit{Greedy Heaviest-Observed Sub-Tree (GHOST)} \cite{ghost} paper and implemented in Ethereum \cite{ethereum}, allow a miner $\mathcal{M}$ to earn block rewards even if their submitted block did not become the tip of the chain. $\mathcal{Ub^n}$ helps the winning chain accumulate 'weight' in terms of both the length and quality of the chain, but also including the amount and quality of $\mathcal{Ub^n}$ and their associated proofs. This means that longer chain forks, either mined maliciously or on the smaller side of a partitioned network, will not be selected over a shorter, weightier chain. This also means that valuable proofs of work aren't lost and can be used by the chain to calculate trust.
 
 \subsection{Protocol}
 
@@ -253,11 +255,6 @@ We would also like to acknowledge many of the prior works and inventions that ha
 	Regina Kaune, Julian Horst, Wolfgang Koch
 		\textit{Accuracy Analysis for TDOA Localization in Sensor Networks}, \\
 		\url{http://fusion.isif.org/proceedings/Fusion_2011/data/papers/217.pdf}	
-
-\bibitem{state-channels}
-	Jeff Coleman
-		\textit{State Channels}, \\
-		\url{http://www.jeffcoleman.ca/state-channels/}
 
 \bibitem{ecc}
 	Microchip
