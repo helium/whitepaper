@@ -1,4 +1,4 @@
-\documentclass[letterpaper,11pt]{report}
+\documentclass[letterpaper,11pt]{article}
 \usepackage{graphicx}
 \usepackage{color}% http://ctan.org/pkg/color
 \usepackage[backref=section, linkbordercolor={1 1 1}, urlbordercolor={1 1 1}, citebordercolor={1 1 1}]{hyperref}% http://ctan.org/pkg/hyperref
@@ -14,6 +14,7 @@
 \author{Helium Systems, Inc}
 \date{\today}
 \maketitle
+\newpage
 
 {\large \textbf{Abstract}}\newline
 
@@ -30,7 +31,7 @@ Helium has a huge variety of uses in a wide variety of sensing and location trac
 
 \section{Introduction}
 
-Helium is a wide-area wireless networking system, a blockchain and a protocol token. The blockchain runs on a new kind of proof, called \textit{Proof-of-Coverage}, where blocks are created by miners who are providing wireless network coverage in a cryptographically verified physical location and time. The Helium protocol provides a bi-directional data transfer system between wireless devices and the Internet via a network of independent providers that does not rely on a single coordinator, where: (1) devices pay to send \& receive data to the internet and geolocate themselves, (2) miners earn tokens for providing network coverage, and (3) miners earn fees from transactions, and for validating the integrity of the network.\newline
+Helium is a wide-area wireless networking system, a blockchain and a protocol token. The blockchain runs on a new kind of proof, called \textit{Proof-of-Coverage}, where blocks are created by miners who are providing wireless network coverage in a cryptographically verified physical location and time. The Helium protocol provides a bi-directional data transfer system between wireless devices and the Internet via a network of independent providers that does not rely on a single coordinator, where: (1) devices pay to send \& receive data to the internet and geolocate themselves, (2) miners earn tokens for providing network coverage, and (3) miners earn fees from transactions, and for validating the integrity of the network.
 
 \subsection{Key Components}
 
@@ -38,7 +39,7 @@ Helium is built around the following key components:
 
 \begin{enumerate}
 	\item \textbf{Wireless Protocol}: we introduce a new open-source and standards-compliant wireless network protocol designed for low power devices over extremely wide areas. This protocol is designed to run on existing commodity radio chips availble from dozens of manufacturers with no proprietary technologies or modulation schemes required.
-	\item \textbf{Blockchain Network}: we demonstrate an entirely new purpose-built blockchain network built to service the \textit{Wireless Protocol} and provide a system for authenticating and identifying devices, providing cryptographic guarantees of data transmission and authenticity, offer transaction primitives designed around the wireless protocol, and more.	
+	\item \textbf{Blockchain Network}: we demonstrate an entirely new purpose-built blockchain network built to service and incentivize the \textit{Wireless Protocol} and provide a system for authenticating and identifying devices, providing cryptographic guarantees of data transmission and authenticity, offer transaction primitives designed around the wireless protocol, and more.	
 	\item \textbf{Proof-of-Coverage}: we present a set of computationally-inexpensive \textit{Proof-of-Coverage} that allows network providers to prove they are capable of providing wireless network coverage. We anchor these proofs using a \textit{Proof-of-Serialization} that allows network providers to prove they are accurately representing time relative to others on the network in a crytographically secure way. 	
 	\item \textbf{Geolocation}: we outline a system for interpreting the physical \textit{geolocation} of a device using the \textit{Wireless Protocol} without the need for expensive and power-hungry satellite location hardware. Devices are able to make immutable, secure, and verifiable claims about their location at a given moment in time which are recorded in the blockchain.
 \end{enumerate}
@@ -58,15 +59,15 @@ Helium is built around the following key components:
 
 DIAGRAM OF THE SYSTEM HERE
 
-\section{\textit{Proof-of-Coverage}}
+\section{\textit{Proof-of-Coverage}} \label{poc}
 
 In the Helium protocol, miners must prove that they are providing wireless network coverage that devices are able to use to communicate with the internet. Miners do this by generating \textit{Proofs-of-Coverage} that the blockchain network and other miners verify.\newline
 
-In this section we outline the implementation for \textit{Proof-of-Coverage}.
+In this section we outline the motivation and implementation of \textit{Proof-of-Coverage}.
 
 \subsection{Motivation}
 
-Most existing blockchain networks such as Bitcoin \cite{bitcoin} and Ethereum \cite{ethereum} use a \textit{Proof-of-Work} system that relies on a algorithmic puzzle that is asymmetric in nature. These proofs are extremely difficult to generate, but simple for an external verifier to prove. Security and consensus on these networks is achieved by knowing that the amount of computing power required to generate a valid proof is difficult to forge, and as subsequent blocks are added, the cumulative difficulty of the chain becomes realistically impossible to fabricate. \newline
+Most existing blockchain networks such as Bitcoin \cite{bitcoin} and Ethereum \cite{ethereum} use a \textit{Proof-of-Work} system that relies on n algorithmic puzzle that is asymmetric in nature. These proofs are extremely difficult to generate, but simple for an external verifier to prove. Security and consensus on these networks is achieved by knowing that the amount of computing power required to generate a valid proof is difficult to forge, and as subsequent blocks are added, the cumulative difficulty of the chain becomes realistically impossible to fabricate. \newline
 
 These proofs are, however, not otherwise \textit{useful} to the network. We define useful as work that is valuable to the network beyond securing the blockchain. While there have been attempts in other networks to turn mining power into something useful, such as Ethereum executing small programs with the mining power, the majority of the work is not useful or reusable. The mining process is also extremely wasteful, as the determining factor in the mining work is typically computational power which consumes massive amounts of power and hardware to execute.\newline
 
@@ -76,7 +77,7 @@ We propose a consensus protocol that uses \textit{Proof-of-Coverage} to both sec
 
 \subsection{\textit{Proof-of-Coverage}}
 
-\textit{Proof-of-Coverage} (\verb|PoC|) is an innovative proof which allows a miner, the prover $\mathcal{P}$, to convince a verifier $\mathcal{V}$ that wireless network coverage $\mathcal{W_p}$ is being made available to a given device on the network $\mathcal{D}$. \verb|PoC| is an interactive protocol where prover $\mathcal{P}$ asserts that they are creating wireless network coverage $\mathcal{W_p}$ in a specific GPS location $\mathcal{L_p}$ and then convinces a verifier $\mathcal{V}$ that $\mathcal{P}$ is in fact creating $\mathcal{W_p}$ via a challenge mechanism over the wireless network. \verb|PoC| is the first such protocol that attempts to prove the veracity of miners in a physical space, and then use it to achieve consensus on a blockchain network.\newline
+\textit{Proof-of-Coverage} (\verb|PoC|) is an innovative proof which allows a miner, the prover $\mathcal{P}$, to convince a verifier $\mathcal{V}$ that wireless network coverage $\mathcal{W_p}$ is being made available to a given device $\mathcal{D}$ on the network. \verb|PoC| is an interactive protocol where prover $\mathcal{P}$ asserts that they are creating wireless network coverage $\mathcal{W_p}$ in a specific GPS location $\mathcal{L_p}$ and then convinces a verifier $\mathcal{V}$ that $\mathcal{P}$ is in fact creating $\mathcal{W_p}$ via a challenge mechanism over the wireless network. \verb|PoC| is the first such protocol that attempts to prove the veracity of miners in a physical space, and then use it to achieve consensus on a blockchain network.\newline
 
 We aim to solve for the following:
 
@@ -90,7 +91,7 @@ We aim to solve for the following:
 
 This section describes the construction of the \textit{Proof-of-Coverage} protocol.\newline
 
-\textbf{Selecting the Verifier}. Because Helium is a physical wireless network, we aim to create a proof that the prover $\mathcal{P}$ is creating wireless network coverage. To do this we must identify a verifier $\mathcal{V}$ that is within \textit{geographic proximity} to $\mathcal{P}$. We define geographic proximity as a miner present within $\mathcal{A}$ = $\mathcal{\pi}$$\mathcal{r^2}$; geographic proximity is required to confirm $\mathcal{P}$ and $\mathcal{V}$ are able to communicate via the RF wireless protocol. As each miners location is recorded in the blockchain via the \verb|assert_location| transaction (see Section \ref{transactions}) we select $\mathcal{V}$ by pseudo-random selection from miners located within $\mathcal{A}$ = $\mathcal{\pi}$$\mathcal{r^2}$ of $\mathcal{P}$, where $\mathcal{r}$ is approximately 1.5 miles from $\mathcal{P}$.\newline
+\textbf{Selecting the Verifier}. Because Helium is a physical wireless network, we aim to create a proof that the prover $\mathcal{P}$ is creating wireless network coverage. To do this we must identify a verifier $\mathcal{V}$ that is within \textit{geographic proximity} to $\mathcal{P}$. We define geographic proximity as a miner present within $\mathcal{A}$ = $\mathcal{\pi}$$\mathcal{r^2}$; geographic proximity is required to confirm $\mathcal{P}$ and $\mathcal{V}$ are able to communicate via the RF wireless protocol. By communicating over the RF wireless protocol we confirm two critical things: 1) $\mathcal{P}$ and $\mathcal{V}$ are in fact geographically proximate to one another, and 2) that $\mathcal{P}$ is creating RF coverage compatible with the wireless protocol that devices are able to use. As each miners location is recorded in the blockchain via the \verb|assert_location| transaction (see Section \ref{transactions}) we select $\mathcal{V}$ by pseudo-random selection from miners located within $\mathcal{A}$ = $\mathcal{\pi}$$\mathcal{r^2}$ of $\mathcal{P}$, where $\mathcal{r}$ is approximately 1.5 miles from $\mathcal{P}$.\newline
 
 ALGORITHM TYPE REPRESENTATION HERE\newline
 
@@ -113,16 +114,32 @@ Any user can participate as a Device, a Miner, or a Router.\newline
 \begin{itemize}
 	\item \textit{Devices} pay to send encrypted data to and from the internet via the \verb|DWN| using hardware compatible with the wireless protocol. In geographies with a sufficient number of miners, devices can pay several miners to geolocate themselves without needing satellite location hardware. Data sent from devices is \textit{fingerprinted}, and that fingerprint stored in the blockchain. 
 	\item \textit{Miners} provide wireless network coverage to the network via purpose-built hardware which provides a long range bridge between the wireless protocol and the internet. Users join the network as miners by purchasing or building mining hardware that conforms to the wireless protocol, and \textit{staking} a deposit inversely proportional to the density of existing miners at their physical location. Miners generate \textit{Proofs-of-Coverage} and submit them to the blockchain to prove that they are continuously providing wireless network coverage that devices can use. Miners join the network with a \textit{score} that diminishes as blocks pass without valid proofs being submitted; once a miners score drops below a threshold they are penalized and lose some or all of their deposit. Miners are eligible to mine new blocks in the blockchain, and receive the block reward and transaction fees for any transactions included in the block once mined.
-	\item \textit{Routers} are internet applications that receive encrypted device data from miners. Routers are the termination point for device data encryption, and devices record to which router(s) miners should send their data into the blockchain. Routers are responsible for confirming to the network that device data was delivered to the correct place, and that the miner should be paid for their service.
+	\item \textit{Routers} are internet applications that receive encrypted device data from miners. Routers are the termination point for device data encryption. Devices record to the blockchain which router(s) miners should send their data. Routers are responsible for confirming to the network that device data was delivered to the correct destination and that the miner should be paid for their service.
 \end{itemize}
-
-\subsection{Network}
-
-Detail about the p2p network and the role that full nodes play.
 
 \subsection{Blockchain}
 
-Detail about our specific instantiation of a ledger, how it is structured, uncles, transactions, etc
+The Helium blockchain is a new type of ledger designed to provide a cost-effective way to run application logic core to the operation of a \verb|DWN|, store immutable device data fingerprints, and furnish a transaction system. We will refer to this as the $\mathcal{Blockchain}$, $\mathcal{B}$. $\mathcal{B}$ is an immutable append-only list of transactions that achieves consensus by verifying \textit{Proofs-of-Coverage} \ref{poc}. Users internal and external to the \verb|DWN| have access to $\mathcal{B}$.\newline
+
+$\mathcal{B}$ consists of blocks $\mathcal{b^n}$, which contain a header and a list of transactions. There are several kinds of transactions, outlined in [\ref{transactions}].\newline
+
+As in other implementations, $\mathcal{b^n}$ in $\mathcal{B}$ consist of a hash of the previous block in the chain, a set of transactions, and a \textit{proof}. At a given epoch $\mathcal{t}$ a block $\mathcal{b^t}$ in $\mathcal{B}$ consists of the following:
+
+\begin{center}
+	\begin{tabular}{|c|}
+		\hline
+		 Cryptographic Roughtime [\ref{roughtime}]\\
+		 \hline
+		 Block Height \\
+		\hline
+		 Previous Block Hash \\
+		 \hline
+		 Transactions \textit{1..n} Merkle Hash $\mathcal{T^t}$ \\
+		 \hline
+		 \textit{Proofs-of-Coverage} \\
+		 \hline
+	\end{tabular}
+\end{center}
 
 \subsection{Protocol}
 
@@ -140,7 +157,7 @@ The mining flow.
 
 Where routing fits and it's relationship to people getting paid?
 
-\section{Transactions}
+\section{Transactions} \label{transactions}
 
 Talk about the basic transaction primitives our blockchain provides, such as address generation, location assertion, network joining, etc as well as our big-blocker mentality.
 
@@ -157,6 +174,20 @@ Intro to the physical components of the network.
 \subsection{Routers}
 
 \subsection{Geolocation}
+
+\subsection{Roughtime} \label{roughtime}
+
+To achieve cryptographic time consensus among decentralized clients, we implement a simplified form of Google's \textit{Roughtime} $\mathcal{R}$ \cite{roughtime}. $\mathcal{R}$ is a protocol that aims to achieve roughtime synchronization in a secure way that does not depend on any particular time server, and in such a way that, if a time server does misbehave, clients end up with cryptographic proof of that behavior. Miners in the Helium \verb|DWN| act as both roughtime servers and clients.\newline
+
+We outline the approximate process to achieve cryptographically secure time via $\mathcal{R}$ as follows:\newline
+
+First, a miner $\mathcal{M}$ picks an $\mathcal{R}$ server, miner $\mathcal{M^1}$ and miner $\mathcal{M^2}$, to prove contact serialization with. It is assumed $\mathcal{M}$ has a public key for $\mathcal{M^1}$ and $\mathcal{M^2}$ (otherwise $\mathcal{M}$ should obtain it from $\mathcal{B}$). $\mathcal{M}$ then generates a salted\footnote{the salt is a 512-bit SHA of $\mathcal{T^t}$ of $\mathcal{b^n}$$R$} hash commitment $\mathcal{K}$ called the \textit{proof-kernel}. The proof-kernel is a commitment to what claim is desired to be proven. $$\mathcal{K} = \mathcal{H}(R || \mathcal{M^1} || \mathcal{M^2})$$ $\mathcal{M}$ sends $\mathcal{K}$ to $\mathcal{M^1}$. $\mathcal{M^1}$ replies with $\mathcal{T}$, a signed message including the current time and $\mathcal{K}$. $\mathcal{M}$ knows that the reply from $\mathcal{M^1}$ was not pre-generated because it includes the nonce $R$ that the $\mathcal{M}$ generated. Because $\mathcal{M}$ doesn't completely trust $\mathcal{M^1}$ it will ask for another time from $\mathcal{M^2}$.\newline
+
+For the second request, $\mathcal{M}$ generates a sub-proof-kernel, $\mathcal{L} = \mathcal{H}(R || \mathcal{T} || \mathcal{K})$, and sends it to $\mathcal{M^2}$. $\mathcal{M^2}$ replies with $\mathcal{U}$, a signed message including the current time and $\mathcal{L}$. $\mathcal{U}$ is now a proof artifact that shows that $\mathcal{M}$ desired and then proved a serialization between $\mathcal{M^1}$ and $\mathcal{M^2}$. Let's assume that the times from $\mathcal{M^1}$ and $\mathcal{M^2}$ are significantly different. If the time from $\mathcal{M^2}$ is before $\mathcal{M^1}$, then $\mathcal{M}$ has proof of misbehaviour; the reply from $\mathcal{M^2}$ implicitly shows that it was created later because of the way that $\mathcal{M}$ constructed the nonce. If the time from $\mathcal{M^2}$ is after, then $\mathcal{M}$ can reverse the roles of $\mathcal{M^1}$ and $\mathcal{M^2}$ and repeat the process to obtain, assuming steady clocks, a misordered proof as in the other case.\newline  
+
+With only two servers, $\mathcal{M}$ can end up with proof that something is wrong, but no idea what the correct time is. But with half a dozen or more independent servers, $\mathcal{M}$ will end up with chain of proof of any server's misbehaviour, signed by several others, and (presumably) enough accurate replies to establish what the correct time is, $\mathcal{R^t}$.\newline
+
+By anchoring a block $\mathcal{b^n}$ using $\mathcal{R^t}$ and Merkle Hash $\mathcal{T^t}$, altering any element of $\mathcal{b^n}$ would invalidate the rest of the block. $\mathcal{R^t}$ is additionally used as a source of entropy in the \textit{Proof-of-Coverage} [\ref{poc}]. 
 
 \section{Future Work}
 
