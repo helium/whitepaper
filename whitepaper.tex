@@ -152,6 +152,20 @@ As in other implementations, $\mathcal{b^n}$ in $\mathcal{B}$ consist of a hash 
 
 As the \textit{Proof-of-Coverage} is valuable to the network, we store as many $\mathcal{b^n}$ and their associated proof to $\mathcal{B}$ as \textit{Uncle Blocks}, $\mathcal{Ub^n}$. $\mathcal{Ub^n}$, as described in the \textit{Greedy Heaviest-Observed Sub-Tree (GHOST)} \cite{ghost} paper and implemented in Ethereum \cite{ethereum}, allow a miner $\mathcal{M}$ to earn block rewards even if their submitted block did not become the tip of the chain. $\mathcal{Ub^n}$ helps the winning chain accumulate 'weight' in terms of both the length and quality of the chain, but also including the amount and quality of $\mathcal{Ub^n}$ and their associated proofs. This means that longer chain forks, either mined maliciously or on the smaller side of a partitioned network, will not be selected over a shorter, weightier chain. This also means that valuable proofs of work aren't lost and can be used by the chain to calculate trust.
 
+\subsubsection{Roughtime} \label{roughtime}
+
+To achieve cryptographic time consensus among decentralized clients, we implement a simplified form of Google's \textit{Roughtime} $\mathcal{R}$ \cite{roughtime}. $\mathcal{R}$ is a protocol that aims to achieve roughtime synchronization in a secure way that does not depend on any particular time server, and in such a way that, if a time server does misbehave, clients end up with cryptographic proof of that behavior. Miners in the Helium \verb|DWN| act as both roughtime servers and clients.\newline
+
+We outline the approximate process to achieve cryptographically secure time via $\mathcal{R}$ as follows:\newline
+
+First, a miner $\mathcal{M}$ picks an $\mathcal{R}$ server, miner $\mathcal{M^1}$ and miner $\mathcal{M^2}$, to prove contact serialization with. It is assumed $\mathcal{M}$ has a public key for $\mathcal{M^1}$ and $\mathcal{M^2}$ (otherwise $\mathcal{M}$ should obtain it from $\mathcal{B}$). $\mathcal{M}$ then generates a salted\footnote{the salt is a 512-bit SHA of $\mathcal{T^t}$ of $\mathcal{b^n}$$R$} hash commitment $\mathcal{K}$ called the \textit{proof-kernel}. The proof-kernel is a commitment to what claim is desired to be proven. $$\mathcal{K} = \mathcal{H}(R || \mathcal{M^1} || \mathcal{M^2})$$ $\mathcal{M}$ sends $\mathcal{K}$ to $\mathcal{M^1}$. $\mathcal{M^1}$ replies with $\mathcal{T}$, a signed message including the current time and $\mathcal{K}$. $\mathcal{M}$ knows that the reply from $\mathcal{M^1}$ was not pre-generated because it includes the nonce $R$ that the $\mathcal{M}$ generated. Because $\mathcal{M}$ doesn't completely trust $\mathcal{M^1}$ it will ask for another time from $\mathcal{M^2}$.\newline
+
+For the second request, $\mathcal{M}$ generates a sub-proof-kernel, $\mathcal{L} = \mathcal{H}(R || \mathcal{T} || \mathcal{K})$, and sends it to $\mathcal{M^2}$. $\mathcal{M^2}$ replies with $\mathcal{U}$, a signed message including the current time and $\mathcal{L}$. $\mathcal{U}$ is now a proof artifact that shows that $\mathcal{M}$ desired and then proved a serialization between $\mathcal{M^1}$ and $\mathcal{M^2}$. Let's assume that the times from $\mathcal{M^1}$ and $\mathcal{M^2}$ are significantly different. If the time from $\mathcal{M^2}$ is before $\mathcal{M^1}$, then $\mathcal{M}$ has proof of misbehaviour; the reply from $\mathcal{M^2}$ implicitly shows that it was created later because of the way that $\mathcal{M}$ constructed the nonce. If the time from $\mathcal{M^2}$ is after, then $\mathcal{M}$ can reverse the roles of $\mathcal{M^1}$ and $\mathcal{M^2}$ and repeat the process to obtain, assuming steady clocks, a misordered proof as in the other case.\newline  
+
+With only two servers, $\mathcal{M}$ can end up with proof that something is wrong, but no idea what the correct time is. But with half a dozen or more independent servers, $\mathcal{M}$ will end up with chain of proof of any server's misbehaviour, signed by several others, and (presumably) enough accurate replies to establish what the correct time is, $\mathcal{R^t}$.\newline
+
+By anchoring a block $\mathcal{b^n}$ using $\mathcal{R^t}$ and Merkle Hash $\mathcal{T^t}$, altering any element of $\mathcal{b^n}$ would invalidate the rest of the block. $\mathcal{R^t}$ is additionally used as a source of entropy in the \textit{Proof-of-Coverage} [\ref{poc}]. 
+
 \subsection{Protocol}
 
 Intro that explains we will now give an overview of how the protocol works.
@@ -185,20 +199,6 @@ Intro to the physical components of the network.
 \subsection{Routers}
 
 \subsection{Geolocation}
-
-\subsection{Roughtime} \label{roughtime}
-
-To achieve cryptographic time consensus among decentralized clients, we implement a simplified form of Google's \textit{Roughtime} $\mathcal{R}$ \cite{roughtime}. $\mathcal{R}$ is a protocol that aims to achieve roughtime synchronization in a secure way that does not depend on any particular time server, and in such a way that, if a time server does misbehave, clients end up with cryptographic proof of that behavior. Miners in the Helium \verb|DWN| act as both roughtime servers and clients.\newline
-
-We outline the approximate process to achieve cryptographically secure time via $\mathcal{R}$ as follows:\newline
-
-First, a miner $\mathcal{M}$ picks an $\mathcal{R}$ server, miner $\mathcal{M^1}$ and miner $\mathcal{M^2}$, to prove contact serialization with. It is assumed $\mathcal{M}$ has a public key for $\mathcal{M^1}$ and $\mathcal{M^2}$ (otherwise $\mathcal{M}$ should obtain it from $\mathcal{B}$). $\mathcal{M}$ then generates a salted\footnote{the salt is a 512-bit SHA of $\mathcal{T^t}$ of $\mathcal{b^n}$$R$} hash commitment $\mathcal{K}$ called the \textit{proof-kernel}. The proof-kernel is a commitment to what claim is desired to be proven. $$\mathcal{K} = \mathcal{H}(R || \mathcal{M^1} || \mathcal{M^2})$$ $\mathcal{M}$ sends $\mathcal{K}$ to $\mathcal{M^1}$. $\mathcal{M^1}$ replies with $\mathcal{T}$, a signed message including the current time and $\mathcal{K}$. $\mathcal{M}$ knows that the reply from $\mathcal{M^1}$ was not pre-generated because it includes the nonce $R$ that the $\mathcal{M}$ generated. Because $\mathcal{M}$ doesn't completely trust $\mathcal{M^1}$ it will ask for another time from $\mathcal{M^2}$.\newline
-
-For the second request, $\mathcal{M}$ generates a sub-proof-kernel, $\mathcal{L} = \mathcal{H}(R || \mathcal{T} || \mathcal{K})$, and sends it to $\mathcal{M^2}$. $\mathcal{M^2}$ replies with $\mathcal{U}$, a signed message including the current time and $\mathcal{L}$. $\mathcal{U}$ is now a proof artifact that shows that $\mathcal{M}$ desired and then proved a serialization between $\mathcal{M^1}$ and $\mathcal{M^2}$. Let's assume that the times from $\mathcal{M^1}$ and $\mathcal{M^2}$ are significantly different. If the time from $\mathcal{M^2}$ is before $\mathcal{M^1}$, then $\mathcal{M}$ has proof of misbehaviour; the reply from $\mathcal{M^2}$ implicitly shows that it was created later because of the way that $\mathcal{M}$ constructed the nonce. If the time from $\mathcal{M^2}$ is after, then $\mathcal{M}$ can reverse the roles of $\mathcal{M^1}$ and $\mathcal{M^2}$ and repeat the process to obtain, assuming steady clocks, a misordered proof as in the other case.\newline  
-
-With only two servers, $\mathcal{M}$ can end up with proof that something is wrong, but no idea what the correct time is. But with half a dozen or more independent servers, $\mathcal{M}$ will end up with chain of proof of any server's misbehaviour, signed by several others, and (presumably) enough accurate replies to establish what the correct time is, $\mathcal{R^t}$.\newline
-
-By anchoring a block $\mathcal{b^n}$ using $\mathcal{R^t}$ and Merkle Hash $\mathcal{T^t}$, altering any element of $\mathcal{b^n}$ would invalidate the rest of the block. $\mathcal{R^t}$ is additionally used as a source of entropy in the \textit{Proof-of-Coverage} [\ref{poc}]. 
 
 \section{Future Work}
 
