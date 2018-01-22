@@ -373,6 +373,27 @@ Each device will use the Microchip ECC508A\cite{ecc} or equivalent hardware-base
 
 \subsection{Routers}
 
+Routers are internet-deployed applications that receive packets from devices via gateways and route them to appropriate destinations such as an HTTP or MQTT endpoint.\newline
+
+There are several functions that routers serve on the network, which include:
+
+\begin{itemize}
+	\item Authenticating devices with the wireless network
+	\item Receiving packets from gateways and routing them to the Internet
+	\item Delivering downlink messages, including OTA updates, to devices via gateways
+	\item Negotiating RF conditions on devices such as data rate, transmit power, and modulation
+	\item Providing delivery confirmations to ensure transport transactions are honest
+	\item Providing authentication and routing mechanisms into third party cloud services such as Amazon AWS or Microsoft Azure
+\end{itemize}
+
+When a gateway receives a data packet from an device on the network, it will query the blockchain to determine which router to use given the devices network address. Anyone anywhere is free to host their own router and define their devices traffic to be delivered there by any gateway on the network. This allows users of the network to essentially create VPN-like functionality whereby encrypted data is delivered only to a router (or set of routers) that they specify and can (optionally) host themselves.\newline
+
+Routers can implement a system called a \textit{Channel} which handles the authentication and routing of data to a specific third party Internet application, such as Microsoft's Azure IoT Hub\cite{azure}. These channel implementations can take advantage of a devices onboard hardware security to create a secure, hardware-authenticated connection to a third party which would otherwise be difficult to implement directly on an embedded microcontroller. Helium will make available an open source reference implemenation of a Channel that can be used to build additional interfaces to Internet services.\newline
+
+Helium Systems Inc hosts a high-availability cloud router for anyone to use, and also provides and maintains an open-source router that is available either as source code or a binary package for a variety of operating systems and distributions.\newline
+
+The protocol specification required for implementing a router is defined in the WHIP Wireless Specification document that will be made available by the Helium Alliance\cite{alliance}.
+
 \subsection{Geolocation} \label{geolocation}
 
 WHIP-comptaible gateways are expected to include hardware and software to enable not only location of the gateway (via GPS/GNSS) but also hardware and software to triangulate the location of an end node. This method is typically called \textit{Time Differential of Arrival (TDoA)} [\cite{tdoa}]. Gateways accomplish TDoA location using a radio frontend configured to output raw sample data, which can then be post processed and compared to GPS location and time to calculate the radio packet's time of flight. With enough of these time-of-flight calculations, from several \textit{Gateways}, the position of the device can be calculated to within several meters.\newline
