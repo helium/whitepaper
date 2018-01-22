@@ -301,17 +301,95 @@ assert location, join network, etc
 
 \section{Physical Implementation}
 
-Intro to the physical components of the network.
+In addition to the blockchain network, Helium is a \textit{physical} wireless network instantiation. The participants in the network, from a physical hardware perspective, can be thought of as follows:\newline
 
-\subsection{Wireless Protocol}
+\textbf{Wireless Protocol (\textit{WHIP})}: The wireless network uses a new wireless protocol, called \textit{WHIP}. WHIP is a long range low power wireless network protocol that takes advantage of commodity open-standards hardware. Hardware compatible with WHIP is based on open-standads, and can communicate over many square miles in dense urban environments or hundreds of square miles in rural settings. WHIP compatible hardware can last for several years using standard batteries. WHIP uses strong public key cryptography and authentication occurs using the Helium blockchain, with all data being encrypted from end to end. WHIP is an open source networking protocol, and we have worked hard to ensure WHIP runs on hardware commonly available from dozens of vendors.\newline
+
+\textbf{Gateways}: Miners operate purpose-built Gateway hardware. Gateways are physical network devices that create wireless RF coverage over wide areas and participate in the blockchain network. Gateways transmit data back and forth between routers on the internet and devices, and create \textit{Proofs-of-Coverage} for the blockchain network [\ref{poc}]. Gateways are manufactured using generally available open-standards components with no proprietary hardware. Gateways can co-operate and geolocate devices using the wireless network without any additional required hardware. Each Gateway can support hundreds of thousands of connected devices, and create coverage over many square miles. Miners operating Gateways specify the price they are willing to accept for transport and geolocation services for devices.\newline
+
+\textbf{Devices}: Devices exist in the form of hardware products that contain a WHIP-compatible radio transceiver and communicate with gateways on the wireless network. WHIP is designed to facilitate low power data transmission and reception, so typically devices would exist in the form of battery-powered sensors that can live for several years using standard batteries (although mains-powered devices will also work quite well). Devices can exist in a variety of forms, depending on the product or use case, and a variety of transmission and reception strategies can be employed to optimize for transmission/reception frequency or battery life. It is recommended that devices use hardware-based key storage which is able to securely generate, store, and authenticate public/private  key pairs without leaking the private key.\newline
+
+In this section we expand on the components of the wireless network.
+
+\subsection{Wireless Protocol (\textit{WHIP})} \label{whip}
+
+\textbf{Motivation}: There are several Low Power Wide Area Network (LPWAN) technologies available today. This new generation of wireless technologies focus on creating extremely long range, low power internet communication for sensors and other smart devices. Typically these technologies trade speed for range, with data rates as low as 18 bits per second (bps) with range measured in miles compared to a typical WiFi network which has substantially higher data rates but range limited to only a few hundred feet. Several of these new technologies, such as LoRa [\ref{lora}] and RPMA [\ref{rpma}], have gained good traction and there are many commercial products available compatible with these systems. However, we believe that the future IoT economy should be built on non-proprietary protocols and modulation schemes, and that participants in this ecosystem should have the freedom to choose hardware and vendor. We do not consider an open alliance built on top of proprietary hardware to be an acceptable compromoise. While there are many open-standards wireless networking protocols and physical layers, such as IEEE 802.15.4 [\ref{802.15.4}] used in the first generation of Helium wireless products, none meet our extremely long range and low power criteria. It is this lack of open solutions that drove the creation of a new protocol.\newline
+
+\textbf{Outline}: We introduce a new open-source Low Power Wide Area Network (LPWAN) protocol called \textit{WHIP}. WHIP is a highly secure, long range, low power wireless network protocol that is compatible with any Frequency Shift Keying (FSK) radio transceiver operating in the sub-GHz unlicensed frequency spectrum. Authentication with the wireless network uses modern public-key encryption and NIST P-256 ECC [\ref{ecc}] key pairs, with the public keys for all participants stored in the blockchain.\newline 
+
+FSK is a simple modulation format that is widely supported, easy to modulate/demodulate and has good resistance to RF noise. There are dozens of vendors implementing FSK radio transceivers compatible with WHIP, such as Texas Instruments [\ref{ti}], Microchip [\ref{microchip}], and Silicon Labs [\ref{silabs}]. \newline
+
+WHIP is a \textit{narrowband} wireless protocol which creates hundreds of extremely small channels within the unlicensed spectrum and employs Frequency Hopping Spread Spectrum (FHSS) to pseudo-randomly hop between channels. Typically FHSS requires a complex time-synchronized system that is limited in capacity, however devices using WHIP do not need to co-ordinate with gateways on channel selection as gateways are capable of hearing all channels within the available spectrum at any time. We choose narrow-band to accomplish the following goals:
+
+\begin{itemize}
+	\item \textbf{Spectrum Efficiency}: it is necessary to operate within unlicensed RF spectrum very efficiently. RF is a shared, limited resource, and therefore a focus on efficiency to increase capacity and improve robustness is a must.
+	\item \textbf{Co-Existence Performance}: as the number of devices and networks increases, the ability to operate in \textit{noisy} RF environments without interference is a critical consideration. 
+	\item \textbf{Range}: narrowband allows for extremely long range communications, with data rates that scale both up and down depending on the density of gateways.
+\end{itemize}
+
+WHIP implements a variety of Forward Error Correction (FEC) techniques. FEC is a technique used for controlling errors in data transmission over unreliable or noisy communication channels, and can result in significantly higher radio sensitivity. FEC gives the receiver the ability to correct errors without needing to request retransmission of data, but at the cost of a fixed, higher channel bandwidth. WHIP implements these techinques at the firmware level in order to maintain hardware compatibility among multiple vendors. WHIP also supports power amplification up to regulatory limits, which vary by region.\newline
+
+\textbf{Implementation}: WHIP supports a number of data rates, channel bandwidths, and FEC techniques. Gateways and devices dynamically negotiate the combination of these options using a \textit{signalling packet} delivered at the lowest bandwidth and datarate to ensure the longest range for the initial communication. The signalling packet is delivered via a 4KHz channel, at a 300bps data rate, using 2-FSK modulation. This initial negotiation allows for the following eight modulation schemes:
+
+\begin{itemize}
+	\item 2-FSK
+	\item 2-GFSK
+	\item 4-FSK
+	\item 4-GFSK
+	\item 4 Reserved for future expansion 
+\end{itemize}
+
+There are also eight FEC options:
+
+\begin{itemize}
+	\item None
+	\item Hamming 8,4
+	\item Golay 24,12
+	\item Reed-Solomon + Convulational coding (the "Voyager code")
+	\item 4 Reserved for future expansion
+\end{itemize}
+
+We also have eight combinations of data rate and deviation, which vary from 300bps to 100,000bps.\newline
+
+The full WHIP wireless specification will be made available by the Helium Alliance \cite{alliance}. 
 
 \subsection{Gateways}
 
+Gateways are physical network devices operated by miners, that create wireless RF coverage over wide areas. They transmit data back and forth between routers on the Internet and devices on the network, process blockchain transactions, and create \textit{Proofs-of-Coverage} for the blockchain network [\ref{poc}]. Gateways can connect to the Internet using any TCP/IP capable backhaul, such as Ethernet, WiFi or Cellular. Each gateway contains a radio frontend capable of listening to several MHz of radio spectrum at a time, and is able to hear all network traffic transmitted within that spectrum. In this configuration modulation and demodulation is done in software, which is typically referred to as a \textit{Software Defined Radio (SDR)}. The benefit of this structure is that gateways can hear any device traffic transmitted within the frequency range, and no synchronization between the gateway and device needs to occur. This allows devices to remain inexpensive and relatively simple, and reduces wireless protocol overhead. If a miner wishes to minimize their gateway hardware costs, synchronized frequency hopping schemes are also permitted within the specification as a cheaper alternative to a more expensive radio frontend.\newline
+
+Gateways require a GPS or GNSS transceiver to obtain accurate position and date/time information. This satellite-derived location will be used in conjunction with other techniques to verify that a gateway is in fact providing wireless network coverage in the location it claims, and to attempt to earn tokens for that service. Because satellite location messages are easy to fabricate and do not necessarily prove that wireless RF coverage is being created, multiple mechanisms are required to validate this work as described in more detail in [\ref{poc}].\newline
+
+Satellite location information is also correlated with packet arrival events to provide \textit{Time Differential of Arrival (TDoA)} location for devices if multiple gateways observe the same packet. This allows devices to physically locate themselves without requiring a GPS/GNSS transceiver, and therefore provide accurate location data at a fraction of the battery life and cost of competing methods. This method is described in detail in [\ref{geolocation}].\newline
+
+Helium Systems Inc. will make both a complete open-source reference design and a finished product available for immediate participation in the network.
+
 \subsection{Devices} \label{devices}
+
+A \textit{device} is any wireless hardware capable of communicating with gateways on the network. WHIP [\ref{whip}] is designed to facilitate low power data transmission and reception, so typically devices would exist in the form of battery-powered sensors that can live for several years using standard batteries.\newline
+
+WHIP is designed such that devices can be manufactured using commodity hardware available from a wide variety of vendors, and for an extremely low cost Bill Of Materials (BOM). The technology in modern radio transceivers, such as the Texas Instruments CC1125 or STMicroelectronics S2-LP, enables extremely long-range network systems that can be built without the need for proprietary modulation schemes or physical layers. Some of these radios are available for around \$1 at reasonable volumes.\newline
+
+Each device will use the Microchip ECC508A\cite{ecc} or equivalent hardware-based key storage device, which is able to securely generate, store, and authenticate public/private \textit{NIST P-256 ECC} [\ref{ecc}] key pairs without leaking the private key. In addition, a wide array of defense mechanisms prevent logical attacks on the encrypted data between the key storage device and its host device, along with physical protections on the security device itself. Users program their key storage device as part of the onboarding process defined in the WHIP wireless specification.
 
 \subsection{Routers}
 
-\subsection{Geolocation}
+\subsection{Geolocation} \label{geolocation}
+
+WHIP-comptaible gateways are expected to include hardware and software to enable not only location of the gateway (via GPS/GNSS) but also hardware and software to triangulate the location of an end node. This method is typically called \textit{Time Differential of Arrival (TDoA)} [\cite{tdoa}]. Gateways accomplish TDoA location using a radio frontend configured to output raw sample data, which can then be post processed and compared to GPS location and time to calculate the radio packet's time of flight. With enough of these time-of-flight calculations, from several \textit{Gateways}, the position of the device can be calculated to within several meters.\newline
+
+Because of the expense and power consumption of a typical GPS module, and the fact that they require a view of the sky, providing geolocation as a network service makes devices cheaper, more power efficient, and able to located accurately indoors. Additionally, because these data transmission events occur in the context of a blockchain, you can obtain unforgeable cryptographic proof of location for a device. Devices being able to prove they were in a specific place at a specific time has tremendous potential for a wide variety of IoT applications.\newline
+
+\begin{figure}[H]
+	\begin{center}
+  		\includegraphics[scale=0.3]{tdoa.eps}
+  		\caption{\textit{Geolocation via TDoA}}
+  		\label{fig:tdoa}
+ 	\end{center}
+\end{figure}
+
+Geolocation requires a density of gateways such that at least three gateways can hear the same packet at the same time. Because each gateway on the network is capable of listening on a wide range of radio spectrum, every gateway in range should hear the same packet with a nanosecond-level variance in the timing which can be used to solve for location via an internet application.\newline
+
+Gateways synchronize their clocks via GPS such that all gateways have the same nanosecond-synchronized clock source with which to timestamp packets.
 
 \section{Future Work}
 
