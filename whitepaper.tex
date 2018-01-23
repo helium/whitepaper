@@ -271,7 +271,13 @@ As in other implementations, $\mathcal{b_n}$ in $\mathcal{B}$ consist of a hash 
 
 As the \textit{Proof-of-Coverage} [\ref{poc}] is valuable to the network, we store as many $\mathcal{b_n}$ and their associated proof to $\mathcal{B}$ as \textit{Uncle Blocks}, $\mathcal{Ub_n}$. $\mathcal{Ub_n}$, as described in the \textit{Greedy Heaviest-Observed Sub-Tree (GHOST)} \cite{ghost} paper and implemented in Ethereum \cite{ethereum}, allow a miner $\mathcal{M}$ to earn block rewards even if their submitted block did not become the tip of the chain. $\mathcal{Ub_n}$ helps the winning chain accumulate 'weight' in terms of both the length and quality of the chain, but also including the amount and quality of $\mathcal{Ub_n}$ and their associated proofs. This means that longer chain forks, either mined maliciously or on the smaller side of a partitioned network, will not be selected over a shorter, weightier chain. This also means that valuable proofs of work aren't lost and can be used by the chain to calculate trust.\newline
 
-\textbf{INSERT GRAPHIC OF BLOCKCHAIN VISUALIZATION WITH SOME KIND OF LEGEND}
+\begin{figure}[H]
+	\begin{center}
+  		\includegraphics[width=\textwidth]{chain.eps}
+  		\caption{\textit{A visualization of the Helium blockchain}}
+  		\label{fig:chain}
+ 	\end{center}
+\end{figure}
 
 \subsection{Protocol}
 
