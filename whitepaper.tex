@@ -93,6 +93,8 @@ Helium is built around the following key components:
  	\end{center}
 \end{figure}
 
+\newpage
+
 \section{\proofofcoverage/} \label{poc}
 
 In the Helium protocol, miners must prove that they are providing wireless network coverage that devices are able to use to communicate with the internet. Miners do this by complying with the \textit{Proof-of-Coverage} protocol which the blockchain network and other miners audit and verify.\newline
@@ -201,6 +203,8 @@ For every target $\mathcal{T_n}$ that hears $\mathcal{O}$ in the \proofofcoverag
 
 \textbf{Verifying the Proof}. Talk about $\mathcal{C}$ submitting this proof and how it could be verified\newline
 
+\newpage
+
 \section{\textit{Proof-of-Synchronization}} \label{roughtime}
 
 To achieve cryptographic time consensus among decentralized clients, we aim to achieve rough time synchronization in a secure way that does not depend on any particular time server, and in such a way that, if a time server does misbehave, clients end up with cryptographic proof of that behavior. \newline
@@ -224,6 +228,8 @@ First, a miner $\mathcal{M}$ picks an $\mathcal{R}$ server, miner $\mathcal{M^1}
 For the second request, $\mathcal{M}$ generates a sub-proof-kernel, $\mathcal{L} = \mathcal{H}(R || \mathcal{T} || \mathcal{K})$, and sends it to $\mathcal{M^2}$. $\mathcal{M^2}$ replies with $\mathcal{U}$, a signed message including the current time and $\mathcal{L}$. $\mathcal{U}$ is now a proof artifact that shows that $\mathcal{M}$ desired and then proved a serialization between $\mathcal{M^1}$ and $\mathcal{M^2}$. Let's assume that the times from $\mathcal{M^1}$ and $\mathcal{M^2}$ are significantly different. If the time from $\mathcal{M^2}$ is before $\mathcal{M^1}$, then $\mathcal{M}$ has proof of misbehaviour; the reply from $\mathcal{M^2}$ implicitly shows that it was created later because of the way that $\mathcal{M}$ constructed the nonce. If the time from $\mathcal{M^2}$ is after, then $\mathcal{M}$ can reverse the roles of $\mathcal{M^1}$ and $\mathcal{M^2}$ and repeat the process to obtain, assuming steady clocks, a misordered proof as in the other case.\newline
 
 With only two servers, $\mathcal{M}$ can end up with proof that something is wrong, but no idea what the correct time is. But with half a dozen or more independent servers, $\mathcal{M}$ will end up with chain of proof of any server's misbehaviour, signed by several others, and (presumably) enough accurate replies to establish what the correct time is, $\mathcal{R^t}$.
+
+\newpage
 
 \section{The Helium DWN}
 
@@ -298,6 +304,8 @@ Talk about transaction vs transport and Professors IOU idea
 \subsection{Primitives in Helium}
 
 assert location, join network, etc
+
+\newpage
 
 \section{Physical Implementation}
 
@@ -411,6 +419,8 @@ Because of the expense and power consumption of a typical GPS module, and the fa
 Geolocation requires a density of gateways such that at least three gateways can hear the same packet at the same time. Because each gateway on the network is capable of listening on a wide range of radio spectrum, every gateway in range should hear the same packet with a nanosecond-level variance in the timing which can be used to solve for location via an internet application.\newline
 
 Gateways synchronize their clocks via GPS such that all gateways have the same nanosecond-synchronized clock source with which to timestamp packets.
+
+\newpage
 
 \section{Future Work}
 
