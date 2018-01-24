@@ -6,15 +6,15 @@
 \usepackage{cite}
 \usepackage{float}
 \usepackage{algorithm2e}
-\usepackage{dutchcal}
+\usepackage{euler}
 \graphicspath{ {images/} }
 
 
-\def\prover/{$\mathcal{P}$}
-\def\verifier/{$\mathcal{V}$}
-\def\coverage/{$\mathcal{W}$}
-\def\device/{$\mathcal{D}$}
-\def\location/{$\mathcal{L}$}
+\def\prover/{$\mathit{P}$}
+\def\verifier/{$\mathit{V}$}
+\def\coverage/{$\mathit{W}$}
+\def\device/{$\mathit{D}$}
+\def\location/{$\mathit{L}$}
 \def\proofofcoverage/{\textit{Proof-of-Coverage}}
 
 \begin{document}
@@ -63,7 +63,7 @@ Helium exists due to a set of core beliefs that have driven every component and 
 Helium is built around the following key components:
 
 \begin{enumerate}
-  \item \textbf{\proofofcoverage/}: we present a set of computationally-inexpensive \proofofcoverage/ that allows network providers to prove they are capable of providing wireless network coverage. We anchor these proofs using a \textit{Proof-of-Serialization} that allows network providers to prove they are accurately representing time relative to others on the network in a crytographically secure way.
+  \item \textbf{\proofofcoverage/}: we present a computationally-inexpensive \proofofcoverage/ that allows miners to prove they are capable of providing wireless network coverage. We anchor these proofs using a \textit{Proof-of-Serialization} that allows miners to prove they are accurately representing time relative to others on the network in a crytographically secure way.
   
   \item \textbf{Blockchain Network}: we demonstrate an entirely new purpose-built blockchain network built to service the \textit{Wireless Protocol} and provide a system for authenticating and identifying devices, providing cryptographic guarantees of data transmission and authenticity, offer transaction primitives designed around the wireless protocol, and more.
   
@@ -113,7 +113,7 @@ We later propose a consensus protocol [\ref{consensus}] that uses \proofofcovera
 
 \subsection{Inspiration}
 
-\proofofcoverage/ (\verb|PoC|) is an innovative proof which allows miners to prove that they are providing wireless network coverage \coverage/ in a specific region to a challenger, $\mathcal{C}$. \verb|PoC| is an interactive protocol where a set of targets $\mathcal{T_n}$ assert that \coverage/ exists in a specific GPS location \location/ and then convinces $\mathcal{C}$ that $\mathcal{T_n}$ are in fact creating \coverage/ and that said coverage must have been created using the wireless RF network. \verb|PoC| is the first such protocol that attempts to prove the veracity of miners in a physical space, and then use it to achieve consensus on a blockchain network.\newline
+\proofofcoverage/ (\verb|PoC|) is an innovative proof which allows miners to prove that they are providing wireless network coverage \coverage/ in a specific region to a challenger, $\mathit{C}$. \verb|PoC| is an interactive protocol where a set of targets $\mathit{T_n}$ assert that \coverage/ exists in a specific GPS location \location/ and then convinces $\mathit{C}$ that $\mathit{T_n}$ are in fact creating \coverage/ and that said coverage must have been created using the wireless RF network. \verb|PoC| is the first such protocol that attempts to prove the veracity of miners in a physical space, and then use it to achieve consensus on a blockchain network.\newline
 
 With \verb|PoC| we aim to solve for the following:
 
@@ -123,9 +123,9 @@ With \verb|PoC| we aim to solve for the following:
 	\item Our goal is to correctly identify which reality is honest when there is a conflict
 \end{itemize}
 
-\proofofcoverage/ is inspired by the \textit{Guided Tour Protocol (GTP)} which devises a system for denial of service prevention by requiring a client $\mathcal{c}$ to make a request to a variety of "tour guide" computers $\mathcal{G_n}$ in order to gain access to a server $\mathcal{s}$. The tour guides must be visited in a specific order and a hash of data exchanged which reveals the location of the next $\mathcal{G_n}$ in order. Only after every $\mathcal{G_n}$ has been visited can $\mathcal{c}$ gain access to $\mathcal{s}$.\newline
+\proofofcoverage/ is inspired by the \textit{Guided Tour Protocol (GTP)} which devises a system for denial of service prevention by requiring a client $\mathit{c}$ to make a request to a variety of "tour guide" computers $\mathit{G_n}$ in order to gain access to a server $\mathit{s}$. The tour guides must be visited in a specific order and a hash of data exchanged which reveals the location of the next $\mathit{G_n}$ in order. Only after every $\mathit{G_n}$ has been visited can $\mathit{c}$ gain access to $\mathit{s}$.\newline
 
-Once $\mathcal{c}$ gets to the last stop of the tour, it submits evidence of the first and last stop to $\mathcal{s}$ who is able to verify that the first and last stops of the tour are correct without needing to contact $\mathcal{G_n}$, and that $\mathcal{c}$ could only know the first and last stops if it had completed the tour correctly.\newline
+Once $\mathit{c}$ gets to the last stop of the tour, it submits evidence of the first and last stop to $\mathit{s}$ who is able to verify that the first and last stops of the tour are correct without needing to contact $\mathit{G_n}$, and that $\mathit{c}$ could only know the first and last stops if it had completed the tour correctly.\newline
 
 While an extremely clever and innovative system, GTP is not directly suitable as a proof in our wireless network as radio frequency (RF) networking has limited range and therefore cannot communicate with peers anywhere on the network. We aim to construct a proof loosely based on the ideas presented in GTP, but applicable to our protocol. We refer the interested reader to \cite{gtp} for a detailed articulation of the GTP protocol.\newline
 
@@ -142,7 +142,7 @@ We aim to construct a proof that takes advantage of the following characteristic
 	\item RF travels at the speed of light with (effectively) no latency
 \end{enumerate}
 
-Our goal is to verify whether miners in a physical region are acting honestly and creating wireless network coverage compatible with the Helium wireless protocol (WHIP). To do this, a challenger $\mathcal{C}$ deterministically constructs a multi-layer data packet $\mathcal{O}$ which begins at an initial target, $\mathcal{T}$, and is broadcast wirelessly to a set of sequential targets, $\mathcal{T_n}$, each of which are only able to decrypt the outer-most layer of $\mathcal{O}$ if they were the intended recipient. Each target acknowledges receipt, $\mathcal{R_T}$, back to $\mathcal{C}$, removes their layer of $\mathcal{O}$, $\mathcal{O}$\textsubscript{L-N}, and broadcasts it for receipt by the next target. Essentially, an "envelope of envelopes" only openable by the intended recipient.\newline
+Our goal is to verify whether miners in a physical region are acting honestly and creating wireless network coverage compatible with the Helium wireless protocol (WHIP). To do this, a challenger $\mathit{C}$ deterministically constructs a multi-layer data packet $\mathit{O}$ which begins at an initial target, $\mathit{T}$, and is broadcast wirelessly to a set of sequential targets, $\mathit{T_n}$, each of which are only able to decrypt the outer-most layer of $\mathit{O}$ if they were the intended recipient. Each target acknowledges receipt, $\mathit{R_T}$, back to $\mathit{C}$, removes their layer of $\mathit{O}$, $\mathit{O}$\textsubscript{L-N}, and broadcasts it for receipt by the next target. Essentially, an "envelope of envelopes" only openable by the intended recipient.\newline
 
 \begin{figure}[H]
 	\begin{center}
@@ -152,45 +152,45 @@ Our goal is to verify whether miners in a physical region are acting honestly an
  	\end{center}
 \end{figure}
 
-\textbf{Selecting the Initial Target}. We aim to deterministically locate an initial target, $\mathcal{T}$, for the challenger, $\mathcal{C}$. $\mathcal{T}$ does not need to be geographically proximate to $\mathcal{C}$. To locate $\mathcal{T}$, $\mathcal{C}$ uses a \textit{consistent hash ring} $\mathcal{\omega}$ of potential miners. $\mathcal{\omega}$ only contains miners eligible as targets as described in [\ref{mining}], and miners are allocated portions of $\mathcal{\omega}$ that are inversely proportional to their score, increasing the probability of potentially dishonest miners being targeted. Given that a miners score is diminishing linearly over time, it is necessary to create this inverse relationship to give low-scoring miners an opportunity to participate in the process and increase their score.\newline
+\textbf{Selecting the Initial Target}. We aim to deterministically locate an initial target, $\mathit{T}$, for the challenger, $\mathit{C}$. $\mathit{T}$ does not need to be geographically proximate to $\mathit{C}$. To locate $\mathit{T}$, $\mathit{C}$ uses a \textit{consistent hash ring} $\mathit{\omega}$ of potential miners. $\mathit{\omega}$ only contains miners eligible as targets as described in [\ref{mining}], and miners are allocated portions of $\mathit{\omega}$ that are inversely proportional to their score, increasing the probability of potentially dishonest miners being targeted. Given that a miners score is diminishing linearly over time, it is necessary to create this inverse relationship to give low-scoring miners an opportunity to participate in the process and increase their score.\newline
 
-\textbf{Constructing the multi-layer challenge}. Once $\mathcal{T}$ has been selected, $\mathcal{C}$ must construct a multi-layer challenge, $\mathcal{O}$. $\mathcal{O}$ is a data packet broadcast by $\mathcal{T}$ over the wireless network and received by geographcially proximate targets $\mathcal{T_n}$. The number of layers of $\mathcal{O}$ to be assembled is defined as $\mathcal{O_L}$ = $\mathcal{\log}$($\mathcal{T_n}$ = $\mathcal{\pi}$$\mathcal{50^2}$) from the location of $\mathcal{T}$. Each layer of $\mathcal{O}$, $\mathcal{O_l}$, consists of a two-tuple of $\mathcal{E}$($\mathcal{S}$, $\mathcal{R}$), where $\mathcal{E}$ is a secure public key encryption function, $\mathcal{S}$ is a secret encrypted with the public key of $\mathcal{T_n}$, and $\mathcal{R}$ is the remainder of $\mathcal{O}$ consisting of recursive two-tuples.\newline
+\textbf{Constructing the multi-layer challenge}. Once $\mathit{T}$ has been selected, $\mathit{C}$ must construct a multi-layer challenge, $\mathit{O}$. $\mathit{O}$ is a data packet broadcast by $\mathit{T}$ over the wireless network and received by geographcially proximate targets $\mathit{T_n}$. The number of layers of $\mathit{O}$ to be assembled is defined as $\mathit{O_L}$ = $\mathit{\log}$($\mathit{T_n}$ = $\mathit{\pi}$$\mathit{50^2}$) from the location of $\mathit{T}$. Each layer of $\mathit{O}$, $\mathit{O_l}$, consists of a two-tuple of $\mathit{E}$($\mathit{S}$, $\mathit{R}$), where $\mathit{E}$ is a secure public key encryption function, $\mathit{S}$ is a secret encrypted with the public key of $\mathit{T_n}$, and $\mathit{R}$ is the remainder of $\mathit{O}$ consisting of recursive two-tuples.\newline
 
-The construction logic of $\mathcal{O}$ is as follows:
+The construction logic of $\mathit{O}$ is as follows:
 
 \begin{enumerate}
-  \item A set of candidate $\mathcal{T_n}$ are created within a geometric circle of an unpredictable but determinstic radius $\mathcal{r}$ (in miles) of $\mathcal{T}$, simply defined as $\mathcal{A}$ = $\mathcal{\pi}$$\mathcal{r^2}$
-  \item A single $\mathcal{T_n}$ within $\mathcal{A}$ is psuedo-randomly selected as the first target for $\mathcal{O}$, and designated as $\mathcal{T_1}$
-  \item A layer $\mathcal{O_l}$ is created and $\mathcal{S}$ is encrypted with the public key of $\mathcal{T_1}$ retrieved from the blockchain [\ref{devices}]
-  \item The next set of candidate $\mathcal{T_n}$ are generated by inspecting a geographic area proximate to $\mathcal{T_1}$, $\mathcal{A_1}$ = $\mathcal{\pi}$$\mathcal{r^2}$
-  \item A single $\mathcal{T_n}$ within $\mathcal{A_1}$ is again pseudo-randomly selected as the next layer of $\mathcal{O}$, and designated as $\mathcal{T_2}$
-  \item This cycle repeats until a number of $\mathcal{T_n}$ and $\mathcal{O_l}$ equal to $\mathcal{O_L}$ is reached
-  \item The pseudo-random function used to determine $\mathcal{T_1}$..$\mathcal{T_L}$ is constructed using a hash of the current block $\mathcal{B_t}$ as a seed, such that the selection process for $\mathcal{T_n}$ is deterministic and therefore verifiable by the network
+  \item A set of candidate $\mathit{T_n}$ are created within a geometric circle of an unpredictable but determinstic radius $\mathit{r}$ (in miles) of $\mathit{T}$, simply defined as $\mathit{A}$ = $\mathit{\pi}$$\mathit{r^2}$
+  \item A single $\mathit{T_n}$ within $\mathit{A}$ is psuedo-randomly selected as the first target for $\mathit{O}$, and designated as $\mathit{T_1}$
+  \item A layer $\mathit{O_l}$ is created and $\mathit{S}$ is encrypted with the public key of $\mathit{T_1}$ retrieved from the blockchain [\ref{devices}]
+  \item The next set of candidate $\mathit{T_n}$ are generated by inspecting a geographic area proximate to $\mathit{T_1}$, $\mathit{A_1}$ = $\mathit{\pi}$$\mathit{r^2}$
+  \item A single $\mathit{T_n}$ within $\mathit{A_1}$ is again pseudo-randomly selected as the next layer of $\mathit{O}$, and designated as $\mathit{T_2}$
+  \item This cycle repeats until a number of $\mathit{T_n}$ and $\mathit{O_l}$ equal to $\mathit{O_L}$ is reached
+  \item The pseudo-random function used to determine $\mathit{T_1}$..$\mathit{T_L}$ is constructed using a hash of the current block $\mathit{B_t}$ as a seed, such that the selection process for $\mathit{T_n}$ is deterministic and therefore verifiable by others on the network
 \end{enumerate}
 
-The resulting $\mathcal{O}$ can be visually represented as the following:\newline
+The resulting $\mathit{O}$ can be visually represented as the following:\newline
 
 \begin{figure}[H]
 	\begin{center}
   		\includegraphics[width=\textwidth]{diagram3.eps}
-  		\caption{\textit{Construction of $\mathcal{O}$}}
+  		\caption{\textit{Construction of $\mathit{O}$}}
   		\label{fig:onion-packet}
  	\end{center}
 \end{figure}
 
-\textbf{Creating the Proof}. Once $\mathcal{O}$ has been constructed and delivered to $\mathcal{T}$, $\mathcal{T}$ immediately broadcasts it. The Helium wireless protocol is not a point-to-point system, so several miners within proximity of $\mathcal{T}$ will hear $\mathcal{O}$. As described prior, each layer $\mathcal{O_l}$ of $\mathcal{O}$ contains the following two-tuple: $$\mathcal{E}(\mathcal{S}, \mathcal{R})$$ where $\mathcal{E}$ is a secure public key encryption function, $\mathcal{S}$ is a secret encrypted with the public key of $\mathcal{T_1}$, and $\mathcal{R}$ is the remainder of $\mathcal{O}$ consisting of recursive two-tuples. In this specific example, only the specific target $\mathcal{T_1}$ will be able to decrypt $\mathcal{S}$ and send a valid receipt back to the challenger, $\mathcal{C}$.\newline
+\textbf{Creating the Proof}. Once $\mathit{O}$ has been constructed and delivered to $\mathit{T}$, $\mathit{T}$ immediately broadcasts it. The Helium wireless protocol is not a point-to-point system, so several miners within proximity of $\mathit{T}$ will hear $\mathit{O}$. As described prior, each layer $\mathit{O_l}$ of $\mathit{O}$ contains the following two-tuple: $$\mathit{E}(\mathit{S}, \mathit{R})$$ where $\mathit{E}$ is a secure public key encryption function, $\mathit{S}$ is a secret encrypted with the public key of $\mathit{T_1}$, and $\mathit{R}$ is the remainder of $\mathit{O}$ consisting of recursive two-tuples. In this specific example, only the specific target $\mathit{T_1}$ will be able to decrypt $\mathit{S}$ and send a valid receipt back to the challenger, $\mathit{C}$.\newline
 
 We describe the approximate flow of \proofofcoverage/ creation as follows:
 
 \begin{enumerate}
-  \item $\mathcal{T}$ receives $\mathcal{O}$ from $\mathcal{C}$ via the peer-to-peer internet network and immediately broadcasts it via the wireless network
-  \item $\mathcal{T_1}$ hears $\mathcal{O}$ and attempts to decrypt the value of $\mathcal{S}$ by using its public key $\mathcal{pk}$: $\mathcal{H}$\textsubscript{pk}($\mathcal{S}$)
-  \item If successful, $\mathcal{T_1}$ then creates signed receipt $\mathcal{R}$\textsubscript{t1} = $\mathcal{H}$($\mathcal{K_S}$) where $\mathcal{H}$ is a secure cryptographic hash function, and $\mathcal{K_S}$ is $\mathcal{S}$ signed by the private key of $\mathcal{T_1}$
-  \item $\mathcal{T_1}$ submits $\mathcal{R}$\textsubscript{t1} to $\mathcal{C}$ via the peer-to-peer internet network, removes the outer most layer, and wirelessly broadcasts the remainder $\mathcal{O}$
-  \item These steps repeat for $\mathcal{T_2}$..$\mathcal{T_L}$, with $\mathcal{T_L}$ being the last target constructed by $\mathcal{C}$
+  \item $\mathit{T}$ receives $\mathit{O}$ from $\mathit{C}$ via the peer-to-peer internet network and immediately broadcasts it via the wireless network
+  \item $\mathit{T_1}$ hears $\mathit{O}$ and attempts to decrypt the value of $\mathit{S}$ by using its public key $\mathit{pk}$: $\mathit{E}$\textsubscript{pk}($\mathit{S}$)
+  \item If successful, $\mathit{T_1}$ then creates signed receipt $\mathit{R}$\textsubscript{t1} = $\mathit{H}$($\mathit{K_S}$) where $\mathit{H}$ is a secure cryptographic hash function, and $\mathit{K_S}$ is $\mathit{S}$ signed by the private key of $\mathit{T_1}$
+  \item $\mathit{T_1}$ submits $\mathit{R}$\textsubscript{t1} to $\mathit{C}$ via the peer-to-peer internet network, removes the outer most layer, and wirelessly broadcasts the remainder $\mathit{O}$
+  \item These steps repeat for $\mathit{T_2}$..$\mathit{T_L}$, with $\mathit{T_L}$ being the last target constructed by $\mathit{C}$
 \end{enumerate}
 
-$\mathcal{C}$ expects to hear responses from $\mathcal{T_n}$ within a time threshold $\mathcal{\lambda}$, otherwise it considers the \proofofcoverage/ to have concluded.\newline
+$\mathit{C}$ expects to hear responses from $\mathit{T_n}$ within a time threshold $\mathit{\lambda}$, otherwise it considers the \proofofcoverage/ to have concluded.\newline
 
 \begin{figure}[H]
 	\begin{center}
@@ -200,9 +200,9 @@ $\mathcal{C}$ expects to hear responses from $\mathcal{T_n}$ within a time thres
  	\end{center}
 \end{figure}
 
-\textbf{Scoring}. \label{scores} When miners join the Helium network, they are assigned a score, $\mathcal{\phi}$, with a value of \textbf{0.500}. This score depreciates linearly per block at a rate of $\mathcal{\phi}$ = $\mathcal{\phi}$ - \(\frac{\phi}{10}\). As $\mathcal{\phi}$ decreases the probability of the miner $\mathcal{M}$ being the target for $\mathcal{C}$ increases such that the network continually attempts to prove that the lowest scoring miners are acting honestly, and giving miners a reasonable chance to improve their score.\newline
+\textbf{Scoring}. \label{scores} When miners join the Helium network, they are assigned a score, $\mathit{\phi}$, with a value of \textbf{0.500}. This score depreciates linearly per block at a rate of $\mathit{\phi}$ = $\mathit{\phi}$ - \(\frac{\phi}{10}\). As $\mathit{\phi}$ decreases the probability of the miner $\mathit{M}$ being the target for $\mathit{C}$ increases such that the network continually attempts to prove that the lowest scoring miners are acting honestly, and giving miners a reasonable chance to improve their score.\newline
 
-For every target $\mathcal{T_n}$ that hears $\mathcal{O}$ in the \proofofcoverage/ and submits a signed receipt to $\mathcal{C}$, $\mathcal{T_n}$ gains a score equal to \textbf{SOME AMOUNT RELATOINAL TO THE PREVIOUS TARGET IN THE CHAIN}.\newline
+For every target $\mathit{T_n}$ that hears $\mathit{O}$ in the \proofofcoverage/ and submits a signed receipt to $\mathit{C}$, $\mathit{T_n}$ gains a score equal to \textbf{SOME AMOUNT RELATIONAL TO THE PREVIOUS TARGET IN THE CHAIN}.\newline
 
 \textbf{Verifying the Proof}. Talk here about \textbf{HOW IS POC VERIFIED EASILY?}
 
@@ -210,11 +210,11 @@ For every target $\mathcal{T_n}$ that hears $\mathcal{O}$ in the \proofofcoverag
 
 This section describes the construction of the \textit{Proof-of-Serialization} protocol.\newline
 
-\textbf{Creating the Proof}. First, a miner $\mathcal{M}$ pseudo-randomly picks two miners $\mathcal{M^1}$ and $\mathcal{M^2}$, to prove contact serialization with. It is assumed $\mathcal{M}$ has a public key for $\mathcal{M^1}$ and $\mathcal{M^2}$ (otherwise $\mathcal{M}$ should obtain it from $\mathcal{B}$). $\mathcal{M}$ then generates a salted\footnote{the salt is a 512-bit SHA of $\mathcal{T^t}$ of $\mathcal{b^n}$$R$} hash commitment $\mathcal{K}$ called the \textit{proof-kernel}. The proof-kernel is a commitment to what claim is desired to be proven. $$\mathcal{K} = \mathcal{H}(R || \mathcal{M^1} || \mathcal{M^2})$$ $\mathcal{M}$ sends $\mathcal{K}$ to $\mathcal{M^1}$. $\mathcal{M^1}$ replies with $\mathcal{T}$, a signed message including the current time and $\mathcal{K}$. $\mathcal{M}$ knows that the reply from $\mathcal{M^1}$ was not pre-generated because it includes the nonce $R$ that the $\mathcal{M}$ generated. Because $\mathcal{M}$ doesn't completely trust $\mathcal{M^1}$ it will ask for another time from $\mathcal{M^2}$.\newline
+\textbf{Creating the Proof}. First, a miner $\mathit{M}$ pseudo-randomly picks two miners $\mathit{M^1}$ and $\mathit{M^2}$, to prove contact serialization with. It is assumed $\mathit{M}$ has a public key for $\mathit{M^1}$ and $\mathit{M^2}$ (otherwise $\mathit{M}$ should obtain it from $\mathit{B}$). $\mathit{M}$ then generates a salted\footnote{the salt is a 512-bit SHA of $\mathit{T^t}$ of $\mathit{b^n}$$R$} hash commitment $\mathit{K}$ called the \textit{proof-kernel}. The proof-kernel is a commitment to what claim is desired to be proven. $$\mathit{K} = \mathit{H}(R || \mathit{M^1} || \mathit{M^2})$$ $\mathit{M}$ sends $\mathit{K}$ to $\mathit{M^1}$. $\mathit{M^1}$ replies with $\mathit{T}$, a signed message including the current time and $\mathit{K}$. $\mathit{M}$ knows that the reply from $\mathit{M^1}$ was not pre-generated because it includes the nonce $R$ that the $\mathit{M}$ generated. Because $\mathit{M}$ doesn't completely trust $\mathit{M^1}$ it will ask for another time from $\mathit{M^2}$.\newline
 
-For the second request, $\mathcal{M}$ generates a sub-proof-kernel, $\mathcal{L} = \mathcal{H}(R || \mathcal{T} || \mathcal{K})$, and sends it to $\mathcal{M^2}$. $\mathcal{M^2}$ replies with $\mathcal{U}$, a signed message including the current time and $\mathcal{L}$. $\mathcal{U}$ is now a proof artifact that shows that $\mathcal{M}$ desired and then proved a serialization between $\mathcal{M^1}$ and $\mathcal{M^2}$. Let's assume that the times from $\mathcal{M^1}$ and $\mathcal{M^2}$ are significantly different. If the time from $\mathcal{M^2}$ is before $\mathcal{M^1}$, then $\mathcal{M}$ has proof of misbehaviour; the reply from $\mathcal{M^2}$ implicitly shows that it was created later because of the way that $\mathcal{M}$ constructed the nonce. If the time from $\mathcal{M^2}$ is after, then $\mathcal{M}$ can reverse the roles of $\mathcal{M^1}$ and $\mathcal{M^2}$ and repeat the process to obtain, assuming steady clocks, a misordered proof as in the other case.\newline
+For the second request, $\mathit{M}$ generates a sub-proof-kernel, $\mathit{L} = \mathit{H}(R || \mathit{T} || \mathit{K})$, and sends it to $\mathit{M^2}$. $\mathit{M^2}$ replies with $\mathit{U}$, a signed message including the current time and $\mathit{L}$. $\mathit{U}$ is now a proof artifact that shows that $\mathit{M}$ desired and then proved a serialization between $\mathit{M^1}$ and $\mathit{M^2}$. Let's assume that the times from $\mathit{M^1}$ and $\mathit{M^2}$ are significantly different. If the time from $\mathit{M^2}$ is before $\mathit{M^1}$, then $\mathit{M}$ has proof of misbehaviour; the reply from $\mathit{M^2}$ implicitly shows that it was created later because of the way that $\mathit{M}$ constructed the nonce. If the time from $\mathit{M^2}$ is after, then $\mathit{M}$ can reverse the roles of $\mathit{M^1}$ and $\mathit{M^2}$ and repeat the process to obtain, assuming steady clocks, a misordered proof as in the other case.\newline
 
-With only two servers, $\mathcal{M}$ can end up with proof that something is wrong, but no idea what the correct time is. But with half a dozen or more independent servers, $\mathcal{M}$ will end up with chain of proof of any server's misbehaviour, signed by several others, and enough accurate replies to establish what the correct time is, $\mathcal{T^t}$.\newline
+With only two servers, $\mathit{M}$ can end up with proof that something is wrong, but no idea what the correct time is. But with half a dozen or more independent servers, $\mathit{M}$ will end up with chain of proof of any server's misbehaviour, signed by several others, and enough accurate replies to establish what the correct time is, $\mathit{T^t}$.\newline
 
 \textbf{Utilizing the Proven Time}. Talk here about \textbf{THEN WHAT? HOW DOES ROUGHTIME GET USED AND BY WHOM? CONSTRUCT THIS SECTION IN THE SAME WAY AS POC ABOVE -- PROFESSOR/RAHUL TO COMPLETE}
 
@@ -236,11 +236,11 @@ Any user can participate as a Device, a Miner, or a Router.
 
 \subsection{Blockchain}
 
-The Helium blockchain is a new type of ledger designed to provide a cost-effective way to run application logic core to the operation of a \verb|DWN|, store immutable device data fingerprints, and furnish a transaction system. We will refer to this as the Blockchain, $\mathcal{B}$. $\mathcal{B}$ is an immutable append-only list of transactions that achieves consensus by verifying \textit{Proofs-of-Coverage} [\ref{poc}]. Users internal and external to the \verb|DWN| have access to $\mathcal{B}$, which is a new blockchain network built from scratch specifically for the \verb|DWN|.\newline
+The Helium blockchain is a new type of ledger designed to provide a cost-effective way to run application logic core to the operation of a \verb|DWN|, store immutable device data fingerprints, and furnish a transaction system. We will refer to this as the Blockchain, $\mathit{B}$. $\mathit{B}$ is an immutable append-only list of transactions that achieves consensus by verifying \textit{Proofs-of-Coverage} [\ref{poc}]. Users internal and external to the \verb|DWN| have access to $\mathit{B}$, which is a new blockchain network built from scratch specifically for the \verb|DWN|.\newline
 
-$\mathcal{B}$ consists of blocks $\mathcal{b_n}$, which contain a header and a list of transactions. There are several kinds of transactions, outlined in [\ref{transactions}]. Although the blocks in chain can be linearly ordered, its data structure is actually a direct acyclic graph.\newline
+$\mathit{B}$ consists of blocks $\mathit{b_n}$, which contain a header and a list of transactions. There are several kinds of transactions, outlined in [\ref{transactions}]. Although the blocks in chain can be linearly ordered, its data structure is actually a direct acyclic graph.\newline
 
-As in other implementations, $\mathcal{b_n}$ consist of a hash of the previous block in the chain, a set of transactions, and a proof. At a given epoch $\mathcal{t}$ a block $\mathcal{b_t}$ consists of the following:
+As in other implementations, $\mathit{b_n}$ consist of a hash of the previous block in the chain, a set of transactions, and a proof. At a given epoch $\mathit{t}$ a block $\mathit{b_t}$ consists of the following:
 
 \begin{center}
 	\begin{tabular}{|c|}
@@ -251,7 +251,7 @@ As in other implementations, $\mathcal{b_n}$ consist of a hash of the previous b
 		\hline
 		 Previous Block Hash \\
 		 \hline
-		 Transactions \textit{1..n} Merkle Hash $\mathcal{T_t}$ \\
+		 Transactions \textit{1..n} Merkle Hash $\mathit{T_t}$ \\
 		 \hline
 		 \textit{Proofs-of-Coverage} \\
 		 \hline
@@ -260,7 +260,7 @@ As in other implementations, $\mathcal{b_n}$ consist of a hash of the previous b
 	\end{tabular}
 \end{center}
 
-As the \textit{Proof-of-Coverage} [\ref{poc}] is valuable to the network, we store as many $\mathcal{b_n}$ and their associated proof to $\mathcal{B}$ as \textit{Uncle Blocks}, $\mathcal{U_n}$. $\mathcal{U_n}$, as described in the \textit{Greedy Heaviest-Observed Sub-Tree (GHOST)} \cite{ghost} paper and implemented in Ethereum \cite{ethereum}, allow a miner to earn block rewards even if their submitted block did not become the tip of the chain. $\mathcal{U_n}$ help the winning chain accumulate 'weight' in terms of both the length and quality of the chain, but also including the amount and quality of $\mathcal{U_n}$ and their associated proofs. This means that longer chain forks, either mined maliciously or on the smaller side of a partitioned network, will not be selected over a shorter, weightier chain. This also means that valuable proofs of work aren't lost and can be used by the chain to calculate trust.\newline
+As the \textit{Proof-of-Coverage} [\ref{poc}] is valuable to the network, we store as many $\mathit{b_n}$ and their associated proof to $\mathit{B}$ as \textit{Uncle Blocks}, $\mathit{U_n}$. $\mathit{U_n}$, as described in the \textit{Greedy Heaviest-Observed Sub-Tree (GHOST)} \cite{ghost} paper and implemented in Ethereum \cite{ethereum}, allow a miner to earn block rewards even if their submitted block did not become the tip of the chain. $\mathit{U_n}$ help the winning chain accumulate 'weight' in terms of both the length and quality of the chain, but also including the amount and quality of $\mathit{U_n}$ and their associated proofs. This means that longer chain forks, either mined maliciously or on the smaller side of a partitioned network, will not be selected over a shorter, weightier chain. This also means that valuable proofs of work aren't lost and can be used by the chain to calculate trust.\newline
 
 \begin{figure}[H]
 	\begin{center}
@@ -330,7 +330,7 @@ We provide a brief overview of the router cycle and the functions available to r
 
 \section{Consensus Protocol} \label{consensus}
 
-Explain how consensus works in the system, using PoC to create scores, and submitting blocks that the network can somehow agree on.
+Explain how consensus works in the system, using PoC to create scores, how blocks have scores based on proofs and uncles (?) and submitting blocks that the network can somehow agree on.
 
 \newpage
 
