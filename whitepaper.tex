@@ -67,19 +67,19 @@ Helium is built around the following key components:
   
   \item \textbf{Blockchain Network}: we demonstrate an entirely new purpose-built blockchain network built to service the \textit{Wireless Protocol} and provide a system for authenticating and identifying devices, providing cryptographic guarantees of data transmission and authenticity, offer transaction primitives designed around the wireless protocol, and more.
   
-	\item \textbf{Wireless Protocol}: we introduce a new open-source and standards-compliant wireless network protocol designed for low power devices over extremely wide areas. This protocol is designed to run on existing commodity radio chips availble from dozens of manufacturers with no proprietary technologies or modulation schemes required.
+	\item \textbf{Wireless Protocol}: we introduce a new open-source and standards-compliant wireless network protocol, called \textit{WHIP}, designed for low power devices over extremely wide areas. This protocol is designed to run on existing commodity radio chips availble from dozens of manufacturers with no proprietary technologies or modulation schemes required.
 	
-	\item \textbf{Geolocation}: we outline a system for interpreting the physical \textit{geolocation} of a device using the \textit{Wireless Protocol} without the need for expensive and power-hungry satellite location hardware. Devices are able to make immutable, secure, and verifiable claims about their location at a given moment in time which are recorded in the blockchain.
+	\item \textbf{Geolocation}: we outline a system for interpreting the physical \textit{geolocation} of a device using WHIP without the need for expensive and power-hungry satellite location hardware. Devices are able to make immutable, secure, and verifiable claims about their location at a given moment in time which are recorded in the blockchain.
 \end{enumerate}
 
 \subsection{System Overview}
 
 \begin{itemize}
-	\item The Helium protocol is a \textit{Decentralized Wireless Network} system built around a new wireless protocol on a purpose-built blockchain with a native token.
-	\item Devices take the form of hardware containing a radio chip and firmware compatible with the wireless protocol, and spend tokens by paying miners to send data to and from the internet.
-	\item Miners earn tokens by providing wireless network coverage via purpose-built hardware which provides a bridge between the Helium wireless protocol and routers, which are internet applications.
+	\item The Helium protocol is a \textit{Decentralized Wireless Network} system built around a new wireless protocol (WHIP) on a purpose-built blockchain with a native token.
+	\item Devices take the form of hardware containing a radio chip and firmware compatible with WHIP, and spend tokens by paying miners to send data to and from the internet.
+	\item Miners earn tokens by providing wireless network coverage via purpose-built hardware which provides a bridge between WHIP and routers, which are internet applications.
 	\item Devices store their private keys in commodity key-storage hardware and their public keys in the blockchain.
-	\item Miners join the network by asserting their satellite-derived location, a special type of transaction in the blockchain, and staking a fixed token deposit.
+	\item Miners join the network by asserting their satellite-derived location, a special type of transaction in the blockchain, and staking a token deposit.
 	\item Miners specify the price they're willing to accept for data transport and geolocation, and devices specify the price they are willing to pay. Miners are paid once they prove they have delivered data to the devices' specified router.
 	\item Miners can particpate in the creation of new blocks in the blockchain, for which they are rewarded newly minted Helium. A miners probability of mining the next block is approximately equal to the amount of wireless network coverage being provided.
 	\item The blockchain employs \proofofcoverage/ to guarantee that miners are correctly representing the amount of wireless network coverage they are creating.
@@ -95,9 +95,86 @@ Helium is built around the following key components:
 
 \newpage
 
+\section{The Helium DWN}
+
+We introduce the Helium Decentralized Wireless Network (\verb|DWN|). The \verb|DWN| provides wireless access to the internet for devices by way of multiple independent miners, and outlines a network and wireless protocol specification by which participants in the network should conform. Devices pay this network of miners for sending data to and from the internet, and miners are paid for continously providing network coverage and delivering device data to the internet.
+
+\subsection{Participants}
+
+Any user can participate as a Device, a Miner, or a Router.
+
+\begin{itemize}
+	\item \textit{Devices} pay to send encrypted data to and from the internet via the \verb|DWN| using hardware compatible with the Helium wireless protocol, called \textit{WHIP} [\ref{whip}]. In geographies with a sufficient number of miners, devices can pay several miners to geolocate themselves without needing satellite location hardware. Data sent from devices is \textit{fingerprinted}, and that fingerprint stored in the blockchain.
+	\item \textit{Miners} provide wireless network coverage to the network via purpose-built hardware, called gateways [\ref{gateways}], which provide a long range bridge between WHIP and the internet. Users join the network as miners by purchasing or building a gateway that conforms to the wireless protocol, and \textit{staking} a token deposit proportional to the density of other miners operating in their area [\ref{staking}]. Miners participate in the \textit{Proof-of-Coverage} [\ref{poc}] process to prove that they are continuously providing wireless network coverage that devices can use. Miners join the network with a score [\ref{scores}] that diminishes as blocks pass without valid proofs being submitted. Miners are eligible to mine new blocks in the blockchain, and receive the block reward and transaction fees for any transactions included in the block once mined. As a miners score drops their probability of mining a block and earning the reward diminishes.
+	\item \textit{Routers} are internet applications that receive encrypted device data from miners. Routers are the termination point for device data encryption. Devices record to the blockchain which router(s) miners should send their data, such that any gateway on the network can send any devices data to the appropriate router. Routers are responsible for confirming to the network that device data was delivered to the correct destination and that the miner should be paid for their service.
+\end{itemize}
+
+\subsection{Blockchain}
+
+The Helium blockchain is a new type of ledger designed to provide a cost-effective way to run application logic core to the operation of a \verb|DWN|, store immutable device data fingerprints, and furnish a transaction system. We will refer to this as the Blockchain, $\mathcal{B}$. $\mathcal{B}$ is an immutable append-only list of transactions that achieves consensus by verifying \textit{Proofs-of-Coverage} [\ref{poc}]. Users internal and external to the \verb|DWN| have access to $\mathcal{B}$, which is a new blockchain network built from scratch specifically for the \verb|DWN|.\newline
+
+$\mathcal{B}$ consists of blocks $\mathcal{b_n}$, which contain a header and a list of transactions. There are several kinds of transactions, outlined in [\ref{transactions}]. Although the blocks in chain can be linearly ordered, its data structure is actually a direct acyclic graph.\newline
+
+As in other implementations, $\mathcal{b_n}$ consist of a hash of the previous block in the chain, a set of transactions, and a proof. At a given epoch $\mathcal{t}$ a block $\mathcal{b_t}$ consists of the following:
+
+\begin{center}
+	\begin{tabular}{|c|}
+		\hline
+		 \textit{Proof-of-Synchronization} [\ref{roughtime}]\\
+		 \hline
+		 Block Height \\
+		\hline
+		 Previous Block Hash \\
+		 \hline
+		 Transactions \textit{1..n} Merkle Hash $\mathcal{T_t}$ \\
+		 \hline
+		 \textit{Proofs-of-Coverage} \\
+		 \hline
+		 Score \\
+		 \hline
+	\end{tabular}
+\end{center}
+
+As the \textit{Proof-of-Coverage} [\ref{poc}] is valuable to the network, we store as many $\mathcal{b_n}$ and their associated proof to $\mathcal{B}$ as \textit{Uncle Blocks}, $\mathcal{U_n}$. $\mathcal{U_n}$, as described in the \textit{Greedy Heaviest-Observed Sub-Tree (GHOST)} \cite{ghost} paper and implemented in Ethereum \cite{ethereum}, allow a miner to earn block rewards even if their submitted block did not become the tip of the chain. $\mathcal{U_n}$ help the winning chain accumulate 'weight' in terms of both the length and quality of the chain, but also including the amount and quality of $\mathcal{U_n}$ and their associated proofs. This means that longer chain forks, either mined maliciously or on the smaller side of a partitioned network, will not be selected over a shorter, weightier chain. This also means that valuable proofs of work aren't lost and can be used by the chain to calculate trust.\newline
+
+\begin{figure}[H]
+	\begin{center}
+  		\includegraphics[width=\textwidth]{chain.eps}
+  		\caption{\textit{A visualization of the Helium blockchain}}
+  		\label{fig:chain}
+ 	\end{center}
+\end{figure}
+
+\subsection{Protocol}
+
+In this section we provide an overview of how the Helium \verb|DWN| works and the functions that Devices, Miners and Routers play in the system.
+
+\subsubsection{Device Cycle}
+
+We provide a brief overview of the device cycle and the functions available to devices on the network.
+
+\begin{enumerate}
+  \item \textbf{Join}: A device joins the \verb|DWN|.\newline
+  Devices join the network by ??????
+  
+  \item \textbf{Send}: A device sends data to a router on the internet.\newline
+  Devices can send data to their specificed router on the internet by paying miners Helium tokens.\newline\newline
+  A device intiates the sending process by broadcasting a packet via the wireless protocol. When a device broadcasts a packet any miners in a reasonable geographic area hear it. Each packet header contains the devices address, and miners inspect the blockchain using this address to determine which router this devices data should be delivered to. \textbf{HOW DOES THE PRICE THE DEVICE IS WILLING TO PAY AND THE MINER WILLING TO ACCEPT GET DETERMINED? IS IT STORED IN THE BLOCKCHAIN AS A TYPE OF TRANSACTION?}
+  
+  
+\end{enumerate}
+
+\subsubsection{Mining Cycle} \label{mining}
+
+The mining flow.
+
+\subsubsection{Routing Cycle}
+
+Where routing fits and it's relationship to people getting paid?
+
 \section{\proofofcoverage/} \label{poc}
 
-In the Helium protocol, miners must prove that they are providing wireless network coverage that devices are able to use to communicate with the internet. Miners do this by complying with the \textit{Proof-of-Coverage} protocol which the blockchain network and other miners audit and verify.\newline
+In the Helium network, miners must prove that they are providing wireless network coverage that devices are able to use to communicate with the internet. Miners do this by complying with the \textit{Proof-of-Coverage} protocol which the blockchain network and other miners audit and verify.\newline
 
 In this section we outline the motivation and implementation for \proofofcoverage/.
 
@@ -140,7 +217,7 @@ We aim to construct a proof that takes advantage of the following characteristic
 	\item RF travels at the speed of light with (effectively) no latency
 \end{enumerate}
 
-Our goal is to verify whether miners in a physical region are acting honestly and creating wireless network coverage compatible with the Helium protocol. To do this, a challenger $\mathcal{C}$ deterministically constructs a multi-layer data packet $\mathcal{O}$ which begins at an initial target, $\mathcal{T}$, and is broadcast wirelessly to a set of sequential targets, $\mathcal{T_n}$, each of which are only able to decrypt the outer-most layer of $\mathcal{O}$ if they were the intended recipient. Each target acknowledges receipt, $\mathcal{R_T}$, back to $\mathcal{C}$, removes their layer of $\mathcal{O}$, $\mathcal{O}$\textsubscript{L-N}, and broadcasts it for receipt by the next target. \newline
+Our goal is to verify whether miners in a physical region are acting honestly and creating wireless network coverage compatible with the Helium wireless protocol (WHIP). To do this, a challenger $\mathcal{C}$ deterministically constructs a multi-layer data packet $\mathcal{O}$ which begins at an initial target, $\mathcal{T}$, and is broadcast wirelessly to a set of sequential targets, $\mathcal{T_n}$, each of which are only able to decrypt the outer-most layer of $\mathcal{O}$ if they were the intended recipient. Each target acknowledges receipt, $\mathcal{R_T}$, back to $\mathcal{C}$, removes their layer of $\mathcal{O}$, $\mathcal{O}$\textsubscript{L-N}, and broadcasts it for receipt by the next target. Essentially, an "envelope of envelopes" only openable by the intended recipient.\newline
 
 \begin{figure}[H]
 	\begin{center}
@@ -150,19 +227,20 @@ Our goal is to verify whether miners in a physical region are acting honestly an
  	\end{center}
 \end{figure}
 
-\textbf{Selecting the Initial Target}. We aim to deterministically locate an initial target, $\mathcal{T}$, for the challenger, $\mathcal{C}$. $\mathcal{T}$ does not need to be geographically proximate to $\mathcal{C}$. To locate $\mathcal{T}$, $\mathcal{C}$ uses a \textit{consistent hash ring} $\mathcal{\omega}$ of potential miners. $\mathcal{\omega}$ only contains miners eligible as targets as described in [\ref{mining}], and miners are allocated portions of $\mathcal{\omega}$ that are inversely proportional to their score, increasing the probability of potentially dishonest miners being targeted.\newline
+\textbf{Selecting the Initial Target}. We aim to deterministically locate an initial target, $\mathcal{T}$, for the challenger, $\mathcal{C}$. $\mathcal{T}$ does not need to be geographically proximate to $\mathcal{C}$. To locate $\mathcal{T}$, $\mathcal{C}$ uses a \textit{consistent hash ring} $\mathcal{\omega}$ of potential miners. $\mathcal{\omega}$ only contains miners eligible as targets as described in [\ref{mining}], and miners are allocated portions of $\mathcal{\omega}$ that are inversely proportional to their score, increasing the probability of potentially dishonest miners being targeted. Given that a miners score is diminishing linearly over time, it is necessary to create this inverse relationship to give low-scoring miners an opportunity to participate in the process and increase their score.\newline
 
 \textbf{Constructing the multi-layer challenge}. Once $\mathcal{T}$ has been selected, $\mathcal{C}$ must construct a multi-layer challenge, $\mathcal{O}$. $\mathcal{O}$ is a data packet broadcast by $\mathcal{T}$ over the wireless network and received by geographcially proximate targets $\mathcal{T_n}$. The number of layers of $\mathcal{O}$ to be assembled is defined as $\mathcal{O_L}$ = $\mathcal{\log}$($\mathcal{T_n}$ = $\mathcal{\pi}$$\mathcal{50^2}$) from the location of $\mathcal{T}$. Each layer of $\mathcal{O}$, $\mathcal{O_l}$, consists of a two-tuple of $\mathcal{E}$($\mathcal{S}$, $\mathcal{R}$), where $\mathcal{E}$ is a secure public key encryption function, $\mathcal{S}$ is a secret encrypted with the public key of $\mathcal{T_n}$, and $\mathcal{R}$ is the remainder of $\mathcal{O}$ consisting of recursive two-tuples.\newline
 
 The construction logic of $\mathcal{O}$ is as follows:
 
 \begin{enumerate}
-  \item A set of candidate $\mathcal{T_n}$ are created within a geometric circle approximately 1 mile in radius of $\mathcal{T}$, simply defined as $\mathcal{A}$ = $\mathcal{\pi}$$\mathcal{1^2}$
+  \item A set of candidate $\mathcal{T_n}$ are created within a geometric circle of an unpredictable but determinstic radius $\mathcal{r}$ (in miles) of $\mathcal{T}$, simply defined as $\mathcal{A}$ = $\mathcal{\pi}$$\mathcal{r^2}$
   \item A single $\mathcal{T_n}$ within $\mathcal{A}$ is psuedo-randomly selected as the first target for $\mathcal{O}$, and designated as $\mathcal{T_1}$
   \item A layer $\mathcal{O_l}$ is created and $\mathcal{S}$ is encrypted with the public key of $\mathcal{T_1}$ retrieved from the blockchain [\ref{devices}]
-  \item The next set of candidate $\mathcal{T_n}$ are generated by inspecting a geographic area proximate to $\mathcal{T_1}$, $\mathcal{A_1}$ = $\mathcal{\pi}$$\mathcal{1^2}$
+  \item The next set of candidate $\mathcal{T_n}$ are generated by inspecting a geographic area proximate to $\mathcal{T_1}$, $\mathcal{A_1}$ = $\mathcal{\pi}$$\mathcal{r^2}$
   \item A single $\mathcal{T_n}$ within $\mathcal{A_1}$ is again pseudo-randomly selected as the next layer of $\mathcal{O}$, and designated as $\mathcal{T_2}$
   \item This cycle repeats until a number of $\mathcal{T_n}$ and $\mathcal{O_l}$ equal to $\mathcal{O_L}$ is reached
+  \item The pseudo-random function used to determine $\mathcal{T_1}$..$\mathcal{T_L}$ is constructed using a hash of the current block $\mathcal{B_t}$ as a seed, such that the selection process for $\mathcal{T_n}$ is deterministic and therefore verifiable by the network
 \end{enumerate}
 
 The resulting $\mathcal{O}$ can be visually represented as the following:\newline
@@ -197,9 +275,9 @@ $\mathcal{C}$ expects to hear responses from $\mathcal{T_n}$ within a time thres
  	\end{center}
 \end{figure}
 
-\textbf{Scoring}. \label{scores} When miners join the Helium network, they are assigned a score, $\mathcal{\phi}$, with a value of \textbf{0.500}. This score depreciates linearly per block at a rate of $\mathcal{\phi}$ = $\mathcal{\phi}$ - \(\frac{\phi}{10}\). As $\mathcal{\phi}$ decreases the probability of the miner $\mathcal{M}$ being the target for $\mathcal{C}$ increases such that the network continually attempts to prove that the lowest scoring miners are acting honestly.\newline 
+\textbf{Scoring}. \label{scores} When miners join the Helium network, they are assigned a score, $\mathcal{\phi}$, with a value of \textbf{0.500}. This score depreciates linearly per block at a rate of $\mathcal{\phi}$ = $\mathcal{\phi}$ - \(\frac{\phi}{10}\). As $\mathcal{\phi}$ decreases the probability of the miner $\mathcal{M}$ being the target for $\mathcal{C}$ increases such that the network continually attempts to prove that the lowest scoring miners are acting honestly, and giving miners a reasonable chance to improve their score.\newline
 
-For every target $\mathcal{T_n}$ that hears $\mathcal{O}$ in the \proofofcoverage/ and submits a signed receipt to $\mathcal{C}$, $\mathcal{T_n}$ gains a score equal to \textbf{XXXXXXXXX}.\newline
+For every target $\mathcal{T_n}$ that hears $\mathcal{O}$ in the \proofofcoverage/ and submits a signed receipt to $\mathcal{C}$, $\mathcal{T_n}$ gains a score equal to \textbf{SOME AMOUNT RELATOINAL TO THE PREVIOUS TARGET IN THE CHAIN}.\newline
 
 \textbf{Verifying the Proof}. Talk about $\mathcal{C}$ submitting this proof and how it could be verified\newline
 
@@ -215,9 +293,9 @@ In this section we outline the motivation and implementation for \textit{Proof-o
 
 In a decentralized network system like Helium.....
 
-\subsection{Inspiration}
+\subsection{Purpose}
 
-Google Roughtime.....
+Why we need Roughtime and how we use it in our system as a source of randomness, etc
 
 \subsection{Constructing \textit{Proof-of-Synchronization}}
 
@@ -231,85 +309,29 @@ With only two servers, $\mathcal{M}$ can end up with proof that something is wro
 
 \newpage
 
-\section{The Helium DWN}
-
-We introduce the Helium Decentralized Wireless Network (\verb|DWN|). The \verb|DWN| provides wireless access to the internet for devices by way of multiple independent miners, and outlines a network and wireless protocol specification by which participants in the network should conform. Devices pay this network of miners for sending data to and from the internet, and miners are paid for continously providing network coverage and delivering device data to the internet.
-
-\subsection{Participants}
-
-Any user can participate as a Device, a Miner, or a Router.
-
-\begin{itemize}
-	\item \textit{Devices} pay to send encrypted data to and from the internet via the \verb|DWN| using hardware compatible with the wireless protocol. In geographies with a sufficient number of miners, devices can pay several miners to geolocate themselves without needing satellite location hardware. Data sent from devices is \textit{fingerprinted}, and that fingerprint stored in the blockchain.
-	\item \textit{Miners} provide wireless network coverage to the network via purpose-built hardware which provides a long range bridge between the wireless protocol and the internet. Users join the network as miners by purchasing or building mining hardware that conforms to the wireless protocol, and \textit{staking} a deposit inversely proportional to the density of existing miners at their physical location. Miners generate \textit{Proofs-of-Coverage} and submit them to the blockchain to prove that they are continuously providing wireless network coverage that devices can use. Miners join the network with a \textit{score} that diminishes as blocks pass without valid proofs being submitted; once a miners score drops below a threshold they are penalized and lose some or all of their deposit. Miners are eligible to mine new blocks in the blockchain, and receive the block reward and transaction fees for any transactions included in the block once mined.
-	\item \textit{Routers} are internet applications that receive encrypted device data from miners. Routers are the termination point for device data encryption. Devices record to the blockchain which router(s) miners should send their data, via a special transaction called the \verb|routing_transaction| [\ref{transactions}]. Routers are responsible for confirming to the network that device data was delivered to the correct destination and that the miner should be paid for their service.
-\end{itemize}
-
-\subsection{Blockchain}
-
-The Helium blockchain is a new type of ledger designed to provide a cost-effective way to run application logic core to the operation of a \verb|DWN|, store immutable device data fingerprints, and furnish a transaction system. We will refer to this as the Blockchain, $\mathcal{B}$. $\mathcal{B}$ is an immutable append-only list of transactions that achieves consensus by verifying \textit{Proofs-of-Coverage} \ref{poc}. Users internal and external to the \verb|DWN| have access to $\mathcal{B}$.\newline
-
-$\mathcal{B}$ consists of blocks $\mathcal{b_n}$, which contain a header and a list of transactions. There are several kinds of transactions, outlined in [\ref{transactions}]. Although the blocks in chain can be linearly ordered, its data structure is actually a direct acyclic graph.\newline
-
-As in other implementations, $\mathcal{b_n}$ in $\mathcal{B}$ consist of a hash of the previous block in the chain, a set of transactions, and a \textit{proof}. At a given epoch $\mathcal{t}$ a block $\mathcal{b_t}$ in $\mathcal{B}$ consists of the following:
-
-\begin{center}
-	\begin{tabular}{|c|}
-		\hline
-		 \textit{Proof-of-Synchronization} [\ref{roughtime}]\\
-		 \hline
-		 Block Height \\
-		\hline
-		 Previous Block Hash \\
-		 \hline
-		 Transactions \textit{1..n} Merkle Hash $\mathcal{T_t}$ \\
-		 \hline
-		 \textit{Proofs-of-Coverage} \\
-		 \hline
-	\end{tabular}
-\end{center}
-
-As the \textit{Proof-of-Coverage} [\ref{poc}] is valuable to the network, we store as many $\mathcal{b_n}$ and their associated proof to $\mathcal{B}$ as \textit{Uncle Blocks}, $\mathcal{Ub_n}$. $\mathcal{Ub_n}$, as described in the \textit{Greedy Heaviest-Observed Sub-Tree (GHOST)} \cite{ghost} paper and implemented in Ethereum \cite{ethereum}, allow a miner $\mathcal{M}$ to earn block rewards even if their submitted block did not become the tip of the chain. $\mathcal{Ub_n}$ helps the winning chain accumulate 'weight' in terms of both the length and quality of the chain, but also including the amount and quality of $\mathcal{Ub_n}$ and their associated proofs. This means that longer chain forks, either mined maliciously or on the smaller side of a partitioned network, will not be selected over a shorter, weightier chain. This also means that valuable proofs of work aren't lost and can be used by the chain to calculate trust.\newline
-
-\begin{figure}[H]
-	\begin{center}
-  		\includegraphics[width=\textwidth]{chain.eps}
-  		\caption{\textit{A visualization of the Helium blockchain}}
-  		\label{fig:chain}
- 	\end{center}
-\end{figure}
-
-\subsection{Protocol}
-
-Intro that explains we will now give an overview of how the protocol works.
-
-\subsubsection{Client Cycle}
-
-The flow of a Client (Device?) using the network.
-
-\subsubsection{Mining Cycle} \label{mining}
-
-The mining flow.
-
-\subsubsection{Routing Cycle}
-
-Where routing fits and it's relationship to people getting paid?
-
 \section{Transactions} \label{transactions}
 
-Talk about the basic transaction primitives our blockchain provides, such as address generation, location assertion, network joining, etc as well as our big-blocker mentality.
+Transactions in the Helium blockchain provide functionality that enables address-to-address transfers of Helium tokens, similar to many existing blockchain networks, but also provide a set of primitives that enable core functionality that is critical to the operation of a \verb|DWN|. In this section we address the philosophy behind our transaction system, the primitives, and the way fees on the network work.
 
 \subsection{Philosophy}
 
-Talk about on-chain mentality vs lightning/state channels
+Helium is built on the philosophy that all transactions should occur \textit{on-chain}; that is, blocks should be sized and mined with a frequency such that every transaction which occurs on the network should be stored in the blockchain rather than a \textit{side-chain} implementation such as a lightning network [\ref{lightning}] or state channel [\ref{state-channels}]. The goal of Helium is to provide internet data transport fees (the fees paid by devices to miners) that are an order of magnitude less than anything currently available for this type of service. To accomplish this goal the cost of mining must be low, blocks must be large enough to encapsulate a large number of transactions, and frequent enough that transactions are processed quickly.\newline
+
+Because the Helium blockchain services a specific use, the \verb|DWN|, blocks must additionally be able store fingerprints of data sent from devices along with the transaction which pays a miner for their transport service. This additional data storage would make a side-chain implementation particularly challenging, and necessitates the use of on-chain storage techniques. We believe that this holistic \textit{tamper-proof} data trail will enable entirely new use cases where the authenticity and veracity of sensor data is critical.
+
+\subsection{Primitives in Helium}
+
+In this section we describe the various transaction primitives.
+
+\begin{itemize}
+  \item \textbf{assert\_location}: this transaction is used by miners joining the network. Etc etc etc etc
+  \item \textbf{join\_network}: devices use this...
+  \item \textbf{????????????}:
+\end{itemize}
 
 \subsection{Fees}
 
 Talk about transaction vs transport and Professors IOU idea
-
-\subsection{Primitives in Helium}
-
-assert location, join network, etc
 
 \newpage
 
@@ -317,7 +339,7 @@ assert location, join network, etc
 
 In addition to the blockchain network, Helium is a \textit{physical} wireless network instantiation. The participants in the network, from a physical hardware perspective, can be thought of as follows:\newline
 
-\textbf{Wireless Protocol (\textit{WHIP})}: The wireless network uses a new wireless protocol, called \textit{WHIP}. WHIP is a long range low power wireless network protocol that takes advantage of commodity open-standards hardware. Hardware compatible with WHIP is based on open-standads, and can communicate over many square miles in dense urban environments or hundreds of square miles in rural settings. WHIP compatible hardware can last for several years using standard batteries. WHIP uses strong public key cryptography and authentication occurs using the Helium blockchain, with all data being encrypted from end to end. WHIP is an open source networking protocol, and we have worked hard to ensure WHIP runs on hardware commonly available from dozens of vendors.\newline
+\textbf{Wireless Protocol (\textit{WHIP})}: The wireless network uses a new wireless protocol, called \textit{WHIP}. WHIP is a long range low power wireless network protocol that takes advantage of commodity open-standards hardware. Hardware compatible with WHIP is based on open-standards, and can communicate over many square miles in dense urban environments or hundreds of square miles in rural settings. WHIP compatible hardware can last for several years using standard batteries. WHIP uses strong public key cryptography and authentication occurs using the Helium blockchain, with all data being encrypted from end to end. WHIP is an open source networking protocol, and we have worked hard to ensure WHIP runs on hardware commonly available from dozens of vendors.\newline
 
 \textbf{Gateways}: Miners operate purpose-built Gateway hardware. Gateways are physical network devices that create wireless RF coverage over wide areas and participate in the blockchain network. Gateways transmit data back and forth between routers on the internet and devices, and create \textit{Proofs-of-Coverage} for the blockchain network [\ref{poc}]. Gateways are manufactured using generally available open-standards components with no proprietary hardware. Gateways can co-operate and geolocate devices using the wireless network without any additional required hardware. Each Gateway can support hundreds of thousands of connected devices, and create coverage over many square miles. Miners operating Gateways specify the price they are willing to accept for transport and geolocation services for devices.\newline
 
@@ -329,7 +351,7 @@ In this section we expand on the components of the wireless network.
 
 \textbf{Motivation}: There are several Low Power Wide Area Network (LPWAN) technologies available today. This new generation of wireless technologies focus on creating extremely long range, low power internet communication for sensors and other smart devices. Typically these technologies trade speed for range, with data rates as low as 18 bits per second (bps) with range measured in miles compared to a typical WiFi network which has substantially higher data rates but range limited to only a few hundred feet. Several of these new technologies, such as LoRa [\ref{lora}] and RPMA [\ref{rpma}], have gained good traction and there are many commercial products available compatible with these systems. However, we believe that the future IoT economy should be built on non-proprietary protocols and modulation schemes, and that participants in this ecosystem should have the freedom to choose hardware and vendor. We do not consider an open alliance built on top of proprietary hardware to be an acceptable compromoise. While there are many open-standards wireless networking protocols and physical layers, such as IEEE 802.15.4 [\ref{802.15.4}] used in the first generation of Helium wireless products, none meet our extremely long range and low power criteria. It is this lack of open solutions that drove the creation of a new protocol.\newline
 
-\textbf{Outline}: We introduce a new open-source Low Power Wide Area Network (LPWAN) protocol called \textit{WHIP}. WHIP is a highly secure, long range, low power wireless network protocol that is compatible with any Frequency Shift Keying (FSK) radio transceiver operating in the sub-GHz unlicensed frequency spectrum. Authentication with the wireless network uses modern public-key encryption and NIST P-256 ECC [\ref{ecc}] key pairs, with the public keys for all participants stored in the blockchain.\newline 
+\textbf{Outline}: We introduce a new open-source Low Power Wide Area Network (LPWAN) protocol called \textit{WHIP}. WHIP is a highly secure, long range, low power wireless network protocol that is compatible with any Frequency Shift Keying (FSK) radio transceiver operating in the sub-GHz unlicensed frequency spectrum. Authentication with the wireless network uses modern public-key encryption and NIST P-256 ECC [\ref{ecc}] key pairs, with the public keys for all participants stored in the blockchain.\newline
 
 FSK is a simple modulation format that is widely supported, easy to modulate/demodulate and has good resistance to RF noise. There are dozens of vendors implementing FSK radio transceivers compatible with WHIP, such as Texas Instruments [\ref{ti}], Microchip [\ref{microchip}], and Silicon Labs [\ref{silabs}]. \newline
 
@@ -337,7 +359,7 @@ WHIP is a \textit{narrowband} wireless protocol which creates hundreds of extrem
 
 \begin{itemize}
 	\item \textbf{Spectrum Efficiency}: it is necessary to operate within unlicensed RF spectrum very efficiently. RF is a shared, limited resource, and therefore a focus on efficiency to increase capacity and improve robustness is a must.
-	\item \textbf{Co-Existence Performance}: as the number of devices and networks increases, the ability to operate in \textit{noisy} RF environments without interference is a critical consideration. 
+	\item \textbf{Co-Existence Performance}: as the number of devices and networks increases, the ability to operate in \textit{noisy} RF environments without interference is a critical consideration.
 	\item \textbf{Range}: narrowband allows for extremely long range communications, with data rates that scale both up and down depending on the density of gateways.
 \end{itemize}
 
@@ -350,7 +372,7 @@ WHIP implements a variety of Forward Error Correction (FEC) techniques. FEC is a
 	\item 2-GFSK
 	\item 4-FSK
 	\item 4-GFSK
-	\item 4 Reserved for future expansion 
+	\item 4 Reserved for future expansion
 \end{itemize}
 
 There are also eight FEC options:
@@ -365,9 +387,9 @@ There are also eight FEC options:
 
 We also have eight combinations of data rate and deviation, which vary from 300bps to 100,000bps.\newline
 
-The full WHIP wireless specification will be made available by the Helium Alliance \cite{alliance}. 
+The full WHIP wireless specification will be made available by the Helium Alliance \cite{alliance}.
 
-\subsection{Gateways}
+\subsection{Gateways} \label{gateways}
 
 Gateways are physical network devices operated by miners, that create wireless RF coverage over wide areas. They transmit data back and forth between routers on the Internet and devices on the network, process blockchain transactions, and create \textit{Proofs-of-Coverage} for the blockchain network [\ref{poc}]. Gateways can connect to the Internet using any TCP/IP capable backhaul, such as Ethernet, WiFi or Cellular. Each gateway contains a radio frontend capable of listening to several MHz of radio spectrum at a time, and is able to hear all network traffic transmitted within that spectrum. In this configuration modulation and demodulation is done in software, which is typically referred to as a \textit{Software Defined Radio (SDR)}. The benefit of this structure is that gateways can hear any device traffic transmitted within the frequency range, and no synchronization between the gateway and device needs to occur. This allows devices to remain inexpensive and relatively simple, and reduces wireless protocol overhead. If a miner wishes to minimize their gateway hardware costs, synchronized frequency hopping schemes are also permitted within the specification as a cheaper alternative to a more expensive radio frontend.\newline
 
