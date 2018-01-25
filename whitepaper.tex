@@ -99,7 +99,7 @@ Helium is built around the following key components:
 
 \newpage
 
-\section{\proofofcoverage/ \& \emph{Proof-of-Serialization}} \label{poc}
+\section{\proofofcoverage/ \& \emph{Proof-of-Serialization}}\label{poc}
 
 In the Helium network, miners must prove that they are providing wireless network coverage that devices are able to use to communicate with the internet. Miners do this by complying with the \emph{Proof-of-Coverage} protocol which the blockchain network and other miners audit and verify. We use a \emph{Proof-of-Serialization} to ensure that miners are correctly representing their time in relation to others on the network, and obtain cryptographic proof of dishonest behavior. Several components of the Helium network, such as blocks in the blockchain, use \emph{Proof-of-Serialization} as a cryptographic ``anchor'' that root those occurences  with a cryptographic time proof. With a combination of \proofofcoverage/ and \emph{Proof-of-Serialization} we can obtain cryptographic proof of the approximate location and time of events occuring within Helium. \newline
 
@@ -204,7 +204,7 @@ $\mathit{C}$ expects to hear responses from $\mathit{T_n}$ within a time thresho
  	\end{center}
 \end{figure}
 
-\textbf{Scoring}. \label{scores} When miners join the Helium network, they are assigned a score, $\mathit{\phi}$, with a value of \textbf{0.500}. This score depreciates linearly per block at a rate of $\mathit{\phi = \phi - \frac{\phi}{10}}$. As $\mathit{\phi}$ decreases the probability of the miner $\mathit{M}$ being the target for $\mathit{C}$ increases such that the network continually attempts to prove that the lowest scoring miners are acting honestly, and giving miners a reasonable chance to improve their score.\newline
+\textbf{Scoring}\label{scores} When miners join the Helium network, they are assigned a score, $\mathit{\phi}$, with a value of \textbf{0.500}. This score depreciates linearly per block at a rate of $\mathit{\phi = \phi - \frac{\phi}{10}}$. As $\mathit{\phi}$ decreases the probability of the miner $\mathit{M}$ being the target for $\mathit{C}$ increases such that the network continually attempts to prove that the lowest scoring miners are acting honestly, and giving miners a reasonable chance to improve their score.\newline
 
 For every target $\mathit{T_n}$ that hears $\mathit{O}$ in the \proofofcoverage/ and submits a signed receipt to $\mathit{C}$, $\mathit{T_n}$ gains a score equal to \todo{some amount relational to the previous target in the chain}.\newline
 
@@ -295,7 +295,7 @@ We provide a brief overview of the device cycle and the functions available to d
 
 \end{enumerate}
 
-\subsubsection{Miner Cycle} \label{mining}
+\subsubsection{Miner Cycle}\label{mining}
 
 We provide a brief overview of the miner cycle and the functions available to miners on the network.
 
@@ -332,13 +332,13 @@ We provide a brief overview of the router cycle and the functions available to r
 
 \newpage
 
-\section{Consensus Protocol} \label{consensus}
+\section{Consensus Protocol}\label{consensus}
 
 Explain how consensus works in the system, using PoC to create scores, how blocks have scores based on proofs and uncles (?) and submitting blocks that the network can somehow agree on.
 
 \newpage
 
-\section{Transactions} \label{transactions}
+\section{Transactions}\label{transactions}
 
 Transactions in the Helium blockchain provide functionality that enables address-to-address transfers of Helium tokens, similar to many existing blockchain networks, but also provide a set of primitives that enable core functionality that is critical to the operation of a \verb|DWN|. In this section we address the philosophy behind our transaction system, the primitives, and the way fees on the network work.
 
@@ -376,7 +376,7 @@ In addition to the blockchain network, Helium is a \emph{physical} wireless netw
 
 In this section we will expand on the components of the wireless network.
 
-\subsection{Wireless Protocol (\emph{WHIP})} \label{whip}
+\subsection{Wireless Protocol (\emph{WHIP})}\label{whip}
 
 \textbf{Motivation}: There are several Low Power Wide Area Network (LPWAN) technologies available today. This new generation of wireless technologies focus on creating extremely long range, low power internet communication for sensors and other smart devices. Typically these technologies trade speed for range, with data rates as low as 18 bits per second (bps) with range measured in miles compared to a typical WiFi network which has substantially higher data rates but range limited to only a few hundred feet. Several of these new technologies, such as LoRa [\ref{lora}] and RPMA [\ref{rpma}], have gained good traction and there are many commercial products available compatible with these systems. However, we believe that the future IoT economy should be built on non-proprietary protocols and modulation schemes, and that participants in this ecosystem should have the freedom to choose hardware and vendor. We do not consider an open alliance built on top of proprietary hardware to be an acceptable compromoise. While there are many open-standards wireless networking protocols and physical layers, such as IEEE 802.15.4 [\ref{802.15.4}] used in the first generation of Helium wireless products, none meet our extremely long range and low power criteria. It is this lack of open solutions that drove the creation of a new protocol.\newline
 
@@ -418,7 +418,7 @@ We also have eight combinations of data rate and deviation, which vary from 300b
 
 The full WHIP wireless specification will be made available by the Helium Alliance~\cite{alliance}.
 
-\subsection{Gateways} \label{gateways}
+\subsection{Gateways}\label{gateways}
 
 Gateways are physical network devices operated by miners, that create wireless RF coverage over wide areas. They transmit data back and forth between routers on the Internet and devices on the network, process blockchain transactions, and create \emph{Proofs-of-Coverage} for the blockchain network [\ref{poc}]. Gateways can connect to the Internet using any TCP/IP capable backhaul, such as Ethernet, WiFi or Cellular. Each gateway contains a radio frontend capable of listening to several MHz of radio spectrum at a time, and is able to hear all network traffic transmitted within that spectrum. In this configuration modulation and demodulation is done in software, which is typically referred to as a \emph{Software Defined Radio (SDR)}. The benefit of this structure is that gateways can hear any device traffic transmitted within the frequency range, and no synchronization between the gateway and device needs to occur. This allows devices to remain inexpensive and relatively simple, and reduces wireless protocol overhead. If a miner wishes to minimize their gateway hardware costs, synchronized frequency hopping schemes are also permitted within the specification as a cheaper alternative to a more expensive radio frontend.\newline
 
@@ -428,7 +428,7 @@ Satellite location information is also correlated with packet arrival events to 
 
 Helium Systems Inc. will make both a complete open-source reference design and a finished product available for immediate participation in the network.
 
-\subsection{Devices} \label{devices}
+\subsection{Devices}\label{devices}
 
 A \emph{device} is any wireless hardware capable of communicating with gateways on the network. WHIP is designed to facilitate low power data transmission and reception, so typically devices would exist in the form of battery-powered sensors that can function for several years using standard batteries.\newline
 
@@ -458,7 +458,7 @@ Helium Systems Inc hosts a high-availability cloud router for anyone to use, and
 
 The protocol specification required for implementing a router is defined in the WHIP Wireless Specification document that will be made available by the Helium Alliance\cite{alliance}.
 
-\subsection{Geolocation} \label{geolocation}
+\subsection{Geolocation}\label{geolocation}
 
 WHIP-comptaible gateways are expected to include hardware and software to enable not only location of the gateway (via GPS/GNSS) but also hardware and software to triangulate the location of an end node. This method is typically called \emph{Time Differential of Arrival (TDoA)}. Gateways accomplish TDoA location using a radio frontend configured to output raw sample data, which can then be post processed and compared to GPS location and time to calculate the radio packet's time of flight. With enough of these time-of-flight calculations from several gateways, the position of the device can be calculated to within several meters.\newline
 
