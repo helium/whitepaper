@@ -20,7 +20,7 @@
 
 \begin{document}
 
-\title{Helium - A Decentralized Wireless Network}
+\title{Helium --- A Decentralized Wireless Network}
 \author{Helium Systems, Inc}
 \date{\today}
 \maketitle
@@ -49,7 +49,7 @@ Helium exists due to a set of core beliefs that have driven every component and 
 
 \textbf{Decentralization}. The Internet of Things (IoT) is poised to change the way we interact with the physical world and at a scale that is unprecedented, with projections of over \$11.1 trillion in economic value added in under 10 years\cite{mckinsey}. It is critical that this industry be driven forward in a truly decentralized way that allows participation from anyone, anywhere, with no arbitrary gatekeepers. There are many existing products, services and companies participating in the IoT ecosystem today, but nearly all are centralized or proprietary in some form. Some require specialized hardware available from a single vendor, some use proprietary technology, and others tightly control access to infrastructure. Helium exists to make it possible for individuals, businesses, and communities to participate and enable IoT solutions without the need to rely on or trust any external entities.\newline
 
-\textbf{Low Power}. Helium is focused on a specific subset of IoT - low power devices. While IoT can cover a very broad range of devices and use cases, we believe that high-power data-intensive applications are well serviced by existing network technologies such as WiFi and LTE. Low power wireless networking solutions are in their relative infancy, particularly those which require long range from an access point. A new class of low power wireless solutions - known as \emph{Low Power Wide Area Networks (LPWANs)} - have begun to emerge in the last several years, but are all proprietary in nature or extremely centralized in some capacity. Helium is built upon an entirely new open source wireless networking protocol designed for IoT devices.\newline
+\textbf{Low Power}. Helium is focused on a specific subset of IoT---low power devices. While IoT can cover a very broad range of devices and use cases, we believe that high-power data-intensive applications are well serviced by existing network technologies such as WiFi and LTE. Low power wireless networking solutions are in their relative infancy, particularly those which require long range from an access point. A new class of low power wireless solutions---known as \emph{Low Power Wide Area Networks (LPWANs)}---have begun to emerge in the last several years, but are all proprietary in nature or extremely centralized in some capacity. Helium is built upon an entirely new open source wireless networking protocol designed for IoT devices.\newline
 
 \textbf{Security}. IoT presents an entirely new class of security challenge. Devices can be small, portable and with limited computing power and bandwidth. Information from the physical world presents new types of attack vector that can affect more than just data. Existing IoT offerings do not typically take advantage of modern encryption, authentication and authorization security techniques. These solutions often use soft-keys easily extractable from firmware by an attacker, or communicate via networking protocols that use vulnerable pre-shared keys. We present an entirely new blockchain-based wireless security system that relies on hardware-secured key material and takes advantage of modern public key cryptography.\newline
 
@@ -130,7 +130,7 @@ Once $\mathit{c}$ gets to the last stop of the tour, it submits evidence of the 
 
 While an extremely clever and innovative system, GTP is not directly suitable as a proof in our wireless network as radio frequency (RF) networking has limited range and therefore cannot communicate with peers anywhere on the network. We aim to construct a proof loosely based on the ideas presented in GTP, but applicable to our protocol. We refer the interested reader to~\cite{gtp} for a detailed articulation of the GTP protocol.\newline
 
-We combine \proofofcoverage/ with \emph{Proof-of-Serialization} - a proof that allows miners on the network to achieve cryptographic time consensus among decentralized client. We aim to achieve rough time synchronization in a secure way that does not depend on any particular time server, and in such a way that, if a time server does misbehave, clients end up with cryptographic proof of that behavior.
+We combine \proofofcoverage/ with \emph{Proof-of-Serialization}---a proof that allows miners on the network to achieve cryptographic time consensus among decentralized client. We aim to achieve rough time synchronization in a secure way that does not depend on any particular time server, and in such a way that, if a time server does misbehave, clients end up with cryptographic proof of that behavior.
 
 \subsection{Constructing \proofofcoverage/}
 
@@ -201,7 +201,7 @@ $\mathit{C}$ expects to hear responses from $\mathit{T_n}$ within a time thresho
  	\end{center}
 \end{figure}
 
-\textbf{Scoring}. \label{scores} When miners join the Helium network, they are assigned a score, $\mathit{\phi}$, with a value of \textbf{0.500}. This score depreciates linearly per block at a rate of $\mathit{\phi}$ = $\mathit{\phi}$ - \(\frac{\phi}{10}\). As $\mathit{\phi}$ decreases the probability of the miner $\mathit{M}$ being the target for $\mathit{C}$ increases such that the network continually attempts to prove that the lowest scoring miners are acting honestly, and giving miners a reasonable chance to improve their score.\newline
+\textbf{Scoring}. \label{scores} When miners join the Helium network, they are assigned a score, $\mathit{\phi}$, with a value of \textbf{0.500}. This score depreciates linearly per block at a rate of $\mathit{\phi = \phi - \frac{\phi}{10}}$. As $\mathit{\phi}$ decreases the probability of the miner $\mathit{M}$ being the target for $\mathit{C}$ increases such that the network continually attempts to prove that the lowest scoring miners are acting honestly, and giving miners a reasonable chance to improve their score.\newline
 
 For every target $\mathit{T_n}$ that hears $\mathit{O}$ in the \proofofcoverage/ and submits a signed receipt to $\mathit{C}$, $\mathit{T_n}$ gains a score equal to \textbf{SOME AMOUNT RELATIONAL TO THE PREVIOUS TARGET IN THE CHAIN}.\newline
 
@@ -217,7 +217,7 @@ For the second request, $\mathit{M}$ generates a sub-proof-kernel, $\mathit{L} =
 
 With only two servers, $\mathit{M}$ can end up with proof that something is wrong, but no idea what the correct time is. But with half a dozen or more independent servers, $\mathit{M}$ will end up with chain of proof of any server's misbehaviour, signed by several others, and enough accurate replies to establish what the correct time is, $\mathit{T^t}$.\newline
 
-\textbf{Utilizing the Proven Time}. Talk here about \textbf{THEN WHAT? HOW DOES ROUGHTIME GET USED AND BY WHOM? CONSTRUCT THIS SECTION IN THE SAME WAY AS POC ABOVE -- PROFESSOR/RAHUL TO COMPLETE}
+\textbf{Utilizing the Proven Time}. Talk here about \textbf{THEN WHAT? HOW DOES ROUGHTIME GET USED AND BY WHOM? CONSTRUCT THIS SECTION IN THE SAME WAY AS POC ABOVE---PROFESSOR/RAHUL TO COMPLETE}
 
 \newpage
 
