@@ -98,7 +98,7 @@ Helium is built around the following key components:
 
 \section{\proofofcoverage/ \& \emph{Proof-of-Serialization}} \label{poc}
 
-In the Helium network, miners must prove that they are providing wireless network coverage that devices are able to use to communicate with the internet. Miners do this by complying with the \emph{Proof-of-Coverage} protocol which the blockchain network and other miners audit and verify. We use a \emph{Proof-of-Serialization} to ensure that miners are correctly representing their time in relation to others on the network, and obtain cryptographic proof of dishonest behavior. Several components of the Helium network, such as blocks in the blockchain, use \emph{Proof-of-Serialization} as a cryptographic "anchor" that root those occurences  with a cryptographic time proof. With a combination of \proofofcoverage/ and \emph{Proof-of-Serialization} we can obtain cryptographic proof of the approximate location and time of events occuring within Helium. \newline
+In the Helium network, miners must prove that they are providing wireless network coverage that devices are able to use to communicate with the internet. Miners do this by complying with the \emph{Proof-of-Coverage} protocol which the blockchain network and other miners audit and verify. We use a \emph{Proof-of-Serialization} to ensure that miners are correctly representing their time in relation to others on the network, and obtain cryptographic proof of dishonest behavior. Several components of the Helium network, such as blocks in the blockchain, use \emph{Proof-of-Serialization} as a cryptographic ``anchor'' that root those occurences  with a cryptographic time proof. With a combination of \proofofcoverage/ and \emph{Proof-of-Serialization} we can obtain cryptographic proof of the approximate location and time of events occuring within Helium. \newline
 
 In this section we outline the motivation and implementation for \proofofcoverage/ and \emph{Proof-of-Serialization}.
 
@@ -124,7 +124,7 @@ With \verb|PoC| we aim to solve for the following:
 	\item Our goal is to correctly identify which reality is honest when there is a conflict
 \end{itemize}
 
-\proofofcoverage/ is inspired by the \emph{Guided Tour Protocol (GTP)} which devises a system for denial of service prevention by requiring a client $\mathit{c}$ to make a request to a variety of "tour guide" computers $\mathit{G_n}$ in order to gain access to a server $\mathit{s}$. The tour guides must be visited in a specific order and a hash of data exchanged which reveals the location of the next $\mathit{G_n}$ in order. Only after every $\mathit{G_n}$ has been visited can $\mathit{c}$ gain access to $\mathit{s}$.\newline
+\proofofcoverage/ is inspired by the \emph{Guided Tour Protocol (GTP)} which devises a system for denial of service prevention by requiring a client $\mathit{c}$ to make a request to a variety of ``tour guide'' computers $\mathit{G_n}$ in order to gain access to a server $\mathit{s}$. The tour guides must be visited in a specific order and a hash of data exchanged which reveals the location of the next $\mathit{G_n}$ in order. Only after every $\mathit{G_n}$ has been visited can $\mathit{c}$ gain access to $\mathit{s}$.\newline
 
 Once $\mathit{c}$ gets to the last stop of the tour, it submits evidence of the first and last stop to $\mathit{s}$ who is able to verify that the first and last stops of the tour are correct without needing to contact $\mathit{G_n}$, and that $\mathit{c}$ could only know the first and last stops if it had completed the tour correctly.\newline
 
@@ -143,7 +143,7 @@ We aim to construct a proof that takes advantage of the following characteristic
 	\item RF travels at the speed of light with (effectively) no latency
 \end{enumerate}
 
-Our goal is to verify whether miners in a physical region are acting honestly and creating wireless network coverage compatible with the Helium wireless protocol (WHIP). To do this, a challenger $\mathit{C}$ deterministically constructs a multi-layer data packet $\mathit{O}$ which begins at an initial target, $\mathit{T}$, and is broadcast wirelessly to a set of sequential targets, $\mathit{T_n}$, each of which are only able to decrypt the outer-most layer of $\mathit{O}$ if they were the intended recipient. Each target acknowledges receipt, $\mathit{R_T}$, back to $\mathit{C}$, removes their layer of $\mathit{O}$, $\mathit{O}$\textsubscript{L-N}, and broadcasts it for receipt by the next target. Essentially, an "envelope of envelopes" only openable by the intended recipient.\newline
+Our goal is to verify whether miners in a physical region are acting honestly and creating wireless network coverage compatible with the Helium wireless protocol (WHIP). To do this, a challenger $\mathit{C}$ deterministically constructs a multi-layer data packet $\mathit{O}$ which begins at an initial target, $\mathit{T}$, and is broadcast wirelessly to a set of sequential targets, $\mathit{T_n}$, each of which are only able to decrypt the outer-most layer of $\mathit{O}$ if they were the intended recipient. Each target acknowledges receipt, $\mathit{R_T}$, back to $\mathit{C}$, removes their layer of $\mathit{O}$, $\mathit{O}$\textsubscript{L-N}, and broadcasts it for receipt by the next target. Essentially, an ``envelope of envelopes'' only openable by the intended recipient.\newline
 
 \begin{figure}[H]
 	\begin{center}
@@ -261,7 +261,7 @@ As in other implementations, $\mathit{b_n}$ consist of a hash of the previous bl
 	\end{tabular}
 \end{center}
 
-As the \emph{Proof-of-Coverage} [\ref{poc}] is valuable to the network, we store as many $\mathit{b_n}$ and their associated proof to $\mathit{B}$ as \emph{Uncle Blocks}, $\mathit{U_n}$. $\mathit{U_n}$, as described in the \emph{Greedy Heaviest-Observed Sub-Tree (GHOST)}~\cite{ghost} paper and implemented in Ethereum~\cite{ethereum}, allow a miner to earn block rewards even if their submitted block did not become the tip of the chain. $\mathit{U_n}$ help the winning chain accumulate 'weight' in terms of both the length and quality of the chain, but also including the amount and quality of $\mathit{U_n}$ and their associated proofs. This means that longer chain forks, either mined maliciously or on the smaller side of a partitioned network, will not be selected over a shorter, weightier chain. This also means that valuable proofs of work aren't lost and can be used by the chain to calculate trust.\newline
+As the \emph{Proof-of-Coverage} [\ref{poc}] is valuable to the network, we store as many $\mathit{b_n}$ and their associated proof to $\mathit{B}$ as \emph{Uncle Blocks}, $\mathit{U_n}$. $\mathit{U_n}$, as described in the \emph{Greedy Heaviest-Observed Sub-Tree (GHOST)}~\cite{ghost} paper and implemented in Ethereum~\cite{ethereum}, allow a miner to earn block rewards even if their submitted block did not become the tip of the chain. $\mathit{U_n}$ help the winning chain accumulate `weight' in terms of both the length and quality of the chain, but also including the amount and quality of $\mathit{U_n}$ and their associated proofs. This means that longer chain forks, either mined maliciously or on the smaller side of a partitioned network, will not be selected over a shorter, weightier chain. This also means that valuable proofs of work aren't lost and can be used by the chain to calculate trust.\newline
 
 \begin{figure}[H]
 	\begin{center}
@@ -298,7 +298,7 @@ We provide a brief overview of the miner cycle and the functions available to mi
 
 \begin{enumerate}
   \item \textbf{Stake}: A miner joins the network and deposits a stake.\newline
-  Talk about how the stake is the "U" shape proportional to the density of devices in that region.\newline
+  Talk about how the stake is the ``U'' shape proportional to the density of devices in that region.\newline
 
   \item \textbf{Assert Location}: A miner asserts their GPS location to the network.\newline
   Talk about how asserting location works (it's a type of transaction? etc) and that once it's been done that miner is ready to participate in the POC process.\newline
@@ -407,7 +407,7 @@ There are also eight FEC options:
 	\item None
 	\item Hamming 8,4
 	\item Golay 24,12
-	\item Reed-Solomon + Convulational coding (the "Voyager code")
+	\item Reed-Solomon + Convulational coding (the ``Voyager code'')
 	\item 4 Reserved for future expansion
 \end{itemize}
 
