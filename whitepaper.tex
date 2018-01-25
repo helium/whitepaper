@@ -27,7 +27,7 @@
 \newpage
 
 \begin{abstract}
-The world is becoming decentralized. A multitude of platforms, technologies, and services are moving from centralized proprietary systems to decentralized open ones. Peer-to-peer networks such as Napster \cite{napster} (created by Helium founder Shawn Fanning) and BitTorrent paved the way for blockchain networks and crypto-currencies to be built. Now Bitcoin, Ethereum, and other blockchain networks have proven the utility of decentralized transaction ledgers. Existing internet services such as file storage, identity verification, and the domain name system are being replaced by modern algorithmic versions. While software-level decentralization has moved quickly, physical networks are taking longer to affect. These networks are more complicated to decentralize as often specialized and expensive hardware is required in order for these systems to function.\newline
+The world is becoming decentralized. A multitude of platforms, technologies, and services are moving from centralized proprietary systems to decentralized open ones. Peer-to-peer networks such as Napster~\cite{napster} (created by Helium founder Shawn Fanning) and BitTorrent paved the way for blockchain networks and crypto-currencies to be built. Now Bitcoin, Ethereum, and other blockchain networks have proven the utility of decentralized transaction ledgers. Existing internet services such as file storage, identity verification, and the domain name system are being replaced by modern algorithmic versions. While software-level decentralization has moved quickly, physical networks are taking longer to affect. These networks are more complicated to decentralize as often specialized and expensive hardware is required in order for these systems to function.\newline
 \newline
 Helium is a \emph{decentralized wireless network} that creates wireless internet coverage for Internet of Things devices using an entirely new open-source wireless radio protocol called WHIP. The network runs on a blockchain with a native protocol token (simply called Helium) which miners earn by providing wireless internet access, via cost-effective open-source hardware, to devices. Devices use WHIP and spend Helium by paying miners to send data to and from the internet, and to geolocate themselves in physical space. As in Bitcoin miners compete to create new blocks in the blockchain, mining, for substantial rewards. Helium mining power is gained by providing wireless network coverage. This is far more useful than computing hashes and provides a directly useful service to devices; mining Helium is not computationally expensive and consumes a minimal amount of power, resulting in a system which provides a tremendous incentive for miners to grow the network. Devices using Helium are able to send and receive data to and from the internet several miles from the nearest miner, and devices within range of several miners can pay to geolocate themselves without needing any additional GPS hardware. Devices last for several years on small commodity batteries, and contain hardware private key stores which are used to securely authenticate against the corresponding public key in the Helium ledger. Data sent from devices is encrypted end to end, and has a cryptographic fingerprint stored in the blockchain to create a tamper-proof data trail.
 \newline\newline
@@ -104,7 +104,7 @@ In this section we outline the motivation and implementation for \proofofcoverag
 
 \subsection{Motivation}
 
-Most existing blockchain networks such as Bitcoin \cite{bitcoin} and Ethereum \cite{ethereum} use a \emph{Proof-of-Work} system that relies on an algorithmic puzzle that is asymmetric in nature. These proofs are extremely difficult to generate, but simple for a third party to verify. Security on these networks is achieved by the network-wide \emph{consensus} that the amount of computing power required to generate a valid proof is difficult to forge, and as subsequent blocks are added, the cumulative difficulty of the chain becoming realistically impossible to fabricate. \newline
+Most existing blockchain networks such as Bitcoin~\cite{bitcoin} and Ethereum~\cite{ethereum} use a \emph{Proof-of-Work} system that relies on an algorithmic puzzle that is asymmetric in nature. These proofs are extremely difficult to generate, but simple for a third party to verify. Security on these networks is achieved by the network-wide \emph{consensus} that the amount of computing power required to generate a valid proof is difficult to forge, and as subsequent blocks are added, the cumulative difficulty of the chain becoming realistically impossible to fabricate. \newline
 
 These computation-heavy proofs are, however, not otherwise \emph{useful} to the network. We define useful as work that is valuable to the network beyond securing the blockchain. While there have been attempts in other networks to turn mining power into something useful, such as Ethereum executing small programs, the majority of the work is not useful or reusable. The mining process is also extremely wasteful, as the determining factor in the work is typically computational power which consumes massive amounts of power and hardware to execute.\newline
 
@@ -128,7 +128,7 @@ With \verb|PoC| we aim to solve for the following:
 
 Once $\mathit{c}$ gets to the last stop of the tour, it submits evidence of the first and last stop to $\mathit{s}$ who is able to verify that the first and last stops of the tour are correct without needing to contact $\mathit{G_n}$, and that $\mathit{c}$ could only know the first and last stops if it had completed the tour correctly.\newline
 
-While an extremely clever and innovative system, GTP is not directly suitable as a proof in our wireless network as radio frequency (RF) networking has limited range and therefore cannot communicate with peers anywhere on the network. We aim to construct a proof loosely based on the ideas presented in GTP, but applicable to our protocol. We refer the interested reader to \cite{gtp} for a detailed articulation of the GTP protocol.\newline
+While an extremely clever and innovative system, GTP is not directly suitable as a proof in our wireless network as radio frequency (RF) networking has limited range and therefore cannot communicate with peers anywhere on the network. We aim to construct a proof loosely based on the ideas presented in GTP, but applicable to our protocol. We refer the interested reader to~\cite{gtp} for a detailed articulation of the GTP protocol.\newline
 
 We combine \proofofcoverage/ with \emph{Proof-of-Serialization} - a proof that allows miners on the network to achieve cryptographic time consensus among decentralized client. We aim to achieve rough time synchronization in a secure way that does not depend on any particular time server, and in such a way that, if a time server does misbehave, clients end up with cryptographic proof of that behavior.
 
@@ -261,7 +261,7 @@ As in other implementations, $\mathit{b_n}$ consist of a hash of the previous bl
 	\end{tabular}
 \end{center}
 
-As the \emph{Proof-of-Coverage} [\ref{poc}] is valuable to the network, we store as many $\mathit{b_n}$ and their associated proof to $\mathit{B}$ as \emph{Uncle Blocks}, $\mathit{U_n}$. $\mathit{U_n}$, as described in the \emph{Greedy Heaviest-Observed Sub-Tree (GHOST)} \cite{ghost} paper and implemented in Ethereum \cite{ethereum}, allow a miner to earn block rewards even if their submitted block did not become the tip of the chain. $\mathit{U_n}$ help the winning chain accumulate 'weight' in terms of both the length and quality of the chain, but also including the amount and quality of $\mathit{U_n}$ and their associated proofs. This means that longer chain forks, either mined maliciously or on the smaller side of a partitioned network, will not be selected over a shorter, weightier chain. This also means that valuable proofs of work aren't lost and can be used by the chain to calculate trust.\newline
+As the \emph{Proof-of-Coverage} [\ref{poc}] is valuable to the network, we store as many $\mathit{b_n}$ and their associated proof to $\mathit{B}$ as \emph{Uncle Blocks}, $\mathit{U_n}$. $\mathit{U_n}$, as described in the \emph{Greedy Heaviest-Observed Sub-Tree (GHOST)}~\cite{ghost} paper and implemented in Ethereum~\cite{ethereum}, allow a miner to earn block rewards even if their submitted block did not become the tip of the chain. $\mathit{U_n}$ help the winning chain accumulate 'weight' in terms of both the length and quality of the chain, but also including the amount and quality of $\mathit{U_n}$ and their associated proofs. This means that longer chain forks, either mined maliciously or on the smaller side of a partitioned network, will not be selected over a shorter, weightier chain. This also means that valuable proofs of work aren't lost and can be used by the chain to calculate trust.\newline
 
 \begin{figure}[H]
 	\begin{center}
@@ -413,7 +413,7 @@ There are also eight FEC options:
 
 We also have eight combinations of data rate and deviation, which vary from 300bps to 100,000bps.\newline
 
-The full WHIP wireless specification will be made available by the Helium Alliance \cite{alliance}.
+The full WHIP wireless specification will be made available by the Helium Alliance~\cite{alliance}.
 
 \subsection{Gateways} \label{gateways}
 
@@ -489,7 +489,7 @@ This document is the result of collaborative work by multiple members of the Hel
 
 We would like to extend our deepest thanks to Jeremy Rubin of the MIT Digital Currency Initiative. Your earliest feedback and direction was critical to some of the design decisions and evolution of this project. We also thank the Blockchain at Berkeley team for their help and detailed review of this work.\newline
 
-We would also like to acknowledge many of the prior works and inventions that have allowed us to create this project, most notably Bitcoin \cite{bitcoin} and Ethereum \cite{ethereum}. We would also like to extend our appreciation to Protocol Labs \cite{protocol} and Filecoin \cite{filecoin} who demonstrated a path for regulatory-compliant sales of protocols under development and pioneered work around the SAFT, which we have borrowed from heavily.
+We would also like to acknowledge many of the prior works and inventions that have allowed us to create this project, most notably Bitcoin~\cite{bitcoin} and Ethereum~\cite{ethereum}. We would also like to extend our appreciation to Protocol Labs~\cite{protocol} and Filecoin~\cite{filecoin} who demonstrated a path for regulatory-compliant sales of protocols under development and pioneered work around the SAFT, which we have borrowed from heavily.
 \newpage
 
 \begin{thebibliography}{9}
