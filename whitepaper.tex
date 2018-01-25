@@ -18,6 +18,9 @@
 \def\location/{$\mathit{L}$}
 \def\proofofcoverage/{\emph{Proof-of-Coverage}}
 
+\newcommand{\todo}[1]{}
+\renewcommand{\todo}[1]{{\color{red} TODO: {#1}}}
+
 \begin{document}
 
 \title{Helium --- A Decentralized Wireless Network}
@@ -203,9 +206,9 @@ $\mathit{C}$ expects to hear responses from $\mathit{T_n}$ within a time thresho
 
 \textbf{Scoring}. \label{scores} When miners join the Helium network, they are assigned a score, $\mathit{\phi}$, with a value of \textbf{0.500}. This score depreciates linearly per block at a rate of $\mathit{\phi = \phi - \frac{\phi}{10}}$. As $\mathit{\phi}$ decreases the probability of the miner $\mathit{M}$ being the target for $\mathit{C}$ increases such that the network continually attempts to prove that the lowest scoring miners are acting honestly, and giving miners a reasonable chance to improve their score.\newline
 
-For every target $\mathit{T_n}$ that hears $\mathit{O}$ in the \proofofcoverage/ and submits a signed receipt to $\mathit{C}$, $\mathit{T_n}$ gains a score equal to \textbf{SOME AMOUNT RELATIONAL TO THE PREVIOUS TARGET IN THE CHAIN}.\newline
+For every target $\mathit{T_n}$ that hears $\mathit{O}$ in the \proofofcoverage/ and submits a signed receipt to $\mathit{C}$, $\mathit{T_n}$ gains a score equal to \todo{some amount relational to the previous target in the chain}.\newline
 
-\textbf{Verifying the Proof}. Talk here about \textbf{HOW IS POC VERIFIED EASILY?}
+\textbf{Verifying the Proof}. Talk here about \todo{how is PoC verified easily?}
 
 \subsection{Constructing \emph{Proof-of-Serialization}}
 
@@ -217,7 +220,7 @@ For the second request, $\mathit{M}$ generates a sub-proof-kernel, $\mathit{L} =
 
 With only two servers, $\mathit{M}$ can end up with proof that something is wrong, but no idea what the correct time is. But with half a dozen or more independent servers, $\mathit{M}$ will end up with chain of proof of any server's misbehaviour, signed by several others, and enough accurate replies to establish what the correct time is, $\mathit{T^t}$.\newline
 
-\textbf{Utilizing the Proven Time}. Talk here about \textbf{THEN WHAT? HOW DOES ROUGHTIME GET USED AND BY WHOM? CONSTRUCT THIS SECTION IN THE SAME WAY AS POC ABOVE---PROFESSOR/RAHUL TO COMPLETE}
+\textbf{Utilizing the Proven Time}. \todo{Talk here about then what? how does roughtime get used and by whom? construct this section in the same way as poc above---professor/rahul to complete.}
 
 \newpage
 
@@ -281,11 +284,11 @@ We provide a brief overview of the device cycle and the functions available to d
 
 \begin{enumerate}
   \item \textbf{Join}: A device joins the \verb|DWN|.\newline
-  Devices join the network by \textbf{PROFESSOR TO COMPLETE THESE}\newline
+  Devices join the network by \todo{professor to complete these}\newline
 
   \item \textbf{Send}: A device sends data to a router on the internet, via a miner.\newline
   Devices can send data to their specificed router on the internet by paying miners Helium tokens.\newline\newline
-  A device intiates the sending process by broadcasting a packet via the wireless protocol. When a device broadcasts a packet any miners in a reasonable geographic area hear it. Each packet header contains the devices address, and miners inspect the blockchain using this address to determine which router this devices data should be delivered to. \textbf{HOW DOES THE PRICE THE DEVICE IS WILLING TO PAY AND THE MINER WILLING TO ACCEPT GET DETERMINED? IS IT STORED IN THE BLOCKCHAIN AS A TYPE OF TRANSACTION?}\newline
+  A device intiates the sending process by broadcasting a packet via the wireless protocol. When a device broadcasts a packet any miners in a reasonable geographic area hear it. Each packet header contains the devices address, and miners inspect the blockchain using this address to determine which router this devices data should be delivered to. \todo{how does the price the device is willing to pay and the miner willing to accept get determined? is it stored in the blockchain as a type of transaction?}\newline
 
   \item \textbf{Receive}: A device receives data from a router on the internet, via a miner.\newline
 
@@ -315,7 +318,7 @@ We provide a brief overview of the miner cycle and the functions available to mi
   \item \textbf{Submit}: A miner submits a new candidate block to the network containing a \proofofcoverage/.\newline
   Talk about how the block submission process works, how the network verifies the block, etc\newline
 
-  \item \textbf{ARE THERE OTHERS???}
+  \item \todo{are there others?}
 
 \end{enumerate}
 
@@ -324,7 +327,7 @@ We provide a brief overview of the miner cycle and the functions available to mi
 We provide a brief overview of the router cycle and the functions available to routers on the network.
 
 \begin{enumerate}
-  \item \textbf{LAY THESE OUT AS ABOVE}
+  \item \todo{lay these out as above}
 \end{enumerate}
 
 \newpage
@@ -352,7 +355,7 @@ In this section we describe the various transaction primitives.
 \begin{itemize}
   \item \textbf{assert\_location}: this transaction is used by miners joining the network. Etc etc etc etc
   \item \textbf{join\_network}: devices use this...
-  \item \textbf{MARC/PROFESSOR TO COMPLETE THESE}:
+  \item \todo{marc/professor to complete these}
 \end{itemize}
 
 \subsection{Fees}
