@@ -247,20 +247,13 @@ $\mathit{B}$ consists of blocks $\mathit{b_n}$, which contain a header and a lis
 As in other implementations, $\mathit{b_n}$ consist of a hash of the previous block in the chain, a set of transactions, and a proof. At a given epoch $\mathit{t}$ a block $\mathit{b_t}$ consists of the following:
 
 \begin{center}
-	\begin{tabular}{|c|}
-		\hline
+	\begin{tabular}{l}
 		 \emph{Proof-of-Serialization} [\ref{roughtime}]\\
-		 \hline
 		 Block Height \\
-		\hline
 		 Previous Block Hash \\
-		 \hline
 		 Transactions \emph{1..n} Merkle Hash $\mathit{T_t}$ \\
-		 \hline
 		 \emph{Proofs-of-Coverage} \\
-		 \hline
 		 Score \\
-		 \hline
 	\end{tabular}
 \end{center}
 
