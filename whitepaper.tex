@@ -20,14 +20,15 @@
 \clearpage
 \maketitle
 \thispagestyle{empty}
-\newpage
 
 \begin{abstract}
-The world is becoming decentralized. A multitude of platforms, technologies, and services are moving from centralized proprietary systems to decentralized open ones. Peer-to-peer networks such as Napster~\cite{napster} (created by Helium founder Shawn Fanning) and BitTorrent paved the way for blockchain networks and crypto-currencies to be built. Now Bitcoin, Ethereum, and other blockchain networks have proven the utility of decentralized transaction ledgers. Existing internet services such as file storage, identity verification, and the domain name system are being replaced by modern algorithmic versions. While software-level decentralization has moved quickly, physical networks are taking longer to affect. These networks are more complicated to decentralize as often specialized and expensive hardware is required in order for these systems to function.\newline
+The Internet of Things (IoT) is a \textdollar1.6 trillion industry, with over 8.4 billion connected devices online, and predicted to more than double over the next 2 years. All of these devices need to connect to the internet in order to function, however current solutions such as cellular, WiFi, and Bluetooth are lacking: they're too expensive, too power hungry or too limited in range.
 \newline
-Helium is a \emph{decentralized wireless network} that creates wireless internet coverage for Internet of Things devices using an entirely new open-source wireless radio protocol called WHIP\@. The network runs on a blockchain with a native protocol token (simply called Helium) which miners earn by providing wireless internet access, via cost-effective open-source hardware, to devices. Devices use the WHIP and spend Helium by paying miners to send data to and from the internet, and to geolocate themselves in physical space. As in Bitcoin miners compete to create new blocks in the blockchain, mining, for substantial rewards. Helium mining power is gained by providing wireless network coverage. This is far more useful than computing hashes and provides a directly useful service to devices; mining Helium is not computationally expensive and consumes a minimal amount of power, resulting in a system which provides a tremendous incentive for miners to grow the network. Devices using Helium are able to send and receive data to and from the internet several miles from the nearest miner, and devices within range of several miners can pay to geolocate themselves without needing any additional GPS hardware. Devices last for several years on small commodity batteries, and contain hardware private key stores which are used to securely authenticate against the corresponding public key in the Helium ledger. Data sent from devices is encrypted end to end, and has a cryptographic fingerprint stored in the blockchain to create a tamper-proof data trail.
-\newline\newline
-Helium has a huge variety of uses in a wide variety of sensing and location tracking applications and is the first decentralized wide area network of its kind.
+\newline
+Helium is a \emph{decentralized wireless network} for IoT devices that enables devices anywhere in the world to connect to the internet and geolocate themselves without the need for power-hungry satellite location hardware or expensive cellular plans. Powering the network is a blockchain with a native protocol token incentivizing a two-sided marketplace between coverage providers and coverage consumers. With the introduction of a blockchain, Helium injects decentralization into an industry currently controlled by monopolistic companies. The end result is that IoT coverage becomes a utility, fueled by competition, available anywhere in the world, at a fraction of current costs.
+\newline
+\newline
+Helium's secure and open-source primitives enable developers to build low-power, internet-connected devices easily and cost-effectively. Helium has a wide variety of applications across industries and is the first decentralized wide area network of its kind.
 \end{abstract}
 
 \newpage
@@ -36,6 +37,8 @@ Helium has a huge variety of uses in a wide variety of sensing and location trac
 \newpage
 
 \section{Introduction}
+
+The world is becoming decentralized. A multitude of platforms, technologies, and services are moving from centralized proprietary systems to decentralized open ones. Peer-to-peer networks such as Napster~\cite{napster} (created by Helium founder Shawn Fanning) and BitTorrent paved the way for blockchain networks and crypto-currencies to be built. Now Bitcoin, Ethereum, and other blockchain networks have proven the utility of decentralized transaction ledgers. Existing internet services such as file storage, identity verification, and the domain name system are being replaced by modern algorithmic versions. While software-level decentralization has moved quickly, physical networks are taking longer to affect. These networks are more complicated to decentralize as often specialized and expensive hardware is required in order for these systems to function.\newline
 
 Helium is a wide-area wireless networking system, a blockchain and a protocol token. The blockchain runs on a new kind of proof, called \emph{Proof-of-Coverage}, where blocks are created by miners who are providing wireless network coverage in a cryptographically verified physical location and time. The Helium protocol provides a bi-directional data transfer system between wireless devices and the Internet via a network of independent providers that does not rely on a single coordinator, where: (1) devices pay to send \& receive data to the internet and geolocate themselves, (2) miners earn tokens for providing network coverage, and (3) miners earn fees from transactions, and for validating the integrity of the network.
 
