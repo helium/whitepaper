@@ -1,5 +1,7 @@
+.PHONY: build
 build:
-	@pdflatex whitepaper.tex
+	@latexmk -pdf -output-directory=build whitepaper.tex
 
+.PHONY: clean
 clean:
-	@find -E . -regex '.*\.(aux|brf|log|out|pdf|toc)' -delete
+	@rm -rf build
