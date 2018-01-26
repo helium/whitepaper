@@ -2,21 +2,12 @@
 
 \usepackage[backref=section, linkbordercolor={1 1 1}, urlbordercolor={1 1 1}, citebordercolor={1 1 1}]{hyperref}
 \usepackage{algorithm2e}
-\usepackage{euler}
 \usepackage{cite}
 \usepackage{color}
-\usepackage{dutchcal}
 \usepackage{float}
 \usepackage{graphicx}
 
 \graphicspath{ {images/} }
-
-\def\prover/{$\mathit{P}$}
-\def\verifier/{$\mathit{V}$}
-\def\coverage/{$\mathit{W}$}
-\def\device/{$\mathit{D}$}
-\def\location/{$\mathit{L}$}
-\def\proofofcoverage/{\emph{Proof-of-Coverage}}
 
 \newcommand{\todo}[1]{}
 \renewcommand{\todo}[1]{{\color{red} TODO:\ {#1}}}
@@ -46,7 +37,7 @@ Helium has a huge variety of uses in a wide variety of sensing and location trac
 
 \section{Introduction}
 
-Helium is a wide-area wireless networking system, a blockchain and a protocol token. The blockchain runs on a new kind of proof, called \proofofcoverage/, where blocks are created by miners who are providing wireless network coverage in a cryptographically verified physical location and time. The Helium protocol provides a bi-directional data transfer system between wireless devices and the Internet via a network of independent providers that does not rely on a single coordinator, where: (1) devices pay to send \& receive data to the internet and geolocate themselves, (2) miners earn tokens for providing network coverage, and (3) miners earn fees from transactions, and for validating the integrity of the network.
+Helium is a wide-area wireless networking system, a blockchain and a protocol token. The blockchain runs on a new kind of proof, called \emph{Proof-of-Coverage}, where blocks are created by miners who are providing wireless network coverage in a cryptographically verified physical location and time. The Helium protocol provides a bi-directional data transfer system between wireless devices and the Internet via a network of independent providers that does not rely on a single coordinator, where: (1) devices pay to send \& receive data to the internet and geolocate themselves, (2) miners earn tokens for providing network coverage, and (3) miners earn fees from transactions, and for validating the integrity of the network.
 
 \subsection{Philosophy}
 
@@ -69,7 +60,7 @@ Helium exists due to a set of core beliefs that have driven every component and 
 Helium is built around the following key components:
 
 \begin{enumerate}
-  \item \textbf{\proofofcoverage/}: we present a computationally-inexpensive \proofofcoverage/ that allows miners to prove they are capable of providing wireless network coverage. We anchor these proofs using a \emph{Proof-of-Serialization} that allows miners to prove they are accurately representing time relative to others on the network in a crytographically secure way.
+  \item \textbf{\emph{Proof-of-Coverage}}: we present a computationally-inexpensive \emph{Proof-of-Coverage} that allows miners to prove they are capable of providing wireless network coverage. We anchor these proofs using a \emph{Proof-of-Serialization} that allows miners to prove they are accurately representing time relative to others on the network in a crytographically secure way.
 
   \item \textbf{Blockchain Network}: we demonstrate an entirely new purpose-built blockchain network built to service the \emph{Wireless Protocol} and provide a system for authenticating and identifying devices, providing cryptographic guarantees of data transmission and authenticity, offer transaction primitives designed around the wireless protocol, and more.
 
@@ -88,7 +79,7 @@ Helium is built around the following key components:
 	\item Miners join the network by asserting their satellite-derived location, a special type of transaction in the blockchain, and staking a token deposit.
 	\item Miners specify the price they're willing to accept for data transport and geolocation, and devices specify the price they are willing to pay. Miners are paid once they prove they have delivered data to the devices' specified router.
 	\item Miners can particpate in the creation of new blocks in the blockchain, for which they are rewarded newly minted Helium. A miners probability of mining the next block is approximately equal to the amount of wireless network coverage being provided.
-	\item The blockchain employs \proofofcoverage/ to guarantee that miners are correctly representing the amount of wireless network coverage they are creating.
+	\item The blockchain employs \emph{Proof-of-Coverage} to guarantee that miners are correctly representing the amount of wireless network coverage they are creating.
 \end{itemize}
 
 \begin{figure}[H]
@@ -101,11 +92,11 @@ Helium is built around the following key components:
 
 \newpage
 
-\section{\proofofcoverage/ \& \emph{Proof-of-Serialization}}\label{poc}
+\section{\emph{Proof-of-Coverage} \& \emph{Proof-of-Serialization}}\label{poc}
 
-In the Helium network, miners must prove that they are providing wireless network coverage that devices are able to use to communicate with the internet. Miners do this by complying with the \emph{Proof-of-Coverage} protocol which the blockchain network and other miners audit and verify. We use a \emph{Proof-of-Serialization} to ensure that miners are correctly representing their time in relation to others on the network, and obtain cryptographic proof of dishonest behavior. Several components of the Helium network, such as blocks in the blockchain, use \emph{Proof-of-Serialization} as a cryptographic ``anchor'' that root those occurences  with a cryptographic time proof. With a combination of \proofofcoverage/ and \emph{Proof-of-Serialization} we can obtain cryptographic proof of the approximate location and time of events occuring within Helium. \newline
+In the Helium network, miners must prove that they are providing wireless network coverage that devices are able to use to communicate with the internet. Miners do this by complying with the \emph{Proof-of-Coverage} protocol which the blockchain network and other miners audit and verify. We use a \emph{Proof-of-Serialization} to ensure that miners are correctly representing their time in relation to others on the network, and obtain cryptographic proof of dishonest behavior. Several components of the Helium network, such as blocks in the blockchain, use \emph{Proof-of-Serialization} as a cryptographic ``anchor'' that root those occurences  with a cryptographic time proof. With a combination of \emph{Proof-of-Coverage} and \emph{Proof-of-Serialization} we can obtain cryptographic proof of the approximate location and time of events occuring within Helium. \newline
 
-In this section we outline the motivation and implementation for \proofofcoverage/ and \emph{Proof-of-Serialization}.
+In this section we outline the motivation and implementation for \emph{Proof-of-Coverage} and \emph{Proof-of-Serialization}.
 
 \subsection{Motivation}
 
@@ -115,11 +106,11 @@ These computation-heavy proofs are, however, not otherwise \emph{useful} to the 
 
 The proofs used in Helium must be resistant to \emph{Sybil Attacks} in which dishonest miners create pseudonymous identities and use them to subvert the network and gain access to block rewards to which they should not be entitled. This is a particularly difficult attack vector to manage in a physical network like Helium. We must also be resistant to a new attack vector: \emph{Alternate Reality Attacks} exist where a dishonest group of miners are able to simluate that wireless network coverage exists in the physical world when it in fact does not. An example of this would be running the mining software on a set of virtual machines and simulating GPS coordinates and RF networking.\newline
 
-We later propose a consensus protocol [\ref{consensus}] that uses \proofofcoverage/ to both secure the blockchain and provide an extremely useful service to the network; providing wireless network coverage that devices can use to send data to and from the internet.
+We later propose a consensus protocol [\ref{consensus}] that uses \emph{Proof-of-Coverage} to both secure the blockchain and provide an extremely useful service to the network; providing wireless network coverage that devices can use to send data to and from the internet.
 
 \subsection{Inspiration}
 
-\proofofcoverage/ (\verb|PoC|) is an innovative proof which allows miners to prove that they are providing wireless network coverage \coverage/ in a specific region to a challenger, $\mathit{C}$. \verb|PoC| is an interactive protocol where a set of targets $\mathit{T_n}$ assert that \coverage/ exists in a specific GPS location \location/ and then convinces $\mathit{C}$ that $\mathit{T_n}$ are in fact creating \coverage/ and that said coverage must have been created using the wireless RF network. \verb|PoC| is the first such protocol that attempts to prove the veracity of miners in a physical space, and then use it to achieve consensus on a blockchain network.\newline
+\emph{Proof-of-Coverage} (\verb|PoC|) is an innovative proof which allows miners to prove that they are providing wireless network coverage $W$ in a specific region to a challenger, $C$. \verb|PoC| is an interactive protocol where a set of targets $T_n$ assert that $W$ exists in a specific GPS location $L$ and then convinces $C$ that $T_n$ are in fact creating $W$ and that said coverage must have been created using the wireless RF network. \verb|PoC| is the first such protocol that attempts to prove the veracity of miners in a physical space, and then use it to achieve consensus on a blockchain network.\newline
 
 With \verb|PoC| we aim to solve for the following:
 
@@ -129,17 +120,17 @@ With \verb|PoC| we aim to solve for the following:
 	\item Our goal is to correctly identify which reality is honest when there is a conflict
 \end{itemize}
 
-\proofofcoverage/ is inspired by the \emph{Guided Tour Protocol (GTP)} which devises a system for denial of service prevention by requiring a client $\mathit{c}$ to make a request to a variety of ``tour guide'' computers $\mathit{G_n}$ in order to gain access to a server $\mathit{s}$. The tour guides must be visited in a specific order and a hash of data exchanged which reveals the location of the next $\mathit{G_n}$ in order. Only after every $\mathit{G_n}$ has been visited can $\mathit{c}$ gain access to $\mathit{s}$.\newline
+\emph{Proof-of-Coverage} is inspired by the \emph{Guided Tour Protocol (GTP)} which devises a system for denial of service prevention by requiring a client $c$ to make a request to a variety of ``tour guide'' computers $G_n$ in order to gain access to a server $s$. The tour guides must be visited in a specific order and a hash of data exchanged which reveals the location of the next $G_n$ in order. Only after every $G_n$ has been visited can $c$ gain access to $s$.\newline
 
-Once $\mathit{c}$ gets to the last stop of the tour, it submits evidence of the first and last stop to $\mathit{s}$ who is able to verify that the first and last stops of the tour are correct without needing to contact $\mathit{G_n}$, and that $\mathit{c}$ could only know the first and last stops if it had completed the tour correctly.\newline
+Once $c$ gets to the last stop of the tour, it submits evidence of the first and last stop to $s$ who is able to verify that the first and last stops of the tour are correct without needing to contact $G_n$, and that $c$ could only know the first and last stops if it had completed the tour correctly.\newline
 
 While an extremely clever and innovative system, GTP is not directly suitable as a proof in our wireless network as radio frequency (RF) networking has limited range and therefore cannot communicate with peers anywhere on the network. We aim to construct a proof loosely based on the ideas presented in GTP, but applicable to our protocol. We refer the interested reader to~\cite{gtp} for a detailed articulation of the GTP protocol.\newline
 
-We combine \proofofcoverage/ with \emph{Proof-of-Serialization}---a proof that allows miners on the network to achieve cryptographic time consensus among decentralized client. We aim to achieve rough time synchronization in a secure way that does not depend on any particular time server, and in such a way that, if a time server does misbehave, clients end up with cryptographic proof of that behavior.
+We combine \emph{Proof-of-Coverage} with \emph{Proof-of-Serialization}---a proof that allows miners on the network to achieve cryptographic time consensus among decentralized client. We aim to achieve rough time synchronization in a secure way that does not depend on any particular time server, and in such a way that, if a time server does misbehave, clients end up with cryptographic proof of that behavior.
 
-\subsection{Constructing \proofofcoverage/}
+\subsection{Constructing \emph{Proof-of-Coverage}}
 
-This section describes the construction of the \proofofcoverage/ protocol.\newline
+This section describes the construction of the \emph{Proof-of-Coverage} protocol.\newline
 
 We aim to construct a proof that takes advantage of the following characteristics of radio frequency (RF) communication that are unique and different to internet communication:
 
@@ -148,7 +139,7 @@ We aim to construct a proof that takes advantage of the following characteristic
 	\item RF travels at the speed of light with (effectively) no latency
 \end{enumerate}
 
-Our goal is to verify whether miners in a physical region are acting honestly and creating wireless network coverage compatible with the Helium wireless protocol (WHIP). To do this, a challenger $\mathit{C}$ deterministically constructs a multi-layer data packet $\mathit{O}$ which begins at an initial target, $\mathit{T}$, and is broadcast wirelessly to a set of sequential targets, $\mathit{T_n}$, each of which are only able to decrypt the outer-most layer of $\mathit{O}$ if they were the intended recipient. Each target acknowledges receipt, $\mathit{R_T}$, back to $\mathit{C}$, removes their layer of $\mathit{O}$, $\mathit{O}$\textsubscript{L-N}, and broadcasts it for receipt by the next target. Essentially, an ``envelope of envelopes'' only openable by the intended recipient.\newline
+Our goal is to verify whether miners in a physical region are acting honestly and creating wireless network coverage compatible with the Helium wireless protocol (WHIP). To do this, a challenger $C$ deterministically constructs a multi-layer data packet $O$ which begins at an initial target, $T$, and is broadcast wirelessly to a set of sequential targets, $T_n$, each of which are only able to decrypt the outer-most layer of $O$ if they were the intended recipient. Each target acknowledges receipt, $R_T$, back to $C$, removes their layer of $O$, $O$\textsubscript{L-N}, and broadcasts it for receipt by the next target. Essentially, an ``envelope of envelopes'' only openable by the intended recipient.\newline
 
 \begin{figure}[H]
 	\begin{center}
@@ -158,57 +149,57 @@ Our goal is to verify whether miners in a physical region are acting honestly an
  	\end{center}
 \end{figure}
 
-\textbf{Selecting the Initial Target}. We aim to deterministically locate an initial target, $\mathit{T}$, for the challenger, $\mathit{C}$. $\mathit{T}$ does not need to be geographically proximate to $\mathit{C}$. To locate $\mathit{T}$, $\mathit{C}$ uses a \emph{consistent hash ring} $\mathit{\omega}$ of potential miners. $\mathit{\omega}$ only contains miners eligible as targets as described in [\ref{mining}], and miners are allocated portions of $\mathit{\omega}$ that are inversely proportional to their score, increasing the probability of potentially dishonest miners being targeted. Given that a miners score is diminishing linearly over time, it is necessary to create this inverse relationship to give low-scoring miners an opportunity to participate in the process and increase their score.\newline
+\textbf{Selecting the Initial Target}. We aim to deterministically locate an initial target, $T$, for the challenger, $C$. $T$ does not need to be geographically proximate to $C$. To locate $T$, $C$ uses a \emph{consistent hash ring} $\omega$ of potential miners. $\omega$ only contains miners eligible as targets as described in [\ref{mining}], and miners are allocated portions of $\omega$ that are inversely proportional to their score, increasing the probability of potentially dishonest miners being targeted. Given that a miners score is diminishing linearly over time, it is necessary to create this inverse relationship to give low-scoring miners an opportunity to participate in the process and increase their score.\newline
 
-\textbf{Constructing the multi-layer challenge}. Once $\mathit{T}$ has been selected, $\mathit{C}$ must construct a multi-layer challenge, $\mathit{O}$. $\mathit{O}$ is a data packet broadcast by $\mathit{T}$ over the wireless network and received by geographcially proximate targets $\mathit{T_n}$. The number of layers of $\mathit{O}$ to be assembled is defined as $\mathit{O_L = \log \left(T_n = \pi50^2\right)}$ from the location of $\mathit{T}$. Each layer of $\mathit{O}$, $\mathit{O_l}$, consists of a two-tuple of $\mathit{E\left(S, R\right)}$, where $\mathit{E}$ is a secure public key encryption function, $\mathit{S}$ is a secret encrypted with the public key of $\mathit{T_n}$, and $\mathit{R}$ is the remainder of $\mathit{O}$ consisting of recursive two-tuples.\newline
+\textbf{Constructing the multi-layer challenge}. Once $T$ has been selected, $C$ must construct a multi-layer challenge, $O$. $O$ is a data packet broadcast by $T$ over the wireless network and received by geographcially proximate targets $T_n$. The number of layers of $O$ to be assembled is defined as $O_L = \log \left(T_n = \pi50^2\right)$ from the location of $T$. Each layer of $O$, $O_l$, consists of a two-tuple of $E\left(S, R\right)$, where $E$ is a secure public key encryption function, $S$ is a secret encrypted with the public key of $T_n$, and $R$ is the remainder of $O$ consisting of recursive two-tuples.\newline
 
-The construction logic of $\mathit{O}$ is as follows:
+The construction logic of $O$ is as follows:
 
 \begin{enumerate}
-  \item A set of candidate $\mathit{T_n}$ are created within a geometric circle of an unpredictable but determinstic radius $\mathit{r}$ (in miles) of $\mathit{T}$, simply defined as $\mathit{A = \pi r^2}$
-  \item A single $\mathit{T_n}$ within $\mathit{A}$ is psuedo-randomly selected as the first target for $\mathit{O}$, and designated as $\mathit{T_1}$
-  \item A layer $\mathit{O_l}$ is created and $\mathit{S}$ is encrypted with the public key of $\mathit{T_1}$ retrieved from the blockchain [\ref{devices}]
-  \item The next set of candidate $\mathit{T_n}$ are generated by inspecting a geographic area proximate to $\mathit{T_1}$, $\mathit{A_1 = \pi r^2}$
-  \item A single $\mathit{T_n}$ within $\mathit{A_1}$ is again pseudo-randomly selected as the next layer of $\mathit{O}$, and designated as $\mathit{T_2}$
-  \item This cycle repeats until a number of $\mathit{T_n}$ and $\mathit{O_l}$ equal to $\mathit{O_L}$ is reached
-  \item The pseudo-random function used to determine $\mathit{T_1}$..$\mathit{T_L}$ is constructed using a hash of the current block $\mathit{B_t}$ as a seed, such that the selection process for $\mathit{T_n}$ is deterministic and therefore verifiable by others on the network
+  \item A set of candidate $T_n$ are created within a geometric circle of an unpredictable but determinstic radius $r$ (in miles) of $T$, simply defined as $A = \pi r^2$
+  \item A single $T_n$ within $A$ is psuedo-randomly selected as the first target for $O$, and designated as $T_1$
+  \item A layer $O_l$ is created and $S$ is encrypted with the public key of $T_1$ retrieved from the blockchain [\ref{devices}]
+  \item The next set of candidate $T_n$ are generated by inspecting a geographic area proximate to $T_1$, $A_1 = \pi r^2$
+  \item A single $T_n$ within $A_1$ is again pseudo-randomly selected as the next layer of $O$, and designated as $T_2$
+  \item This cycle repeats until a number of $T_n$ and $O_l$ equal to $O_L$ is reached
+  \item The pseudo-random function used to determine $T_1$..$T_L$ is constructed using a hash of the current block $B_t$ as a seed, such that the selection process for $T_n$ is deterministic and therefore verifiable by others on the network
 \end{enumerate}
 
-The resulting $\mathit{O}$ can be visually represented as the following:\newline
+The resulting $O$ can be visually represented as the following:\newline
 
 \begin{figure}[H]
 	\begin{center}
   		\includegraphics[width=\textwidth]{diagram3.eps}
-  		\caption{\emph{Construction of $\mathit{O}$}}
+  		\caption{\emph{Construction of $O$}}
   		\label{fig:onion-packet}
  	\end{center}
 \end{figure}
 
-\textbf{Creating the Proof}. Once $\mathit{O}$ has been constructed and delivered to $\mathit{T}$, $\mathit{T}$ immediately broadcasts it. The Helium wireless protocol is not a point-to-point system, so several miners within proximity of $\mathit{T}$ will hear $\mathit{O}$. As described prior, each layer $\mathit{O_l}$ of $\mathit{O}$ contains the following two-tuple: \[\mathit{E\left(S, R\right)}\] where $\mathit{E}$ is a secure public key encryption function, $\mathit{S}$ is a secret encrypted with the public key of $\mathit{T_1}$, and $\mathit{R}$ is the remainder of $\mathit{O}$ consisting of recursive two-tuples. In this specific example, only the specific target $\mathit{T_1}$ will be able to decrypt $\mathit{S}$ and send a valid receipt back to the challenger, $\mathit{C}$.\newline
+\textbf{Creating the Proof}. Once $O$ has been constructed and delivered to $T$, $T$ immediately broadcasts it. The Helium wireless protocol is not a point-to-point system, so several miners within proximity of $T$ will hear $O$. As described prior, each layer $O_l$ of $O$ contains the following two-tuple: \[\mathit{E\left(S, R\right)}\] where $E$ is a secure public key encryption function, $S$ is a secret encrypted with the public key of $T_1$, and $R$ is the remainder of $O$ consisting of recursive two-tuples. In this specific example, only the specific target $T_1$ will be able to decrypt $S$ and send a valid receipt back to the challenger, $C$.\newline
 
-We describe the approximate flow of \proofofcoverage/ creation as follows:
+We describe the approximate flow of \emph{Proof-of-Coverage} creation as follows:
 
 \begin{enumerate}
-  \item $\mathit{T}$ receives $\mathit{O}$ from $\mathit{C}$ via the peer-to-peer internet network and immediately broadcasts it via the wireless network
-  \item $\mathit{T_1}$ hears $\mathit{O}$ and attempts to decrypt the value of $\mathit{S}$ by using its public key $\mathit{pk:\ E_{pk}\left(S\right)}$
-  \item If successful, $\mathit{T_1}$ then creates signed receipt $\mathit{R_{t1} = H\left(K_s \right)}$ where $\mathit{H}$ is a secure cryptographic hash function, and $\mathit{K_S}$ is $\mathit{S}$ signed by the private key of $\mathit{T_1}$
-  \item $\mathit{T_1}$ submits $\mathit{R}$\textsubscript{t1} to $\mathit{C}$ via the peer-to-peer internet network, removes the outer most layer, and wirelessly broadcasts the remainder $\mathit{O}$
-  \item These steps repeat for $\mathit{T_2}$..$\mathit{T_L}$, with $\mathit{T_L}$ being the last target constructed by $\mathit{C}$
+  \item $T$ receives $O$ from $C$ via the peer-to-peer internet network and immediately broadcasts it via the wireless network
+  \item $T_1$ hears $O$ and attempts to decrypt the value of $S$ by using its public key $pk:\ E_{pk}\left(S\right)$
+  \item If successful, $T_1$ then creates signed receipt $R_{t1} = H\left(K_s \right)$ where $H$ is a secure cryptographic hash function, and $K_S$ is $S$ signed by the private key of $T_1$
+  \item $T_1$ submits $R$\textsubscript{t1} to $C$ via the peer-to-peer internet network, removes the outer most layer, and wirelessly broadcasts the remainder $O$
+  \item These steps repeat for $T_2$..$T_L$, with $T_L$ being the last target constructed by $C$
 \end{enumerate}
 
-$\mathit{C}$ expects to hear responses from $\mathit{T_n}$ within a time threshold $\mathit{\lambda}$, otherwise it considers the \proofofcoverage/ to have concluded.\newline
+$C$ expects to hear responses from $T_n$ within a time threshold $\lambda$, otherwise it considers the \emph{Proof-of-Coverage} to have concluded.\newline
 
 \begin{figure}[H]
 	\begin{center}
   		\includegraphics[width=\textwidth]{diagram4.eps}
-  		\caption{\emph{\proofofcoverage/ flow}}
+  		\caption{\emph{\emph{Proof-of-Coverage} flow}}
   		\label{fig:poc-flow}
  	\end{center}
 \end{figure}
 
-\textbf{Scoring}\label{scores} When miners join the Helium network, they are assigned a score, $\mathit{\phi}$, with a value of \textbf{0.500}. This score depreciates linearly per block at a rate of $\mathit{\phi = \phi - \frac{\phi}{10}}$. As $\mathit{\phi}$ decreases the probability of the miner $\mathit{M}$ being the target for $\mathit{C}$ increases such that the network continually attempts to prove that the lowest scoring miners are acting honestly, and giving miners a reasonable chance to improve their score.\newline
+\textbf{Scoring}\label{scores} When miners join the Helium network, they are assigned a score, $\phi$, with a value of \textbf{0.500}. This score depreciates linearly per block at a rate of $\phi = \phi - \frac{\phi}{10}$. As $\phi$ decreases the probability of the miner $M$ being the target for $C$ increases such that the network continually attempts to prove that the lowest scoring miners are acting honestly, and giving miners a reasonable chance to improve their score.\newline
 
-For every target $\mathit{T_n}$ that hears $\mathit{O}$ in the \proofofcoverage/ and submits a signed receipt to $\mathit{C}$, $\mathit{T_n}$ gains a score equal to \todo{some amount relational to the previous target in the chain}.
+For every target $T_n$ that hears $O$ in the \emph{Proof-of-Coverage} and submits a signed receipt to $C$, $T_n$ gains a score equal to \todo{some amount relational to the previous target in the chain}.
 
 \textbf{Verifying the Proof}. Talk here about \todo{how is PoC verified easily?}
 
@@ -216,11 +207,11 @@ For every target $\mathit{T_n}$ that hears $\mathit{O}$ in the \proofofcoverage/
 
 This section describes the construction of the \emph{Proof-of-Serialization} protocol.\newline
 
-\textbf{Creating the Proof}. First, a miner $\mathit{M}$ pseudo-randomly picks two miners $\mathit{M^1}$ and $\mathit{M^2}$, to prove contact serialization with. It is assumed $\mathit{M}$ has a public key for $\mathit{M^1}$ and $\mathit{M^2}$ (otherwise $\mathit{M}$ should obtain it from the blockchain). $\mathit{M}$ then generates a salted\footnote{the salt is a 512-bit SHA of $\mathit{T^t}$ of $\mathit{b^n R}$} hash commitment $\mathit{K}$ called the \emph{proof-kernel}. The proof-kernel is a commitment to what claim is desired to be proven. \[\mathit{K = H\left(R || M^1 || M^2\right)}\] $\mathit{M}$ sends $\mathit{K}$ to $\mathit{M^1}$. $\mathit{M^1}$ replies with $\mathit{T}$, a signed message including the current time and $\mathit{K}$. $\mathit{M}$ knows that the reply from $\mathit{M^1}$ was not pre-generated because it includes the nonce $R$ that the $\mathit{M}$ generated. Because $\mathit{M}$ doesn't completely trust $\mathit{M^1}$ it will ask for another time from $\mathit{M^2}$.\newline
+\textbf{Creating the Proof}. First, a miner $M$ pseudo-randomly picks two miners $M^1$ and $M^2$, to prove contact serialization with. It is assumed $M$ has a public key for $M^1$ and $M^2$ (otherwise $M$ should obtain it from the blockchain). $M$ then generates a salted\footnote{the salt is a 512-bit SHA of $T^t$ of $b^n R$} hash commitment $K$ called the \emph{proof-kernel}. The proof-kernel is a commitment to what claim is desired to be proven. \[\mathit{K = H\left(R || M^1 || M^2\right)}\] $M$ sends $K$ to $M^1$. $M^1$ replies with $T$, a signed message including the current time and $K$. $M$ knows that the reply from $M^1$ was not pre-generated because it includes the nonce $R$ that the $M$ generated. Because $M$ doesn't completely trust $M^1$ it will ask for another time from $M^2$.\newline
 
-For the second request, $\mathit{M}$ generates a sub-proof-kernel, $\mathit{L} = \mathit{H}(R || \mathit{T} || \mathit{K})$, and sends it to $\mathit{M^2}$. $\mathit{M^2}$ replies with $\mathit{U}$, a signed message including the current time and $\mathit{L}$. $\mathit{U}$ is now a proof artifact that shows that $\mathit{M}$ desired and then proved a serialization between $\mathit{M^1}$ and $\mathit{M^2}$. Let's assume that the times from $\mathit{M^1}$ and $\mathit{M^2}$ are significantly different. If the time from $\mathit{M^2}$ is before $\mathit{M^1}$, then $\mathit{M}$ has proof of misbehaviour; the reply from $\mathit{M^2}$ implicitly shows that it was created later because of the way that $\mathit{M}$ constructed the nonce. If the time from $\mathit{M^2}$ is after, then $\mathit{M}$ can reverse the roles of $\mathit{M^1}$ and $\mathit{M^2}$ and repeat the process to obtain, assuming steady clocks, a misordered proof as in the other case.\newline
+For the second request, $M$ generates a sub-proof-kernel, $L = H\left(R || T || K\right)$, and sends it to $M^2$. $M^2$ replies with $U$, a signed message including the current time and $L$. $U$ is now a proof artifact that shows that $M$ desired and then proved a serialization between $M^1$ and $M^2$. Let's assume that the times from $M^1$ and $M^2$ are significantly different. If the time from $M^2$ is before $M^1$, then $M$ has proof of misbehaviour; the reply from $M^2$ implicitly shows that it was created later because of the way that $M$ constructed the nonce. If the time from $M^2$ is after, then $M$ can reverse the roles of $M^1$ and $M^2$ and repeat the process to obtain, assuming steady clocks, a misordered proof as in the other case.\newline
 
-With only two servers, $\mathit{M}$ can end up with proof that something is wrong, but no idea what the correct time is. But with half a dozen or more independent servers, $\mathit{M}$ will end up with chain of proof of any server's misbehaviour, signed by several others, and enough accurate replies to establish what the correct time is, $\mathit{T^t}$.\newline
+With only two servers, $M$ can end up with proof that something is wrong, but no idea what the correct time is. But with half a dozen or more independent servers, $M$ will end up with chain of proof of any server's misbehaviour, signed by several others, and enough accurate replies to establish what the correct time is, $T^t$.\newline
 
 \textbf{Utilizing the Proven Time}. \todo{Talk here about then what? how does roughtime get used and by whom? construct this section in the same way as poc above---professor/rahul to complete.}
 
@@ -242,24 +233,24 @@ Any user can participate as a Device, a Miner, or a Router.
 
 \subsection{Blockchain}
 
-The Helium blockchain is a new type of ledger designed to provide a cost-effective way to run application logic core to the operation of a \verb|DWN|, store immutable device data fingerprints, and furnish a transaction system. We will refer to this as the Blockchain, $\mathit{B}$. $\mathit{B}$ is an immutable append-only list of transactions that achieves consensus by verifying \emph{Proofs-of-Coverage} [\ref{poc}]. Users internal and external to the \verb|DWN| have access to $\mathit{B}$, which is a new blockchain network built from scratch specifically for the \verb|DWN|.\newline
+The Helium blockchain is a new type of ledger designed to provide a cost-effective way to run application logic core to the operation of a \verb|DWN|, store immutable device data fingerprints, and furnish a transaction system. We will refer to this as the Blockchain, $B$. $B$ is an immutable append-only list of transactions that achieves consensus by verifying \emph{Proofs-of-Coverage} [\ref{poc}]. Users internal and external to the \verb|DWN| have access to $B$, which is a new blockchain network built from scratch specifically for the \verb|DWN|.\newline
 
-$\mathit{B}$ consists of blocks $\mathit{b_n}$, which contain a header and a list of transactions. There are several kinds of transactions, outlined in [\ref{transactions}]. Although the blocks in chain can be linearly ordered, its data structure is actually a direct acyclic graph.\newline
+$B$ consists of blocks $b_n$, which contain a header and a list of transactions. There are several kinds of transactions, outlined in [\ref{transactions}]. Although the blocks in chain can be linearly ordered, its data structure is actually a direct acyclic graph.\newline
 
-As in other implementations, $\mathit{b_n}$ consist of a hash of the previous block in the chain, a set of transactions, and a proof. At a given epoch $\mathit{t}$ a block $\mathit{b_t}$ consists of the following:
+As in other implementations, $b_n$ consist of a hash of the previous block in the chain, a set of transactions, and a proof. At a given epoch $t$ a block $b_t$ consists of the following:
 
 \begin{center}
 	\begin{tabular}{l}
 		 \emph{Proof-of-Serialization} [\ref{roughtime}]\\
 		 Block Height \\
 		 Previous Block Hash \\
-		 Transactions \emph{1..n} Merkle Hash $\mathit{T_t}$ \\
+		 Transactions \emph{1..n} Merkle Hash $T_t$ \\
 		 \emph{Proofs-of-Coverage} \\
 		 Score \\
 	\end{tabular}
 \end{center}
 
-As the \emph{Proof-of-Coverage} [\ref{poc}] is valuable to the network, we store as many $\mathit{b_n}$ and their associated proof to $\mathit{B}$ as \emph{Uncle Blocks}, $\mathit{U_n}$. $\mathit{U_n}$, as described in the \emph{Greedy Heaviest-Observed Sub-Tree (GHOST)}~\cite{ghost} paper and implemented in Ethereum~\cite{ethereum}, allow a miner to earn block rewards even if their submitted block did not become the tip of the chain. $\mathit{U_n}$ help the winning chain accumulate `weight' in terms of both the length and quality of the chain, but also including the amount and quality of $\mathit{U_n}$ and their associated proofs. This means that longer chain forks, either mined maliciously or on the smaller side of a partitioned network, will not be selected over a shorter, weightier chain. This also means that valuable proofs of work aren't lost and can be used by the chain to calculate trust.\newline
+As the \emph{Proof-of-Coverage} [\ref{poc}] is valuable to the network, we store as many $b_n$ and their associated proof to $B$ as \emph{Uncle Blocks}, $U_n$. $U_n$, as described in the \emph{Greedy Heaviest-Observed Sub-Tree (GHOST)}~\cite{ghost} paper and implemented in Ethereum~\cite{ethereum}, allow a miner to earn block rewards even if their submitted block did not become the tip of the chain. $U_n$ help the winning chain accumulate `weight' in terms of both the length and quality of the chain, but also including the amount and quality of $U_n$ and their associated proofs. This means that longer chain forks, either mined maliciously or on the smaller side of a partitioned network, will not be selected over a shorter, weightier chain. This also means that valuable proofs of work aren't lost and can be used by the chain to calculate trust.\newline
 
 \begin{figure}[H]
 	\begin{center}
@@ -301,7 +292,7 @@ We provide a brief overview of the miner cycle and the functions available to mi
   \item \textbf{Assert Location}: A miner asserts their GPS location to the network.\newline
   Talk about how asserting location works (it's a type of transaction? etc) and that once it's been done that miner is ready to participate in the POC process.\newline
 
-  \item \textbf{Challenge}: A miner begins the \proofofcoverage/ process by becoming a Challenger.\newline
+  \item \textbf{Challenge}: A miner begins the \emph{Proof-of-Coverage} process by becoming a Challenger.\newline
   Talk about how this kicks off the targeting/hash ring process\newline
 
   \item \textbf{Deliver}: A miner delivers data from a device to a router on the internet.\newline
@@ -310,7 +301,7 @@ We provide a brief overview of the miner cycle and the functions available to mi
   \item \textbf{Receive}: A miner receives data from a router on the internet fpr delivery to a device.\newline
   Talk about how miners deliver data from routers to devices and what that procses looks like\newline
 
-  \item \textbf{Submit}: A miner submits a new candidate block to the network containing a \proofofcoverage/.\newline
+  \item \textbf{Submit}: A miner submits a new candidate block to the network containing a \emph{Proof-of-Coverage}.\newline
   Talk about how the block submission process works, how the network verifies the block, etc\newline
 
   \item \todo{are there others?}
@@ -483,7 +474,7 @@ Smart Contracts, better proofs, more physical layers, etc
 
 \section{Acknowledgements}
 
-This document is the result of collaborative work by multiple members of the Helium team, and would not have been possible without the help, feedback, and review of the board, advisors, and collaborators of Helium. Particularly: Andrew Allen wrote the original draft of a whitepaper, laying the groundwork and thinking for this eventual project and whitepaper document; Andrew Thompson devised the critical \proofofcoverage/ implementation, drove much of the early development and built the first simulator of this system; Marc Nijdam implemented and structured the development efforts on both the hardware and software, including implementing libp2p in Erlang; Mark Phillips added continuous review, feedback and sanity checking of this document; Jay Kickliter built the earliest hardware testing apparatus that proved much of the physical implementation was possible; Peter Main created the various illustrations and artwork, as well as providing valuable review; and Amir Haleem wrote this whitepaper based on these various concepts and works.\newline
+This document is the result of collaborative work by multiple members of the Helium team, and would not have been possible without the help, feedback, and review of the board, advisors, and collaborators of Helium. Particularly: Andrew Allen wrote the original draft of a whitepaper, laying the groundwork and thinking for this eventual project and whitepaper document; Andrew Thompson devised the critical \emph{Proof-of-Coverage} implementation, drove much of the early development and built the first simulator of this system; Marc Nijdam implemented and structured the development efforts on both the hardware and software, including implementing libp2p in Erlang; Mark Phillips added continuous review, feedback and sanity checking of this document; Jay Kickliter built the earliest hardware testing apparatus that proved much of the physical implementation was possible; Peter Main created the various illustrations and artwork, as well as providing valuable review; and Amir Haleem wrote this whitepaper based on these various concepts and works.\newline
 
 We would like to extend our deepest thanks to Jeremy Rubin of the MIT Digital Currency Initiative. Your earliest feedback and direction was critical to some of the design decisions and evolution of this project. We also thank the Blockchain at Berkeley team for their help and detailed review of this work.\newline
 
