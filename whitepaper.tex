@@ -214,7 +214,7 @@ For the second request, $M$ generates a sub-proof-kernel, $L = H\left(R || T || 
 
 With only two servers, $M$ can end up with proof that something is wrong, but no idea what the correct time is. But with half a dozen or more independent servers, $M$ will end up with chain of proof of any server's misbehaviour, signed by several others, and enough accurate replies to establish what the correct time is, $T^t$.
 
-\textbf{Utilizing the Proven Time}. \todo{Talk here about then what? how does roughtime get used and by whom? construct this section in the same way as PoC above---professor/Rahul to complete.}
+\textbf{Utilizing the Proven Time}. The proven time allows us to prove, with relative certainty, that some piece of data $D$ was created between the time of the previous block $PbT^t$ and $T^t$. $D$ in this case is the proof-of-coverage. The randomness used to compute $O$ and thus obtain the proof-of-coverage is tied to the previous block, which contains $PbT^t$. Thus we know that $D$ must have been constructed between $PbT^t$ and $T^t$. This ensures that the proof-of-coverage cannot be pre-computed and that that blocks in the blockchain must have a minimum spacing in time; the \emph{blocktime}. Blocks which do not have at least \emph{blocktime} distance in time from their parent block are considered invalid.
 
 \newpage
 
