@@ -160,7 +160,7 @@ The construction logic of $O$ is as follows:
   \item A set of candidates, $T_n$, are constructed such that all members of $T_n$ are within a contiguous radio network that also contains $T$
   \item Two targets, $T_1$ and $T_L$, are selected by finding the highest scoring targets in $T_n$ furthest from $T$
   \item A weighted graph is constructed from $T_n$ such that members of $T_n$ in radio range of each other are connected by an edge weighted by the value of \(1 - |{score(T_a) - score(T_b)}|\)
-  \item The shortest path between $T_1$ to $T$ to $T_L$ is computed using Dijkstra's algorithm
+  \item The shortest path between $T_1$ to $T$ to $T_L$ is computed using Dijkstra's algorithm\cite{dijkstra}
 \end{enumerate}
 
 The resulting $O$ can be visually represented as the following:
@@ -180,7 +180,7 @@ We describe the approximate flow of \emph{Proof-of-Coverage} creation as follows
   \item These steps repeat for $T_2$..$T_L$, with $T_L$ being the last target constructed by $C$
 \end{enumerate}
 
-$C$ expects to hear responses from $T_n$ within a time threshold $\lambda$, otherwise it considers the \emph{Proof-of-Coverage} to have concluded. Because $C$ is the only party with complete knowledge of $O$, it can assign upper bounds to the values for $TA$ and $RS$ and thus verify that each layer of $O$ was transmitted approximately where and when it was expected.
+$C$ expects to hear responses from $T_n$ within a time threshold $\lambda$, otherwise it considers the \emph{Proof-of-Coverage} to have concluded. Because $C$ is the only party with complete knowledge of $O$, it can assign upper bounds to the values for $TA$ and $RS$ and thus verify that each layer of $O$ was transmitted approximately where and when it was expected. The upper bound for $TA$ ls limited by the speed of light between $T_n$ and $T_n-1$. Thus we know that, subject to some slight delays from reflection or multipath, the packet should not arrive at $T_n$ later than the speed of light multiplied by the geographical distance plus some small episilon value. For $RA$, because of the inverse-square law, we can calculate the maximum RSSI possible for a packet transmitted from $T_n-1$ to $T_n$. Gateways that are closer than expected, or which are transmitting at a higher power to mask their location disparity, are unlikely to get the transmission power correct, given that they do not know who the next layer of the onion is addressed to.
 
 \begin{figure}[H]
     \begin{center}
@@ -541,6 +541,11 @@ We would also like to acknowledge many of the prior works and inventions that ha
 \bibitem{filecoin}
     Filecoin, \\
         \url{https://filecoin.io}
+
+\bibitem{dijkstra}
+    Dijkstra, E. W.
+    \emph{A note on two problems in connexion with graphs} \\
+    \url{http://www-m3.ma.tum.de/foswiki/pub/MN0506/WebHome/dijkstra.pdf}
 
 \end{thebibliography}
 
