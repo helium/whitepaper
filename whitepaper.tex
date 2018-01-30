@@ -242,12 +242,12 @@ As in other implementations, $b_n$ consist of a hash of the previous block in th
 
 \begin{center}
     \begin{tabular}{l}
-         \emph{Proof-of-Serialization} [\ref{roughtime}]\\
+         Block Version \\
          Block Height \\
          Previous Block Hash \\
          Transactions \emph{1..n} Merkle Hash $T_t$ \\
          \emph{Proofs-of-Coverage} \\
-         Score \\
+         \emph{Proof-of-Serialization} [\ref{roughtime}]\\
     \end{tabular}
 \end{center}
 
@@ -287,23 +287,27 @@ We provide a brief overview of the device cycle and the functions available to d
 We provide a brief overview of the mining cycle and the functions available to miners on the network.
 
 \begin{enumerate}
-  \item \textbf{Stake}: A miner joins the network and deposits a stake.
-  Talk about how the stake is the ``U'' shape proportional to the density of devices in that region.
+  \item \textbf{Join}: A miner joins the network.
+   Joining the network is simply adding the miner's address/public key and its 'owner' (the address mining rewards should be paid to) to the blockchain.
 
   \item \textbf{Assert Location}: A miner asserts their GPS location to the network.
-  Talk about how asserting location works (it's a type of transaction? etc) and that once it's been done that miner is ready to participate in the POC process.
+      Asserting a location indicates that the miner is claiming it is at particular physical coordinates. To assert a location, a dynamic stake is required. The value of the dynamic stake is related to a parabolic curve where the x axis represents the density of the existing network in that area and the y axis is the staking multiplier. Thus for singleton gateways, or very small networks, the staking requirements are high, once the network approaches an ideal density the stake approaches the lowest point and then as the density of the network exceeds the ideal the staking cost increases. This disincentivizes \emph{Alternate Reality Attacks} because asserting a location in a unpopulated region with no way to confirm network presence is very expensive. Similarly constructing a 'mining warehouse', where an extremely high density of miners is deployed also becomes very expensive. Only miners that have asserted a location are allowed to mine. Assertions of location can be retracted and the stake recovered, or they can be confiscated in cases of misbehaviour. \todo{Talk about ideal density, hexagons and stuff. cc Rahul}
+
+  \item \textbf{Add transactions to mempool}: A miner connects to the p2p network and listens for clients publishing transactions to the network. Most blockchains have a transaction fee associated with them that the miner can claim if it publishes the winning block. The miner can also capture transactions from blocks published to the p2p network that did not win.
+
+  \item \textbf{Construct a block}: The miner takes the current head of the chain and begins to construct a new block. The new block contains the hash of the previous block (the current head), the block height (how many blocks are in the chain between this block and the genesis block) and a set of transactions from the mempool. The set of transactions are added to a merkle tree and the root hash is also stored.
 
   \item \textbf{Challenge}: A miner begins the \emph{Proof-of-Coverage} process by becoming a Challenger.
-  Talk about how this kicks off the targeting/hash ring process
+			The miner uses their public key to sign a digest of their partially completed block to obtain some verifiable randomness. This randomness is used to choose the Target. Once the Target is selected the proof of coverage is constructed as in section 2.3 \todo{link this?}
 
   \item \textbf{Deliver}: A miner delivers data from a device to a router on the internet.
-  Talk about how miners deliver data to routers and what that process looks like
+  Once a miner has received a packet from an end device, along with the precise timestamp it was received, it looks up the routers for the organization owning that device and offers the packet to one of those routers, for a fee. The router can accept the fee and return an IOU or it can reject the offer if it already has a copy of the packet or it is unwilling to pay the offered price. A router may pay for several copies of the packet if it wishes to solve for the position of the end device.
 
   \item \textbf{Receive}: A miner receives data from a router on the internet for delivery to a device.
-  Talk about how miners deliver data from routers to devices and what that process looks like
+  In response to an uplink packet offer, the router can also respond with a downlink packet, with an attached IOU to have the gateway deliver a downlink packet to the end device. The end device will listen for a downlink packet after transmitting.
 
   \item \textbf{Submit}: A miner submits a new candidate block to the network containing a \emph{Proof-of-Coverage}.
-  Talk about how the block submission process works, how the network verifies the block, etc
+  Once a miner has completed a block it publishes it to its p2p peers, which, if they consider it valid and have not seen it before, gossip it to their peers, etc. Blocks are ranked in terms of quality; how valuable the proof-of-coverage was, how many transactions were in the block, how many uncles were included and how close to the ideal blocktime was the time difference from the previous block. After a settling period each miner chooses its preferred 'best' block and mines the next block on top of that.
 
   \item \todo{are there others?}
 
