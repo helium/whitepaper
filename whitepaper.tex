@@ -400,12 +400,27 @@ Because the Helium blockchain services a specific use, the \verb|DWN|, blocks mu
 In this section we describe the various transaction primitives.
 
 \begin{itemize}
-  \item \textbf{assert\_location}: this transaction is used by miners joining the network. Etc etc etc etc
-  \item \textbf{join\_network}: devices use this\ldots
-  \item \todo{marc/professor to complete these}
+  \item \textbf{add\_gateway}: registers a new gateway on the network, adding it to an existing account which will be responsible for supplying its stake (required for mining) and will receive mining rewards and fees earned by the gateway
+  \item \textbf{assert\_location}: a gateway asserts its current location in the form of geographic coordinates
+  \item \textbf{payment}: a generic payment transaction, used to move tokens between two accounts
+  \item \textbf{stake\_deposit}: creates a staked deposit which can later be fractionally redeemed without incurring transaction fees
+  \item \textbf{redeem\_deposit}: a router may issue a credit against its stake which a gateway can redeem in the form of a redemption transaction in payment for transport or other services
 \end{itemize}
 
 \subsection{Fees}
+
+Transaction fees are an essential part of most blockchain implementations. They asdf and ensure that spam transactions don't pollute the blockchain and network. All transactions on the \verb|DWN| require transaction fees, with the exception of the \textbf{redeem} transaction (covered in the Micropayments section). Transaction fees are determined by...
+
+\subsection{Micropayments}
+
+current micro-transaction implementations include state channels like lightning network and raiden. However, we see value to including metadata along with each packet transaction on the blockchain. And the purpose of state channels is to keep unnecessary transactions off the blockchain. big block approach, with light clients, pruning, routers serving as full nodes.
+
+so this approach should help control the size of the blockchain, as gateways have fixed storage.
+
+but what about fees? if we want to meter by packet, and for the cost of transport to be very cheap, we want to prevent the scenario where the transaction fees outstrip the transport fees themselves. In an ideal world we wouldn't have to charge two fees, one for providing transport and one for storing the transaction on the blockchain.
+
+We propose a special type of transaction based on staking and burning.
+
 
 Talk about transaction vs transport and Professors IOU idea
 
