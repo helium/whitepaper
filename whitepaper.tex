@@ -151,7 +151,7 @@ Our goal is to verify whether miners in a physical region are acting honestly an
      \end{center}
 \end{figure}
 
-\textbf{Selecting the Initial Target}. We aim to deterministically locate an initial target, $T$, for the challenger, $C$. $T$ does not need to be geographically proximate to $C$. To locate $T$, $C$ uses a \emph{consistent hash ring} $\omega$ of potential miners seeded using the public key of $C$ to sign a digest of their partially completed block to obtain some verifiable randomness, $\eta$. $\omega$ only contains miners eligible as targets as described in [\ref{mining}], and miners are allocated portions of $\omega$ that are inversely proportional to their score, increasing the probability of potentially dishonest miners being targeted. Given that a miners score is diminishing linearly over time [\ref{scores}], it is necessary to create this inverse relationship to give low-scoring miners an opportunity to participate in the process and increase their score.
+\textbf{Selecting the Initial Target}. We aim to deterministically locate an initial target, $T$, for the challenger, $C$. $T$ does not need to be geographically proximate to $C$. To locate $T$, $C$ uses a \emph{consistent hash ring} $\omega$, of potential miners. $\omega$ only contains miners eligible as targets as described in [\ref{mining}], and miners are allocated portions of $\omega$ that are inversely proportional to their score, increasing the probability of potentially dishonest miners being targeted. Given that a miners score is diminishing linearly over time [\ref{scores}], it is necessary to create this inverse relationship to give low-scoring miners an opportunity to participate in the process and increase their score. We seed verifiable randomness, $\eta$, into the selection process using a signed digest of the partial block from $C$ - thus, it is necessary for $C$ to have begun forming a new candidate block for the blockchain before the \emph{Proof-of-Coverage} process can begin [\ref{mining}].
 
 \textbf{Constructing the multi-layer challenge}. Once $T$ has been selected, $C$ must construct a multi-layer challenge, $O$. $O$ is a data packet broadcast by $T$ over the wireless network and received by geographcially proximate targets $T_n$. Each layer of $O$, $O_l$, consists of a three-tuple of $E\left(S, \psi, R\right)$, where $E$ is a secure public key encryption function, $S$ is a secret value, $\psi$ is the time to broadcast the next layer of the challenge and $R$ is the remainder of $O$ consisting of recursive three-tuples.
 
@@ -197,7 +197,20 @@ Once $T_L$ has delivered receipt to $C$, or $\lambda$ has elapsed, the \emph{Pro
 
 For every target $T_n$ that hears $O$ in the \emph{Proof-of-Coverage} and submits a signed receipt to $C$, $T_n$ gains a score equal to \todo{some amount relational to the previous target in the chain}.
 
-\textbf{Verifying the Proof}. \todo{FIX THIS SECTION TO NOT RANDOMLY TALK ABOUT PUBLISHING BLOCKS} Once the block is published to the network other miners can see the randomness, $\eta$ that was used by the challenger to generate the multi-layer-challenge. This allows them to do a parallel construction of the multi-layer-challenge and then verify the receipts for each target in the list.
+\textbf{Verifying the Proof}. Once $T_L$ has delivered $K_S$, or $\lambda$ has elapsed, the \emph{Proof-of-Coverage} is considered complete. When $C$ attempts to mine the next block [\ref{mining}], all receipts $K_S$ from $T_1$...$T_L$ are included in the candidate block, $B_C$, published to the blockchain network [\ref{blockchain}]. As all the steps originally completed by $C$ are deterministic in nature with verifiable and recreatable randomness, it is simple for a verifying miners, $V$, to recreate the original steps and verify that the proof is legitimate.
+
+Verifying miners who see $B_C$ are able to verify the \emph{Proof-of-Coverage} prior to considering the block by recreating the following steps:
+
+\begin{enumerate}
+	\item The verifying miner, $V$, reconstructs the hash ring of miners $\omega$
+	\item Because $V$ is able to now see $B_C$, the random seed $\eta$ can be verified to have been created by the private key of $C$
+	\item $V$ then selects $T$ from $\omega$, as seeding with $\eta$ will result in the same target selection
+	\item The set of candidate $T_n$ are reconstructed from which $T_1$ and $T_L$ are determined
+	\item Dijkstra's algorithm is used to reconstruct the walk of $T_n$ from $T_1$ to $T_L$
+	\item The $K_S$ receipts contained in $B_C$ are verified to have been signed by the private keys of $T_1$..$T_L$
+\end{enumerate}
+
+Assuming these steps are completed successfully, the \emph{Proof-of-Coverage} is verified and $B_C$ can be considered for inclusion in the blockchain [\ref{consensus}].
 
 \subsection{Constructing \emph{Proof-of-Serialization}}
 
@@ -227,7 +240,7 @@ Any user can participate as a Device, a Miner, or a Router.
     \item \emph{Routers} are internet applications that receive encrypted device data from miners. Routers are the termination point for device data encryption. Devices record to the blockchain which routers miners should send their data, such that any gateway on the network can send any devices data to the appropriate router. Routers are responsible for confirming to the network that device data was delivered to the correct destination and that the miner should be paid for their service.
 \end{itemize}
 
-\subsection{Blockchain}
+\subsection{Blockchain} \label{blockchain}
 
 The Helium blockchain is a new type of ledger designed to provide a cost-effective way to run application logic core to the operation of a \verb|DWN|, store immutable device data fingerprints, and furnish a transaction system. We will refer to this as the Blockchain, $B$. $B$ is an immutable append-only list of transactions that achieves consensus by verifying \emph{Proofs-of-Coverage} [\ref{poc}]. Users internal and external to the \verb|DWN| have access to $B$, which is a new blockchain network built from scratch specifically for the \verb|DWN|.
 
@@ -536,6 +549,21 @@ We would also like to acknowledge many of the prior works and inventions that ha
     Adam Langley, Google,
         \emph{Roughtime}, \\
         \url{https://roughtime.googlesource.com/roughtime}
+
+\bibitem{lora}
+    LoRa Alliance,
+        \emph{LoRa Alliance - Wide Area Networks for IoT}, \\
+        \url{https://www.lora-alliance.org}
+
+\bibitem{rpma}
+    Ingenu,
+        \emph{RPMA}, \\
+        \url{https://www.ingenu.com/technology/rpma/}
+
+\bibitem{ieee802_15_4}
+    IEEE Std 802.15.4-2015,
+        \emph{IEEE Standard for Low-Rate Wireless Networks}, \\
+        \url{https://standards.ieee.org/findstds/standard/802.15.4-2015.html}
 
 \bibitem{gtp}
     Mehmud Abliz, Taieb Znati,
