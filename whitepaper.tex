@@ -8,6 +8,9 @@
 \usepackage{graphicx}
 \usepackage{parskip}
 \usepackage{bytefield}
+\usepackage{booktabs}
+\usepackage{tabulary}
+\usepackage{tabularx}
 
 \graphicspath{ {images/} }
 
@@ -399,21 +402,100 @@ Because the Helium blockchain services a specific use, the \verb|DWN|, blocks mu
 
 In this section we describe the various transaction primitives.
 
-\begin{itemize}
-  \item \textbf{add\_gateway}: registers a new gateway on the network, adding it to an existing account which will be responsible for supplying its stake (required for mining) and will receive mining rewards and fees earned by the gateway
-  \item \textbf{assert\_location}: a gateway asserts its current location in the form of geographic coordinates
-  \item \textbf{payment}: a generic payment transaction, used to move tokens between two accounts
-  \item \textbf{stake\_deposit}: creates a staked deposit which can later be fractionally redeemed without incurring transaction fees
-  \item \textbf{redeem\_deposit}: a router may issue a credit against its stake which a gateway can redeem in the form of a redemption transaction in payment for transport or other services
-\end{itemize}
+\subsubsection{add\_gateway}
+    Registers a new gateway on the network, adding it to an existing account which will be responsible for supplying its stake (required for mining) and will receive mining rewards and fees earned by the gateway
+
+    \begin{table}[!h]
+        \centering
+        \begin{tabularx}{\textwidth}{l X}
+        \toprule
+        Property & Description \\ \midrule
+        gateway\_address & the address of the gateway being added to the network \\
+        public\_key & the public key of the gateway being added to the network \\
+        owner\_address & the address of the owner account \\
+        signatures & mutual signatures of the owner and gateway
+    \end{tabularx}
+  \end{table}
+
+    \subsubsection{assert\_location}
+
+    An assertion of a gateway's location in the form of geographic coordinates
+
+  \begin{table}[!h]
+    \centering
+    \begin{tabularx}{\textwidth}{l X}
+        \toprule
+        Property & Description \\ \midrule
+        gateway\_address & the address asserting its location \\
+        nonce & a monotoically increasing integer \\
+        lat & the latitude of the gateway \\
+        lng & the longitude of the gateway \\
+        signature & the signature of the gateway
+    \end{tabularx}
+  \end{table}
+
+    \subsubsection{payment}
+
+    A generic payment transaction, used to move tokens between two accounts
+
+    \begin{table}[!h]
+        \centering
+        \begin{tabularx}{\textwidth}{l X}
+            \toprule
+            Property & Description \\ \midrule
+            payer\_address & the address of the sender \\
+            payee\_address & the address of the recipient \\
+            nonce & a monotoically increasing integer \\
+            value & an integer-based representation of the tokens to send \\
+            signature & the signature of the sender
+        \end{tabularx}
+      \end{table}
+
+    \subsubsection{create\_deposit}
+    Creates a staked deposit which can later be fractionally issued and redeemed in the form of chits without incurring transaction fees. Any unused portion of the deposit will be burned at the expiry block height.
+
+    \begin{table}[!h]
+        \centering
+        \begin{tabularx}{\textwidth}{l X}
+            \toprule
+            Property & Description \\ \midrule
+            payer\_address & the address of the sender \\
+            payee\_address & the address of the recipient \\
+            nonce & a monotoically increasing integer \\
+            value & an integer-based representation of the tokens to send \\
+            signature & the signature of the sender
+        \end{tabularx}
+      \end{table}
+
+    \subsubsection{redeem\_chit}
+    Redeems a chit issued against a previously staked deposit in payment for transport or other services
+
+    \begin{table}[!h]
+        \centering
+        \begin{tabularx}{\textwidth}{l X}
+            \toprule
+            Property & Description \\ \midrule
+            payer\_address & the address of the sender \\
+            payee\_address & the address of the recipient \\
+            nonce & a monotoically increasing integer \\
+            value & an integer-based representation of the tokens to send \\
+            signature & the signature of the sender
+        \end{tabularx}
+      \end{table}
 
 \subsection{Fees}
 
-Transaction fees are an essential part of most blockchain implementations. They asdf and ensure that spam transactions don't pollute the blockchain and network. All transactions on the \verb|DWN| require transaction fees, with the exception of the \textbf{redeem} transaction (covered in the Micropayments section). Transaction fees are determined by...
+Transaction fees are an essential part of most blockchain implementations. They asdf and ensure that spam transactions don't pollute the blockchain and network. All transactions on the \verb|DWN| require transaction fees, with the exception of the \textbf{redeem} transaction (covered in the Microtransactions section). Transaction fees are determined by...
 
-\subsection{Micropayments}
+\subsection{Microtransactions}
 
-current micro-transaction implementations include state channels like lightning network and raiden. However, we see value to including metadata along with each packet transaction on the blockchain. And the purpose of state channels is to keep unnecessary transactions off the blockchain. big block approach, with light clients, pruning, routers serving as full nodes.
+In this section we discuss Helium's need for microtransactions, the limitations of existing solutions, and propose a solution based on staking and burning.
+
+\subsubsection{Limitations of Existing Solutions}
+
+\subsubsection{Stake Deposit \& Chits}
+
+current microtransaction implementations include state channels like lightning network and raiden. However, we see value to including metadata along with each packet transaction on the blockchain. And the purpose of state channels is to keep unnecessary transactions off the blockchain. big block approach, with light clients, pruning, routers serving as full nodes.
 
 so this approach should help control the size of the blockchain, as gateways have fixed storage.
 
@@ -422,7 +504,24 @@ but what about fees? if we want to meter by packet, and for the cost of transpor
 We propose a special type of transaction based on staking and burning.
 
 
-Talk about transaction vs transport and Professors IOU idea
+\subsubsection{Example Deposit Lifecycle}
+
+\begin{enumerate}
+
+\item A router $R$ creates a deposit $S$ of 500 tokens, expiring at block height $n + 10,080$ (1 week from now), by creating a stake\_deposit transaction
+
+\item A gateway $G$ hears a packet broadcast by device $D$ belonging to $R$
+\item $G$ and $R$ negotiate a price of 1 token for transport
+\item $G$ completes its requested transport service and as payment, $R$ issues a chit $C_{0}$ with value 1 token against $S$
+\item $G$ verifies the correctness of $C_{0}$ , creates a redeem\_deposit transaction, adds it to its mempool and broadcasts the transaction to the p2p network for inclusion in the next block
+\item $G$'s account balance is now += 1 token and the balance of $S$ is 499 tokens
+\item $R$ continues issuing chits $C_{n}$  against $S$ until either:
+    \begin{enumerate}
+        \item $S$'s value is depleted at which point $R$ can create a new deposit
+        \item $S$ expires at block height $n + 10,080$ and the remaining balance is burned
+    \end{enumerate}
+\end{enumerate}
+
 
 \newpage
 
