@@ -400,55 +400,32 @@ Talk about transaction vs transport and Professors IOU idea
 
 In addition to the blockchain network, Helium is a \emph{physical} wireless network instantiation. The participants in the network, from a physical hardware perspective, can be thought of as follows:
 
-\textbf{Wireless Protocol (\emph{WHIP})}: The wireless network uses a new wireless protocol, called \emph{WHIP}. WHIP is a long-range low power wireless network protocol that takes advantage of commodity open-standards hardware. Hardware compatible with WHIP can communicate over many square miles in dense urban environments or hundreds of square miles in rural settings. WHIP compatible hardware can last for several years using standard batteries. WHIP uses strong public key cryptography and authentication occurs using the Helium blockchain, with all data being encrypted from end to end. WHIP is an open source networking protocol, and we have worked hard to ensure WHIP runs on hardware commonly available from dozens of vendors.
+\textbf{Wireless Protocol (\emph{WHIP})}: The wireless network uses a new open wireless protocol, called \emph{WHIP}. WHIP is a long-range, low-power, wireless network protocol suitable for use with commodity open-standards hardware. WHIP compatible hardware can communicate over many square miles in dense urban environments or hundreds of square miles in rural settings. WHIP compatible hardware can also last for several years using standard batteries. WHIP uses strong public key cryptography and authentication occurs using the Helium blockchain, with end-to-end encryption.
 
-\textbf{Gateways}: Miners operate purpose-built hardware, called gateways. Gateways are physical network devices that create wireless RF coverage over wide areas and participate in the blockchain network. Gateways transmit data back and forth between routers on the internet and devices, and create \emph{Proofs-of-Coverage} for the blockchain network [\ref{poc}]. Gateways are manufactured using generally available open-standards components with no proprietary hardware. Gateways can co-operate and geolocate devices using the wireless network without any additional required hardware. Each Gateway can support hundreds of thousands of connected devices, and create coverage over many square miles. Miners operating gateways specify the price they are willing to accept for transport and geolocation services for devices.
+\textbf{Gateways}: Gateways are physical network devices that provide wide-area wireless coverage and participate in the blockchain network. Gateways transmit data back and forth between routers on the internet and devices while generating \emph{Proofs-of-Coverage} for the blockchain network [\ref{poc}]. Gateways are manufactured using commodity open-standards components with no proprietary hardware. Gateways can cooperate and geolocate devices using the wireless network without any additional required hardware. Each Gateway can support thousands of connected devices, and provide coverage over many square miles. Miners operating gateways specify the price they are willing to accept for transport and geolocation services for devices.
 
-\textbf{Devices}: Devices exist in the form of hardware products that contain a WHIP-compatible radio transceiver and communicate with gateways on the wireless network. WHIP is designed to facilitate low power data transmission and reception, so typically devices would exist in the form of battery-powered sensors that can live for several years using standard batteries (although mains-powered devices will also work quite well). Devices can exist in a variety of forms, depending on the product or use case, and a variety of transmission and reception strategies can be employed to optimize for transmission/reception frequency or battery life. It is recommended that devices use hardware-based key storage which is able to securely generate, store, and authenticate public/private key pairs without leaking the private key.
+\textbf{Devices}: Devices exist in the form of hardware products that contain a WHIP-compatible radio transceiver and communicate with gateways on the wireless network. WHIP is designed to facilitate low power data transmission and reception, so typically devices would exist in the form of battery-powered sensors that can live for several years using standard batteries (although mains-powered devices also work quite well). Devices can exist in a variety of forms, depending on the product or use case, and a variety of transmission and reception strategies can be employed to optimize for transmission/reception frequency or battery life. Device manufacturers should use hardware-based key storage which can securely generate, store, and authenticate public/private key pairs without leaking the private key.
 
-In this section we will expand on the components of the wireless network.
+In this section, we expand on the components of the wireless network.
 
 \subsection{Wireless Protocol (\emph{WHIP})}\label{whip}
 
-\textbf{Motivation}: There are several Low Power Wide Area Network (LPWAN) technologies available today. This new generation of wireless technologies focus on creating extremely long range, low power internet communication for sensors and other smart devices. Typically these technologies trade speed for range, with data rates as low as 18 bits per second (bps) with range measured in miles compared to a typical WiFi network which has substantially higher data rates but range limited to only a few hundred feet. Several of these new technologies, such as LoRa [\ref{lora}] and RPMA [\ref{rpma}], have gained good traction and there are many commercial products available compatible with these systems. However, we believe that the future IoT economy should be built on non-proprietary protocols and modulation schemes, and that participants in this ecosystem should have the freedom to choose hardware and vendor. We do not consider an open alliance built on top of proprietary hardware to be an acceptable compromise. While there are many open-standards wireless networking protocols and physical layers, such as IEEE 802.15.4 [\ref{802.15.4}] used in the first generation of Helium wireless products, none meet our extremely long range and low power criteria. It is this lack of open solutions that drove the creation of a new protocol.
+\textbf{Motivation}: Several Low Power Wide Area Network (LPWAN) technologies are available today. These wireless technologies focus on creating extremely long-range, low-power internet communication for sensors and other smart devices. Typically these technologies trade throughput for range, with data rates as low as 18~bits~per~second (bps) and range measured in miles. In comparison, a typical WiFi network has significantly higher data rates but ranges limited to only a few hundred feet. Several of these new technologies, such as LoRa~\cite{lora} and RPMA~\cite{rpma}, have gained good traction and there are many commercial products available compatible with these systems. However, we believe that the future IoT economy should use non-proprietary protocols and modulation schemes and that participants in this ecosystem should have the freedom to choose between competing hardware vendors. We do not consider an open alliance built on top of proprietary hardware to be an acceptable compromise. While there are many open-standard wireless networking stacks, such as IEEE~802.15.4~\cite{ieee802_15_4} used in the first generation of Helium wireless products, none meet our extremely long range and low power criteria. It is this lack of open solutions that drove the creation of a new protocol.
 
-\textbf{Outline}: We introduce a new open-source Low Power Wide Area Network (LPWAN) protocol called \emph{WHIP}. WHIP is a highly secure, long range, low power wireless network protocol that is compatible with any Frequency Shift Keying (FSK) radio transceiver operating in the sub-GHz unlicensed frequency spectrum. Authentication with the wireless network uses modern public-key encryption and NIST P-256 ECC [\ref{ecc}] key pairs, with the public keys for all participants stored in the blockchain.
+\textbf{Outline}: We introduce a new open-source Low Power Wide Area Network (LPWAN) protocol called \emph{WHIP}. WHIP is a highly secure, long range, low power wireless network protocol that is compatible with any Frequency Shift Keying (FSK) radio transceiver operating in the sub-GHz unlicensed frequency spectrum. Authentication with the wireless network uses modern public-key encryption and NIST~P-256 ECC~\cite{ecc} key pairs, with the public keys for all participants stored in the blockchain.
 
-FSK is a simple modulation format that is widely supported, easy to modulate and demodulate, and has good resistance to RF noise. There are dozens of vendors implementing FSK radio transceivers compatible with WHIP, such as Texas Instruments [\ref{ti}], Microchip [\ref{microchip}], and Silicon Labs [\ref{silabs}].
+FSK is a simple and widely supported modulation format which easy to implement and has excellent resistance to RF noise. There are dozens of vendors implementing FSK radio transceivers compatible with WHIP, such as Texas Instruments, Microchip, and Silicon Labs.
 
-WHIP is a \emph{narrowband} wireless protocol which creates hundreds of extremely small channels within the unlicensed spectrum and employs Frequency Hopping Spread Spectrum (FHSS) to pseudo-randomly hop between channels. Typically FHSS requires a complex time-synchronized system that is limited in capacity, however devices using WHIP do not need to coordinate with gateways on channel selection as gateways are capable of hearing all channels within the available spectrum at any time. We choose narrow-band to accomplish the following goals:
+WHIP is a \emph{narrowband} wireless protocol which creates several channels within the unlicensed spectrum and employs frequency hopping to hop between channels. Typically frequency hopping requires a complex time-synchronized system that is limited in capacity, however, devices using WHIP do not need to coordinate with gateways on channel selection as gateways are capable of hearing all channels within the available spectrum at any time. We choose narrow-band to accomplish the following goals:
 
-\begin{itemize}
-    \item \textbf{Spectrum Efficiency}: it is necessary to operate within unlicensed RF spectrum very efficiently. RF is a shared, limited resource, and therefore a focus on efficiency to increase capacity and improve robustness is a must.
-    \item \textbf{Co-Existence Performance}: as the number of devices and networks increases, the ability to operate in \emph{noisy} RF environments without interference is a critical consideration.
-    \item \textbf{Range}: narrowband allows for extremely long-range communications, with data rates that scale both up and down depending on the density of gateways.
-\end{itemize}
+\begin{description}
+  \item[Spectral Efficiency] it is necessary to operate within unlicensed RF spectrum very efficiently. RF is a shared, limited resource, and therefore a focus on efficiency to increase capacity and improve robustness is a must.
+  \item[Co-Existence Performance] as the number of devices and networks increase, the ability to operate in \emph{noisy} RF environments without interference is a critical consideration.
+  \item[Range] narrowband allows for extremely long-range communications, with data rates that scale both up and down depending on the density of gateways.
+\end{description}
 
-WHIP implements a variety of Forward Error Correction (FEC) techniques. FEC is a technique used for controlling errors in data transmission over unreliable or noisy communication channels, and can result in significantly higher radio sensitivity. FEC gives the receiver the ability to correct errors without needing to request retransmission of data, but at the cost of a fixed, higher channel bandwidth. WHIP implements these techniques at the firmware level in order to maintain hardware compatibility among multiple vendors. WHIP also supports power amplification up to regulatory limits, which vary by region.
-
-\textbf{Implementation}: WHIP supports a number of data rates, channel bandwidths, and FEC techniques. Gateways and devices dynamically negotiate the combination of these options using a \emph{signalling packet} delivered at the lowest bandwidth and datarate to ensure the longest range for the initial communication. The signalling packet is delivered via a 4KHz channel, at a 300bps data rate, using 2-FSK modulation. This initial negotiation allows for the following eight modulation schemes:
-
-\begin{itemize}
-    \item 2-FSK
-    \item 2-GFSK
-    \item 4-FSK
-    \item 4-GFSK
-    \item 4 Reserved for future expansion
-\end{itemize}
-
-There are also eight FEC options:
-
-\begin{itemize}
-    \item None
-    \item Hamming 8,4
-    \item Golay 24,12
-    \item Reed-Solomon + Convulational coding (the ``Voyager code'')
-    \item 4 Reserved for future expansion
-\end{itemize}
-
-We also have eight combinations of data rate and deviation, which vary from 300bps to 100,000bps.
-
-The full WHIP wireless specification will be made available by the Helium Alliance~\cite{alliance}.
+\textbf{Implementation}: WHIP supports several data rates, channel bandwidths, and error-correction techniques. Gateways and devices dynamically negotiate the combination of these options using a \emph{signalling packet} delivered at the lowest bandwidth and symbol rate to ensure maximum range for the initial communication.
+The full WHIP specification will be made available by the Helium Alliance~\cite{alliance}.
 
 \subsection{Gateways}\label{gateways}
 
