@@ -295,6 +295,43 @@ We provide a brief overview of the device cycle and the functions available to d
 
 We provide a brief overview of the mining cycle and the functions available to miners on the network.
 
+\begin{algorithm}[H]
+  \SetAlgorithmName{Cycle}{List of Lifecycles}
+  \DontPrintSemicolon
+  \SetKwProg{Miner}{\BlankLine Miner}{}{}
+  \caption{Miner Cycle Overview}\label{cycle:miner}
+
+  \Miner{At every epoch \emph{blocktime}} {
+    Construct a block\;
+    Add transactions from non-winning blocks\;
+    Add transactions from mempool\;
+    Construct \emph{Proof-of-Coverage}\;
+    Construct \emph{Proof-of-Serialization}\;
+    Submit block to peers\;
+  }
+
+  \Miner{At any time} {
+    Receive transactions\;
+    Receive block\;
+    Receive coverage challenge\;
+    Receive serialization challenge\;
+    Receive data from device\;
+    Receive data from router\;
+  }
+
+  \Miner{when joining} {
+    Construct transaction with address, public key, and payee\;
+    Construct transaction with location\;
+    Submit transaction to a random peer\;
+  }
+
+  \Miner{on location change} {
+    Construct transaction with new location\;
+    Submit transaction to a ramdom peer\;
+  }
+\end{algorithm}
+
+
 \begin{description}
   \item [Join] A miner joins the network.
 
@@ -332,41 +369,70 @@ We provide a brief overview of the mining cycle and the functions available to m
 
 An overview of the various steps in each part of the lifecycle of a miner is given in Cycle~\ref{cycle:miner}
 
+
 \begin{algorithm}[H]
-  \SetAlgorithmName{Cycle}{List of Lifecycles}
+  \SetAlgorithmName{Protocol}{List of Protocols}
   \DontPrintSemicolon
-  \SetKwProg{B}{\BlankLine Miner}{}{}
-  \caption{Miner Cycle Overview}\label{cycle:miner}
+  \SetKwProg{Recv}{\BlankLine Receive}{}{}
+  \SetKwFunction{Time}{Time}
+  \SetKwFunction{Sign}{Sign}
+  \SetKwFunction{FindRouters}{FindRouters}
+  \SetKwFunction{CalculateDeliverFee}{CalculateDeliverFee}
+  \SetKwFunction{DeliverOffer}{DeliverOffer}
+  \SetKwFunction{Deliver}{Deliver}
+  \SetKwFunction{Transmit}{Transmit}
+  \SetKwFunction{Transaction}{Transaction}
+  \caption{Receive Protocol}\label{proto:recv}
 
-  \B{At every epoch \emph{blocktime}} {
-    Construct a block\;
-    Add transactions from non-winning blocks\;
-    Add transactions from mempool\;
-    Construct \emph{Proof-of-Coverage}\;
-    Construct \emph{Proof-of-Serialization}\;
-    Submit block to peers\;
+  \Recv{transactions} {
+    Add transactions to mempool\;
+  }\label{proto:recv.trans}
+
+  \Recv{block} {
+    Add sender to peer list\;
+    Verify block\;
+    Add block to chain\;
+    Gossip block to peers\;
+    Harvest losing block transactions\;
+  }\label{proto:recv.block}
+
+  \Recv{coverage challenge} {
+
   }
 
-  \B{At any time} {
-    Receive transactions\;
-    Receive block to add to chain or harvest\;
-    Receive coverage challenge\;
-    Receive time request\;
-    Receive data from device\;
-    Receive data from router\;
-  }
+  \Recv{serialization challenge K}{
+    $T \leftarrow \Time(milliseconds) $\;
+    $B \leftarrow \ll K:64, T:64 \gg $\;
+    $R \leftarrow \Sign(B) $\;
+    Respond $R$ to sender\;
+  }\label{proto:recv.challenge}
 
-  \B{when joining} {
-    Construct transaction with address, public key, and payee\;
-    Construct transaction with location\;
-    Submit transaction to a random peer\;
-  }
+  \Recv{data at gateway G, from device D, data A, data signature $S_a$} {
+    $R \leftarrow R \in \FindRouters(D) $\;
+    $F \leftarrow \CalculateDeliverFee(R, D, A) $\;
+    \Switch{\DeliverOffer(R, $S_a$, F)} {
+      \Case{${IOU}_{FG}$}{
+        Validate ${IOU}_{FG}$\;
+        \Deliver(R, A)\;
+        $T \leftarrow \Transaction(redemption, G, {IOU}_{FG}) $\;
+        Submit $T$ to peers\;
+      }
+      \lOther{drop A}
+    }
+  }\label{proto:recv.data.device}
 
-  \B{on location change} {
-    Construct transaction with new location\;
-    Submit transaction to a ramdom peer\;
-  }
+  \Recv{data at gateway G, from router R, data A, for device D, with ${IOU}_{FG}$} {
+    \emph{This may happen in resonse to G delivering data to R}
+
+    Validate ${IOU}_{FG}$\;
+    \Transmit(D, A)\;
+    $T \leftarrow \Transaction(redemption, G, {IOU}_{FG}) $\;
+    Submit $T$ to peers\;
+
+  }\label{proto:recv.data.router}
+
 \end{algorithm}
+
 
 
 \subsubsection{Routing Cycle}
