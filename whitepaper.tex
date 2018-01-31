@@ -141,7 +141,7 @@ We aim to construct a proof that takes advantage of the following characteristic
     \item RF travels at the speed of light with (effectively) no latency
 \end{enumerate}
 
-Our goal is to verify whether miners in a physical region are acting honestly and creating wireless network coverage compatible with the Helium wireless protocol (WHIP). To do this, a challenger $C$ deterministically constructs a multi-layer data packet $O$ which begins at an initial target, $T$, and is broadcast wirelessly to a set of sequential targets, $T_n$, each of which are only able to decrypt the outer-most layer of $O$ if they were the intended recipient. Each target acknowledges receipt, $R_T$, back to $C$, removes their layer of $O$, $O$\textsubscript{L-N}, and broadcasts it for receipt by the next target. Essentially, an ``envelope of envelopes'' only openable by the intended recipient.
+Our goal is to verify whether miners in a physical region are acting honestly and creating wireless network coverage compatible with the Helium wireless protocol (WHIP). To do this, a challenger $C$ deterministically constructs a multi-layer data packet $O$ which begins at an initial target, $T$, and is broadcast wirelessly to a set of sequential targets, $T_n$, each of which are only able to decrypt the outer-most layer of $O$ if they were the intended recipient. Each target acknowledges receipt, $K_S$, back to $C$, removes their layer of $O$, $O$\textsubscript{L-N}, and broadcasts it for receipt by the next target. Essentially, an ``envelope of envelopes'' only openable by the intended recipient.
 
 \begin{figure}[H]
     \begin{center}
@@ -151,7 +151,7 @@ Our goal is to verify whether miners in a physical region are acting honestly an
      \end{center}
 \end{figure}
 
-\textbf{Selecting the Initial Target}. We aim to deterministically locate an initial target, $T$, for the challenger, $C$. $T$ does not need to be geographically proximate to $C$. To locate $T$, $C$ uses a \emph{consistent hash ring} $\omega$ of potential miners. $\omega$ only contains miners eligible as targets as described in [\ref{mining}], and miners are allocated portions of $\omega$ that are inversely proportional to their score, increasing the probability of potentially dishonest miners being targeted. Given that a miners score is diminishing linearly over time [\ref{scores}], it is necessary to create this inverse relationship to give low-scoring miners an opportunity to participate in the process and increase their score.
+\textbf{Selecting the Initial Target}. We aim to deterministically locate an initial target, $T$, for the challenger, $C$. $T$ does not need to be geographically proximate to $C$. To locate $T$, $C$ uses a \emph{consistent hash ring} $\omega$ of potential miners seeded using the public key of $C$ to sign a digest of their partially completed block to obtain some verifiable randomness, $\eta$. $\omega$ only contains miners eligible as targets as described in [\ref{mining}], and miners are allocated portions of $\omega$ that are inversely proportional to their score, increasing the probability of potentially dishonest miners being targeted. Given that a miners score is diminishing linearly over time [\ref{scores}], it is necessary to create this inverse relationship to give low-scoring miners an opportunity to participate in the process and increase their score.
 
 \textbf{Constructing the multi-layer challenge}. Once $T$ has been selected, $C$ must construct a multi-layer challenge, $O$. $O$ is a data packet broadcast by $T$ over the wireless network and received by geographcially proximate targets $T_n$. Each layer of $O$, $O_l$, consists of a three-tuple of $E\left(S, \psi, R\right)$, where $E$ is a secure public key encryption function, $S$ is a secret value, $\psi$ is the time to broadcast the next layer of the challenge and $R$ is the remainder of $O$ consisting of recursive three-tuples.
 
@@ -183,6 +183,8 @@ We describe the approximate flow of \emph{Proof-of-Coverage} creation as follows
 
 $C$ expects to hear responses from $T_n$ within a time threshold $\lambda$, otherwise it considers the \emph{Proof-of-Coverage} to have concluded. Because $C$ is the only party with complete knowledge of $O$, it can assign upper bounds to the values for $\beta$ and $\upsilon$ and thus verify that each layer of $O$ was transmitted approximately where and when it was expected. The upper bound for $\beta$ ls limited by the speed of light $\tau$ between $T_n$ and $T_n-1$. Thus we know that, subject to some slight delays from reflection or multipath, the packet should not arrive at $T_n$ later than $\tau$ multiplied by the geographical distance $D$ plus some small episilon value, $\upsilon = \tau \times \Big(D + \epsilon\Big)$. For $\upsilon$, because of the inverse-square law, we can calculate the maximum RSSI possible for a packet transmitted, $\mu$, from $T_n-1$ to $T_n$ as $\mu = \frac{1}{D^2}$. Gateways that are closer than expected, or which are transmitting at a higher power to mask their location disparity, are unlikely to get $\mu$ correct, given that they do not know who the next layer of $O$ is addressed to.
 
+Once $T_L$ has delivered receipt to $C$, or $\lambda$ has elapsed, the \emph{Proof-of-Coverage} is completed. The collection of signed receipts, $K_S$, constitute the \emph{Proof-of-Coverage} that $C$ will include when attempting to mine the next block in the blockchain [\ref{mining}].
+
 \begin{figure}[H]
     \begin{center}
           \includegraphics[width=\textwidth]{diagram4.eps}
@@ -195,7 +197,7 @@ $C$ expects to hear responses from $T_n$ within a time threshold $\lambda$, othe
 
 For every target $T_n$ that hears $O$ in the \emph{Proof-of-Coverage} and submits a signed receipt to $C$, $T_n$ gains a score equal to \todo{some amount relational to the previous target in the chain}.
 
-\textbf{Verifying the Proof}. Once the block is published to the network other miners can see the randomness that was used by the challenger to generate the multi-layer-challenge. This allows them to do a parallel construction of the multi-layer-challenge and then verify the receipts for each target in the list.
+\textbf{Verifying the Proof}. \todo{FIX THIS SECTION TO NOT RANDOMLY TALK ABOUT PUBLISHING BLOCKS} Once the block is published to the network other miners can see the randomness, $\eta$ that was used by the challenger to generate the multi-layer-challenge. This allows them to do a parallel construction of the multi-layer-challenge and then verify the receipts for each target in the list.
 
 \subsection{Constructing \emph{Proof-of-Serialization}}
 
