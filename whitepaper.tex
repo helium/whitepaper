@@ -403,89 +403,97 @@ Because the Helium blockchain services a specific use, the \verb|DWN|, blocks mu
 In this section we describe the various transaction primitives.
 
 \subsubsection{add\_gateway}
-    Registers a new gateway on the network, adding it to an existing account which will be responsible for supplying its stake (required for mining) and will receive mining rewards and fees earned by the gateway
 
-    \begin{table}[!h]
-        \centering
-        \begin{tabularx}{\textwidth}{l X}
-        \toprule
-        Property & Description \\ \midrule
-        gateway\_address & the address of the gateway being added to the network \\
-        public\_key & the public key of the gateway being added to the network \\
-        owner\_address & the address of the owner account \\
-        signatures & mutual signatures of the owner and gateway
-    \end{tabularx}
-  \end{table}
+Registers a new gateway on the network, adding it to an existing account which will be responsible for supplying its stake (required for mining) and will receive mining rewards and fees earned by the gateway
 
-    \subsubsection{assert\_location}
+\begin{table}[!ht]
+  \centering
+  \begin{tabularx}{\textwidth}{l X}
+    \toprule
+    Property & Description \\ \midrule
+    gateway\_address & the address of the gateway being added to the network \\
+    public\_key & the public key of the gateway being added to the network \\
+    owner\_address & the address of the owner account \\
+    signatures & mutual signatures of the owner and gateway
+  \end{tabularx}
+\end{table}
 
-    An assertion of a gateway's location in the form of geographic coordinates
+\subsubsection{assert\_location}
 
-  \begin{table}[!h]
-    \centering
-    \begin{tabularx}{\textwidth}{l X}
-        \toprule
-        Property & Description \\ \midrule
-        gateway\_address & the address asserting its location \\
-        nonce & a monotoically increasing integer \\
-        lat & the latitude of the gateway \\
-        lng & the longitude of the gateway \\
-        signature & the signature of the gateway
-    \end{tabularx}
-  \end{table}
+An assertion of a gateway's location in the form of geographic coordinates
 
-    \subsubsection{payment}
+\begin{table}[!ht]
+  \centering
+  \begin{tabularx}{\textwidth}{l X}
+      \toprule
+      Property & Description \\ \midrule
+      gateway\_address & the address asserting its location \\
+      nonce & a monotoically increasing integer \\
+      lat & the latitude of the gateway \\
+      lng & the longitude of the gateway \\
+      signature & the signature of the gateway
+  \end{tabularx}
+\end{table}
 
-    A generic payment transaction, used to move tokens between two accounts
+\subsubsection{payment}
 
-    \begin{table}[!h]
-        \centering
-        \begin{tabularx}{\textwidth}{l X}
-            \toprule
-            Property & Description \\ \midrule
-            payer\_address & the address of the sender \\
-            payee\_address & the address of the recipient \\
-            nonce & a monotoically increasing integer \\
-            value & an integer-based representation of the tokens to send \\
-            signature & the signature of the sender
-        \end{tabularx}
-      \end{table}
+A generic payment transaction, used to move tokens between two accounts
 
-    \subsubsection{create\_deposit}
-    Creates a staked deposit which can later be fractionally issued and redeemed in the form of chits without incurring transaction fees. Any unused portion of the deposit will be burned at the expiry block height.
+\begin{table}[!ht]
+  \centering
+  \begin{tabularx}{\textwidth}{l X}
+      \toprule
+      Property & Description \\ \midrule
+      payer\_address & the address of the sender \\
+      payee\_address & the address of the recipient \\
+      nonce & a monotoically increasing integer \\
+      value & an integer-based representation of the tokens to send \\
+      signature & the signature of the sender
+  \end{tabularx}
+\end{table}
 
-    \begin{table}[!h]
-        \centering
-        \begin{tabularx}{\textwidth}{l X}
-            \toprule
-            Property & Description \\ \midrule
-            payer\_address & the address of the sender \\
-            payee\_address & the address of the recipient \\
-            nonce & a monotoically increasing integer \\
-            value & an integer-based representation of the tokens to send \\
-            signature & the signature of the sender
-        \end{tabularx}
-      \end{table}
+\subsubsection{create\_deposit}
+Creates a staked deposit which can later be fractionally issued and redeemed in the form of chits without incurring transaction fees. Any unused portion of the deposit will be burned after some time.
 
-    \subsubsection{redeem\_chit}
-    Redeems a chit issued against a previously staked deposit in payment for transport or other services
+\begin{table}[!ht]
+  \centering
+  \begin{tabularx}{\textwidth}{l X}
+      \toprule
+      Property & Description \\ \midrule
+      address & the address of the account creating the deposit \\
+      value & an integer-based representation of the deposit amount \\
+      public\_key & an ephemeral public key used for signing chits for this deposit \\
+      expiry\_height & the block height at which this stake expires \\
+      signature & the signature of the depositor
+  \end{tabularx}
+\end{table}
 
-    \begin{table}[!h]
-        \centering
-        \begin{tabularx}{\textwidth}{l X}
-            \toprule
-            Property & Description \\ \midrule
-            payer\_address & the address of the sender \\
-            payee\_address & the address of the recipient \\
-            nonce & a monotoically increasing integer \\
-            value & an integer-based representation of the tokens to send \\
-            signature & the signature of the sender
-        \end{tabularx}
-      \end{table}
+\todo{is expiry height a fixed value? or configurable?}
+
+\subsubsection{chit}
+Issues a chit against a previously staked deposit in payment for transport or other services
+
+\begin{table}[!ht]
+  \centering
+  \begin{tabularx}{\textwidth}{l X}
+      \toprule
+      Property & Description \\ \midrule
+      public\_key & the public key used to create the deposit \\
+      value & an integer-based representaion of the value of the chit \\
+      nonce & a monotoically increasing integer \\
+      packet\_reference & a derivative reference to the packet being paid for \\
+      payee\_address & the address of the recipient \\
+      signature & the signature of the depositor
+  \end{tabularx}
+\end{table}
+
+\todo{what's the packet reference? can it include metadata that could be referenced in the blockchain later?}
 
 \subsection{Fees}
 
-Transaction fees are an essential part of most blockchain implementations. They asdf and ensure that spam transactions don't pollute the blockchain and network. All transactions on the \verb|DWN| require transaction fees, with the exception of the \textbf{redeem} transaction (covered in the Microtransactions section). Transaction fees are determined by...
+Transaction fees are an essential part of most blockchain implementations. They incentivize miners to include a transaction in their draft block and ensure that spam transactions don't pollute the blockchain and network. All transactions on the \verb|DWN| require transaction fees, with the exception of the \textbf{chit} transaction (covered in the Microtransactions section). Transaction fees are determined by...
+
+\todo{How do we determine fees? are they just arbitrary and determined by demand? how do we specify that?}
 
 \subsection{Microtransactions}
 
@@ -493,7 +501,7 @@ In this section we discuss Helium's need for microtransactions, the limitations 
 
 \subsubsection{Limitations of Existing Solutions}
 
-\subsubsection{Stake Deposit \& Chits}
+\subsubsection{A Proposed Solution Based on Staking \& Chits}
 
 current microtransaction implementations include state channels like lightning network and raiden. However, we see value to including metadata along with each packet transaction on the blockchain. And the purpose of state channels is to keep unnecessary transactions off the blockchain. big block approach, with light clients, pruning, routers serving as full nodes.
 
@@ -503,24 +511,48 @@ but what about fees? if we want to meter by packet, and for the cost of transpor
 
 We propose a special type of transaction based on staking and burning.
 
-
 \subsubsection{Example Deposit Lifecycle}
 
 \begin{enumerate}
 
-\item A router $R$ creates a deposit $S$ of 500 tokens, expiring at block height $n + 10,080$ (1 week from now), by creating a stake\_deposit transaction
-
-\item A gateway $G$ hears a packet broadcast by device $D$ belonging to $R$
-\item $G$ and $R$ negotiate a price of 1 token for transport
-\item $G$ completes its requested transport service and as payment, $R$ issues a chit $C_{0}$ with value 1 token against $S$
-\item $G$ verifies the correctness of $C_{0}$ , creates a redeem\_deposit transaction, adds it to its mempool and broadcasts the transaction to the p2p network for inclusion in the next block
-\item $G$'s account balance is now += 1 token and the balance of $S$ is 499 tokens
-\item $R$ continues issuing chits $C_{n}$  against $S$ until either:
-    \begin{enumerate}
-        \item $S$'s value is depleted at which point $R$ can create a new deposit
-        \item $S$ expires at block height $n + 10,080$ and the remaining balance is burned
-    \end{enumerate}
+\item A router $R$ creates a deposit $S$ of 500 tokens, expiring at block height $current\_height + 10,080$ (1 week from now), by publishing a create\_deposit transaction and paying a nominal transaction fee
+\item A gateway $G$ hears a packet $P$ broadcast by device $D$
+\item $G$ uses metadata attached to $P$, referencing the current state of the blockchain, to identify $R$ as the owner of $D$
+\item $G$ sends the signature $Sig_P$ of $P$ and an offer of 1 token for transport to $R$
+\item $R$ receives $Sig_P$ and the payment offer and can decide if it wants the packet for the offered price
+\item Assuming $R$ wants the packet at the offered price, it constructs a \textbf{chit} transaction $C_0$ with nonce 0, value 1, payable to $G$, against $S$ and sends it to $G$
+\item Having received $C_0$, $G$ verifies the correctness of $C_0$ by inspecting $S$ on the blockchain and sends $P$ to $R$
+\item $G$ adds $C_0$ to its mempool and gossips it to the p2p network where any interested gateway can add it to its own mempool for inclusion in the next block
+\item $R$ continues issuing chits $C_n$  against $S$ until either:
+  \begin{enumerate}
+  \item $S$'s value is depleted at which point $R$ can create a new deposit
+  \item $S$ expires at block height $n + 10,080$ and the remaining balance is burned
+  \end{enumerate}
+\item Once $S$ is closed either through depletion or expiration, all gateways owning chits against $S$ receive their payment
 \end{enumerate}
+
+points:
+
+gateways are selfish and only add chits payable to them, or belonging to a deposit in which they have received chits, to their mempool.
+
+this prevents spam attacks because only a trusted gateway that has performed some work in exchange for a chit will add it to their draft blocks
+
+gateways gossip chits they receive to the p2p network of gateways
+
+because no one gets paid until everyone gets paid, its in a gateway owed a chit's best interest to continue adding chits for that deposit to its draft blocks so that a deposit is exhausted sooner and it can get paid
+
+chits must be added to the blockchain in order of nonce
+
+if a router issues a chit with a higher nonce to a gateway, it can also include chits with nonces that make up the difference between what's already been added to the blockchain and its current nonce. This way, a gateway never has a partial nonce.
+
+maybe a gateway could also ask a router for prior nonces in case it wasn't listening to gossip?
+
+if a gateway fails to send the agreed upon packet to the router after the router issues a chit, the router can rerequest it (for some period of time). If the gateway is a bad actor and purposefully witholds the paid-for packet, the router may add the gateway to its own private blacklist of bad actor gateways. we hope that the threat of losing future business from a router and the relatively low overhead of completing the transfer of the packet will be enough to disincentivize gateways from acting in bad faith.
+
+\todo{how does the redemption period after the expiration work? we want to balance not wanting to hold onto deposits for a long time with preventing gateways from getting screwed out of their owed balance if they aren't chosen for a block in time}
+
+
+\todo{can a router close a deposit prior to expiration and reclaim the remainder? how would that work if it has issued chits that haven't been published yet?}
 
 
 \newpage
