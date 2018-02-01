@@ -9,7 +9,7 @@
 \usepackage{parskip}
 \usepackage{bytefield}
 \usepackage{booktabs}
-\usepackage{tabulary}
+\usepackage{float}
 \usepackage{tabularx}
 
 \graphicspath{ {images/} }
@@ -390,13 +390,7 @@ We provide a brief overview of the router cycle and the functions available to r
 
 \section{Transactions}\label{transactions}
 
-Transactions in the Helium blockchain provide functionality that enables address-to-address transfers of Helium tokens, similar to many existing blockchain networks, but also provide a set of primitives that enable core functionality that is critical to the operation of a \verb|DWN|. In this section we address the philosophy behind our transaction system, the primitives, and the way fees on the network work.
-
-\subsection{Philosophy}
-
-Helium is built on the philosophy that all transactions should occur \emph{on-chain}; that is, blocks should be sized and mined with a frequency such that every transaction which occurs on the network should be stored in the blockchain rather than a \emph{side-chain} implementation such as a lightning network [\ref{lightning}] or state channel [\ref{state-channels}]. The goal of Helium is to provide internet data transport fees (the fees paid by devices to miners) that are an order of magnitude less than anything currently available for this type of service. To accomplish this goal the cost of mining must be low, blocks must be large enough to encapsulate a large number of transactions, and frequent enough that transactions are processed quickly.
-
-Because the Helium blockchain services a specific use, the \verb|DWN|, blocks must additionally be able store fingerprints of data sent from devices along with the transaction which pays a miner for their transport service. This additional data storage would make a side-chain implementation particularly challenging, and necessitates the use of on-chain storage techniques. We believe that this holistic \emph{tamper-proof} data trail will enable entirely new use cases where the authenticity and veracity of sensor data is critical.
+Transactions in the Helium blockchain provide functionality that enables address-to-address transfers of Helium tokens, similar to many existing blockchain networks, but also provide a set of primitives that enable core functionality that is critical to the operation of a \verb|DWN|. In this section we address the philosophy behind our transaction system, the primitives, and the way fees on the network work. We will also address Helium's need for microtransactions and propose a new solution.
 
 \subsection{Primitives in Helium}
 
@@ -406,7 +400,7 @@ In this section we describe the various transaction primitives.
 
 Registers a new gateway on the network, adding it to an existing account which will be responsible for supplying its stake (required for mining) and will receive mining rewards and fees earned by the gateway
 
-\begin{table}[!ht]
+\begin{table}[H]
   \centering
   \begin{tabularx}{\textwidth}{l X}
     \toprule
@@ -422,7 +416,7 @@ Registers a new gateway on the network, adding it to an existing account which w
 
 An assertion of a gateway's location in the form of geographic coordinates
 
-\begin{table}[!ht]
+\begin{table}[H]
   \centering
   \begin{tabularx}{\textwidth}{l X}
       \toprule
@@ -439,7 +433,7 @@ An assertion of a gateway's location in the form of geographic coordinates
 
 A generic payment transaction, used to move tokens between two accounts
 
-\begin{table}[!ht]
+\begin{table}[H]
   \centering
   \begin{tabularx}{\textwidth}{l X}
       \toprule
@@ -455,7 +449,7 @@ A generic payment transaction, used to move tokens between two accounts
 \subsubsection{create\_deposit}
 Creates a staked deposit which can later be fractionally issued and redeemed in the form of chits without incurring transaction fees. Any unused portion of the deposit will be burned after some time.
 
-\begin{table}[!ht]
+\begin{table}[H]
   \centering
   \begin{tabularx}{\textwidth}{l X}
       \toprule
@@ -473,7 +467,7 @@ Creates a staked deposit which can later be fractionally issued and redeemed in 
 \subsubsection{chit}
 Issues a chit against a previously staked deposit in payment for transport or other services
 
-\begin{table}[!ht]
+\begin{table}[H]
   \centering
   \begin{tabularx}{\textwidth}{l X}
       \toprule
@@ -499,61 +493,100 @@ Transaction fees are an essential part of most blockchain implementations. They 
 
 In this section we discuss Helium's need for microtransactions, the limitations of existing solutions, and propose a solution based on staking and burning.
 
+\subsubsection{Helium's Need for Microtransactions}
+
+\paragraph{Devices Pay Per Packet}
+The goal of Helium is to provide internet data transport fees (the fees paid by devices to miners) that are an order of magnitude less than anything currently available for this type of service. This transport fee would need to be metered per-packet in order to allow for maximum flexibility --- this way, a device could use any gateway, even just to send or receive a single packet without having previously established a relationship with that gateway.
+
+\paragraph{All Transactions Occur On-Chain}
+Helium is built on the philosophy that all transactions should occur \emph{on-chain}; that is, blocks should be sized and mined with a frequency such that every transaction which occurs on the network should be stored in the blockchain.  To accomplish this goal the cost of mining must be low, blocks must be large enough to encapsulate a large number of transactions, and frequent enough that transactions are processed quickly.
+
+\paragraph{Allow Devices to Persist Data to the Blockchain}
+Because the Helium blockchain services a specific use, the \verb|DWN|, blocks must additionally be able store fingerprints of data sent from devices along with the transaction which pays a miner for their transport service.  We believe that this holistic \emph{tamper-proof} data trail will enable entirely new use cases where the authenticity and veracity of sensor data is critical.
+
 \subsubsection{Limitations of Existing Solutions}
+
+Now that we have discussed the requirements of the Helium Network, let's look at the existing solutions for micropayments on a blockchain and address their shortcommings as they apply to our network.
+
+\paragraph{Heavyweight Transactions}
+The first option is fine for larger transactions as the service fee is smaller than the payment. This doesn't work well for very small transactions as whoever pays the transaction fee ends up possibly paying more for the transaction fees than the value being exchanged. This is why you can't buy a packet of gum with a credit card. The gas station pays a minimum fee on each credit card transaction, and under a certain charge they lose money. This option is clearly not suitable for micro transactions.
+
+\paragraph{Zero-fee Transactions}
+Could we simply remove fees? A true zero-fee blockchain would be frought with spam transactions. It would be trivial to write a script to pollute the blockchain with garbage transactions. Some ostensibly zero-fee blockchain implemetations get around this issue in clever ways, such as by offloading the work of processing and verifying transactions to the transactors (iota). But those implementations aren't perfect, for example, IOTA hasn't yet proved it is capable of operating fully decentralized. \todo{fill this out a bit more}
+
+\paragraph{State Channels}
+State channels allow two parties to exchange value, small increments at a time, with very limited risk. If one party thinks the other is cheating them, they can publish the final transaction in the state channel to the blockchain and shut it down. At most one payment is usually at risk. However, there are several downsides: the payer has to lock up significant funds for the lifetime of the state channel, meaning they may be unable to open state channels with other parties or pay other dues; transactions in the state channel do not appear on the main chain at all; and they're relatively complex to get right (note that neither Lightning nor Raiden have become widely used yet).
+
+\paragraph{Payment in Arrear}
+Payment in arrear, after the services have been rendered, is extremely risky in a decentralized pseudo-anonymous system. You don't know if the person who is supposed to pay you will ever pay you, nor do you know if they'll even have the money when the debt comes due. This model only works when the parties involved trust each other, or have some recourse to recover funds (lawyers!).
+
+\subsubsection{Light Clients \& Full Nodes}
+
+One requirement for the Helium Network is that all transactions occur on-chain. This means that the size of the full blockchain will grow quite large. This issue is compounded by the fact that all miners on the network are hardware gateways, limited in computation power and storage space.
+
+We will solve this constraint by allowing mining nodes to operate as \textbf{light clients} on the blockchain, pruning old blocks as needed and keeping only the latest ledger values. They will communicate over the p2p network with \textbf{full nodes} which maintain a complete history of the blockchain to verify transactions.
+
+This begs the question of who is responsible for operating full nodes, and what their incentive to do so is. Routers are software-only applications with access to scalable, cloud-based storage and will be required to operate full nodes in order to fulfill their stated purpose. Helium will operate a router that will make it easy for developers to launch products without needing to deploy their own router. However, many enterprise developers, who are required to maintain a higher standard of privacy, will want to host their own router. Together, these routers will form a network of full nodes capable of supporting resource constrained gateways and wallets operating light clients.
+
 
 \subsubsection{A Proposed Solution Based on Staking \& Chits}
 
-current microtransaction implementations include state channels like lightning network and raiden. However, we see value to including metadata along with each packet transaction on the blockchain. And the purpose of state channels is to keep unnecessary transactions off the blockchain. big block approach, with light clients, pruning, routers serving as full nodes.
+I propose they push their pile of chips on the table and proceed to issue IOUs against their pile of tokens until it is exhausted. These IOUs are linked to each other, the blockchain needs to have seen the previous ones before subsequent ones will be accepted. Each IOU references the sequence number, the amount to pay, the hash of the packet, etc. These IOUs are returned in response to a gateway offering a packet for delivery.
 
-so this approach should help control the size of the blockchain, as gateways have fixed storage.
+Because the gateway concerned wants to get paid for transport, it will add the IOU transaction to its mempool, along with any previous IOUs that it depends on. This means that several gateways are all incentivized to include these IOUs in their blockchain. The entity issuing IOUs can even use the final IOU in the transaction chain to incentivize a miner to include all the previous (or missing) IOUs in a block. If previous transactions are not included in the chain, nobody gets paid.
 
-but what about fees? if we want to meter by packet, and for the cost of transport to be very cheap, we want to prevent the scenario where the transaction fees outstrip the transport fees themselves. In an ideal world we wouldn't have to charge two fees, one for providing transport and one for storing the transaction on the blockchain.
+On the face of things, this is similar to how state channels work, but with a couple notable differences. State channels are one to one, this is one to many. Additionally, this keeps the record of the transactions on the chain. The crucial advantage here is that we can likely eliminate transaction fees for most, if not all of these payments. The first, staking transaction, can be sent along with the first IOU transaction, so the gateway is incentivized to add it to their block. If the first miner doesn't include it, the second IOU can be accompanied with the staking transaction and the first IOU when communicating with the next miner, etc. Eventually the advantage of including the transactions outweighs the disadvantages.
 
-We propose a special type of transaction based on staking and burning.
+In theory, it is possible for the IOU issuer to spend all the staked tokens and not have anything left to incentivize a miner to include the final transaction. All the miners involved in the IOU chain have an incentive to get it included in a block, and because we have a fairer chance any individual miner winning a block, this should eventually clear.
 
-\subsubsection{Example Deposit Lifecycle}
+Note that nobody gets paid until everybody gets paid. IOUs should not be issued after the ExpiryHeight. If the stake is not distributed N blocks (like a week?) after the ExpiryHeight, the stake is disbursed as much as possible and any remaining balance is destroyed. This provides an incentive for everyone involved to settle the balance. Entities allowing their remaining stake to be destroyed would also potentially lose standing among gateways.
 
-\begin{enumerate}
-
-\item A router $R$ creates a deposit $S$ of 500 tokens, expiring at block height $current\_height + 10,080$ (1 week from now), by publishing a create\_deposit transaction and paying a nominal transaction fee
-\item A gateway $G$ hears a packet $P$ broadcast by device $D$
-\item $G$ uses metadata attached to $P$, referencing the current state of the blockchain, to identify $R$ as the owner of $D$
-\item $G$ sends the signature $Sig_P$ of $P$ and an offer of 1 token for transport to $R$
-\item $R$ receives $Sig_P$ and the payment offer and can decide if it wants the packet for the offered price
-\item Assuming $R$ wants the packet at the offered price, it constructs a \textbf{chit} transaction $C_0$ with nonce 0, value 1, payable to $G$, against $S$ and sends it to $G$
-\item Having received $C_0$, $G$ verifies the correctness of $C_0$ by inspecting $S$ on the blockchain and sends $P$ to $R$
-\item $G$ adds $C_0$ to its mempool and gossips it to the p2p network where any interested gateway can add it to its own mempool for inclusion in the next block
-\item $R$ continues issuing chits $C_n$  against $S$ until either:
-  \begin{enumerate}
-  \item $S$'s value is depleted at which point $R$ can create a new deposit
-  \item $S$ expires at block height $n + 10,080$ and the remaining balance is burned
-  \end{enumerate}
-\item Once $S$ is closed either through depletion or expiration, all gateways owning chits against $S$ receive their payment
-\end{enumerate}
-
-points:
-
-gateways are selfish and only add chits payable to them, or belonging to a deposit in which they have received chits, to their mempool.
-
-this prevents spam attacks because only a trusted gateway that has performed some work in exchange for a chit will add it to their draft blocks
-
-gateways gossip chits they receive to the p2p network of gateways
-
-because no one gets paid until everyone gets paid, its in a gateway owed a chit's best interest to continue adding chits for that deposit to its draft blocks so that a deposit is exhausted sooner and it can get paid
-
-chits must be added to the blockchain in order of nonce
-
-if a router issues a chit with a higher nonce to a gateway, it can also include chits with nonces that make up the difference between what's already been added to the blockchain and its current nonce. This way, a gateway never has a partial nonce.
-
-maybe a gateway could also ask a router for prior nonces in case it wasn't listening to gossip?
-
-if a gateway fails to send the agreed upon packet to the router after the router issues a chit, the router can rerequest it (for some period of time). If the gateway is a bad actor and purposefully witholds the paid-for packet, the router may add the gateway to its own private blacklist of bad actor gateways. we hope that the threat of losing future business from a router and the relatively low overhead of completing the transfer of the packet will be enough to disincentivize gateways from acting in bad faith.
+\todo{Edit this section}
 
 \todo{how does the redemption period after the expiration work? we want to balance not wanting to hold onto deposits for a long time with preventing gateways from getting screwed out of their owed balance if they aren't chosen for a block in time}
 
 
 \todo{can a router close a deposit prior to expiration and reclaim the remainder? how would that work if it has issued chits that haven't been published yet?}
 
+\todo{what would a geolocation transaction that consults multiple gateways look like?}
+
+
+\subsubsection{Example Deposit Lifecycle}
+
+In this section, we will walk through an example lifecycle of a router staking a deposit, gateways performing work on behalf of the router, and being compensated by the router through chits agaist the deposit.
+
+\begin{enumerate}
+
+\item A router $R$ creates a deposit $S$ of 500 tokens, expiring at block height $current\_height + 10,080$ (1 week from now), by publishing a create\_deposit transaction and paying a nominal transaction fee
+\item A gateway $G_A$ hears a packet $P_1$ broadcast by device $D$
+\item $G_A$ uses metadata attached to $P_1$, referencing the current state of the blockchain, to identify $R$ as the owner of $D$
+\item $G_A$ sends the signature $Sig(P_1)$ of $P_1$ and an offer of 1 token for transport to $R$
+\item $R$ receives $Sig(P_1)$ and the payment offer and can decide if it wants the packet for the offered price
+\item Assuming $R$ wants the packet at the offered price, it constructs a \textbf{chit} transaction $C_1$ with nonce 1, value 1 token, payable to $G_A$, against $S$ and sends it to $G_A$
+\item Having received $C_1$, $G_A$ verifies the correctness of $C_1$ by inspecting $S$ on the blockchain and sends $P$ to $R$
+\item $G_A$ adds $C_1$ to its mempool and gossips it to the p2p network where any interested gateway can add it to its own mempool for inclusion in the next block
+\item Meanwhile, $D$ has moved and when it broadcasts its next packet $P_2$, another gateway $G_B$ hears it
+\item Just as before, $G_B$ sends $Sig(P_2)$ to $R$ along with an offer of 0.9 tokens for transport
+\item $R$ responds with a chit $C_2$, but since $C_1$ has not been included in a block yet, and chits must be included in nonce order, $R$ also sends $C_1$
+\item $G_B$ adds $C_1$ and $C_2$ to its mempool and gossips both chit transactions to the p2p network
+\item $G_A$, being invested in deposit $S$, hears about the new chit $C_2$ over the p2p network and adds it to its mempool
+\item $R$ continues issuing chits $C_n$  against $S$ until either:
+  \begin{enumerate}
+  \item $S$'s value is depleted at which point $R$ can create a new deposit
+  \item $S$ expires at the previously specified block height and the remaining balance is burned
+  \end{enumerate}
+\item Once $S$ is closed either through depletion or expiration, all gateways owning chits against $S$ receive their payment
+\end{enumerate}
+
+\subsubsection{Problems \& Solutions}
+
+Here, we address potential problems that could arise with the deposit \& chit approach and present solutions to these problems.
+
+\paragraph{Degenerate Gateway} A gateway, after being issued a chit for the service it has agreed to perform, could neglect to follow through and perform the service. If a gateway fails to send the agreed upon packet to the router after the router issues a chit, the router can rerequest it (for some period of time). If the gateway is a bad actor and purposefully witholds the paid-for packet, the router may add the gateway to its own private blacklist of bad actor gateways. The threat of losing future business from a router and the relatively low overhead of completing the transfer of the packet acts to disincentivize gateways from acting in bad faith. This is consistent with state channel implementations where the task is subdivided such that the scope of potential loss is incredibly low.
+
+\paragraph{Chit Bomb} A malicious actor could stake a deposit and then proceed to issue a near limitless amount of miniscule chits against that deposit without incurring transaction fees. This could flood mempools and pollute the blockchain with spam transactions. Assuming we trust our network of gateways (see trust/scoring section?), this could never happen. Gateways are the only mining entity on the network, and chits can only be issued to gateways in payment for their services. Because all gateways are selfish, they will only include transactions that benefit themselves. These are either transactions with fees attached, or chits that they have a direct investment in (either because they will get paid, or it's attached to a stake in which they have chits). Therefore, they would ignore any spam chits that were not issued in exchange for a service provided.
+
+\todo{Other problems we want to address?}
 
 \newpage
 
