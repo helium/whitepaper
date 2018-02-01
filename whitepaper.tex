@@ -406,7 +406,8 @@ Constraints,
 \begin{equation*} \label{constraints}
 \begin{split}
 0 \leq P(M) < 1 \\
-\phi\textsubscript{h} < 1
+\phi\textsubscript{h} < 1\\
+\lim_{h \to \infty} \phi\textsubscript{h} \rightarrow 1.0
 \end{split}
 \end{equation*}
 
@@ -419,6 +420,13 @@ Relationships,
 &= \frac{\phi\textsubscript{h-1}}{\sqrt{\phi\textsubscript{h-1}} + \frac{1}{(\alpha\textsubscript{h})^2}}\\
 \phi\textsubscript{h} &= g(\phi\textsubscript{h-1}, \eta\textsubscript{h-1}, \phi\textsubscript{max})\\
 &= \phi\textsubscript{h-1} + \epsilon\textsubscript{h}
+\end{split}
+\end{equation*}\newline
+
+Substituting the values,
+\begin{equation*} \label{score}
+\begin{split}
+\phi\textsubscript{h} &= \phi\textsubscript{h-1} + \frac{\phi\textsubscript{h-1}}{\sqrt{\phi\textsubscript{h-1}} + (\lvert1 - \sqrt{1 - (\phi\textsubscript{h-1} - 1)^2}\rvert \cdot \eta\textsubscript{h-1})^2}
 \end{split}
 \end{equation*}\newline
 
