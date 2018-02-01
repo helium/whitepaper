@@ -389,46 +389,61 @@ We provide a brief overview of the router cycle and the functions available to r
 \todo{define these terms before as well}\newline
 Given,\newline
 \begin{tabular}{l l}
-	g, &gateway \\
+	$\tau$, &gateway \\
 	h, &height of the blockchain \\
-	P(g), &probability of g being selected as target\\
-	$\phi$\textsubscript{G}, &score of god gateway\\
-	$\phi$\textsubscript{0}, &score of g initially\\
-	$\phi$\textsubscript{h}, &score of g at height h\\
+	P($\tau$), &probability of $\tau$ being selected as target\\
+	$\phi$\textsubscript{0}, &score of $\tau$ initially\\
+	$\phi$\textsubscript{h}, &score of $\tau$ at height h\\
 	$\phi'$\textsubscript{h}, &depreciation value of $\phi$\textsubscript{h}\\
 	$\delta$\textsubscript{h}, &rate of decay of $\phi$\textsubscript{h}\\
 	$\epsilon$\textsubscript{h}, &boost for $\phi$\textsubscript{h} on successful verification\\
 	$\alpha$\textsubscript{h}, &boost factor\\
 	$\eta$\textsubscript{h}, &trusted gateways\\
+	$\phi$\textsubscript{max}, &local maximum score for $\eta$\textsubscript{h}
 \end{tabular}
 
 Constraints,
 \begin{equation*} \label{constraints}
 \begin{split}
-0 \leq P(M) < 1 \\
-\phi\textsubscript{h} < 1\\
-\lim_{h \to \infty} \phi\textsubscript{h} \rightarrow 1.0
+& 0 \leq P(M) < 1 \\
+& \phi\textsubscript{h} < 1.0\\
+\end{split}
+\end{equation*}
+
+Goal,
+\begin{equation*} \label{constraints}
+\begin{split}
+\lim_{h \to \infty} & \phi\textsubscript{h} \rightarrow 1.0
 \end{split}
 \end{equation*}
 
 Relationships,
-\begin{equation*} \label{functions}
+\begin{equation} \label{alpha}
 \begin{split}
-\alpha\textsubscript{h} &= e(\phi\textsubscript{h-1}, \eta\textsubscript{h-1}) \\
-&= \lvert1 - \sqrt{1 - (\phi\textsubscript{h-1} - 1)^2}\rvert \cdot \eta\textsubscript{h-1}\\
-\epsilon\textsubscript{h} &= f(\phi\textsubscript{h-1}, \alpha\textsubscript{h})\\
-&= \frac{\phi\textsubscript{h-1}}{\sqrt{\phi\textsubscript{h-1}} + \frac{1}{(\alpha\textsubscript{h})^2}}\\
-\phi\textsubscript{h} &= g(\phi\textsubscript{h-1}, \eta\textsubscript{h-1}, \phi\textsubscript{max})\\
-&= \phi\textsubscript{h-1} + \epsilon\textsubscript{h}
+\alpha\textsubscript{h} &= g(\phi\textsubscript{h-1}, \eta\textsubscript{h-1}) = \lvert1 - \sqrt{1 - (\phi\textsubscript{h-1} - 1)^2}\rvert \cdot \eta\textsubscript{h-1}\\
 \end{split}
-\end{equation*}\newline
+\end{equation}
 
-Substituting the values,
-\begin{equation*} \label{score}
+\begin{equation} \label{epsilon}
 \begin{split}
-\phi\textsubscript{h} &= \phi\textsubscript{h-1} + \frac{\phi\textsubscript{h-1}}{\sqrt{\phi\textsubscript{h-1}} + (\lvert1 - \sqrt{1 - (\phi\textsubscript{h-1} - 1)^2}\rvert \cdot \eta\textsubscript{h-1})^2}
+\epsilon\textsubscript{h} &= f(\phi\textsubscript{h-1}, \alpha\textsubscript{h}) = \frac{\phi\textsubscript{h-1}}{\sqrt{\phi\textsubscript{h-1}} + \frac{1}{(\alpha\textsubscript{h})^2}}\\
 \end{split}
-\end{equation*}\newline
+\end{equation}
+
+\begin{equation} \label{score}
+	\phi\textsubscript{h} = \begin{cases}
+		\phi\textsubscript{h-1}, &if \phi\textsubscript{h-1} = \phi\textsubscript{max}.\\
+		\phi\textsubscript{h-1} + \epsilon\textsubscript{h-1}, &{otherwise}.
+	\end{cases}
+\end{equation}
+
+Substituting the values from \ref{alpha}, \ref{epsilon} to \ref{score}, we get the following recurrence relationship:
+\begin{equation} \label{recurrence}
+	\phi\textsubscript{h} = \begin{cases}
+		\phi\textsubscript{h-1}, &if \phi\textsubscript{h-1} = \phi\textsubscript{max}.\\
+		\phi\textsubscript{h-1} + \frac{\phi\textsubscript{h-1}}{\sqrt{\phi\textsubscript{h-1}} + (\lvert1 - \sqrt{1 - (\phi\textsubscript{h-1} - 1)^2}\rvert \cdot \eta\textsubscript{h-1})^{-2}}, &{otherwise}.
+	\end{cases}
+\end{equation}
 
 
 \newpage
