@@ -202,12 +202,12 @@ For every target $T_n$ that hears $O$ in the \emph{Proof-of-Coverage} and submit
 Verifying miners who see $B_C$ are able to verify the \emph{Proof-of-Coverage} prior to considering the block by recreating the following steps:
 
 \begin{enumerate}
-	\item The verifying miner, $V$, reconstructs the hash ring of miners $\omega$
-	\item Because $V$ is able to now see $B_C$, the random seed $\eta$ can be verified to have been created by the private key of $C$
-	\item $V$ then selects $T$ from $\omega$, as seeding with $\eta$ will result in the same target selection
-	\item The set of candidate $T_n$ are reconstructed from which $T_1$ and $T_L$ are determined
-	\item Dijkstra's algorithm is used to reconstruct the walk of $T_n$ from $T_1$ to $T_L$
-	\item The $K_S$ receipts contained in $B_C$ are verified to have been signed by the private keys of $T_1$..$T_L$
+        \item The verifying miner, $V$, reconstructs the hash ring of miners $\omega$
+        \item Because $V$ is able to now see $B_C$, the random seed $\eta$ can be verified to have been created by the private key of $C$
+        \item $V$ then selects $T$ from $\omega$, as seeding with $\eta$ will result in the same target selection
+        \item The set of candidate $T_n$ are reconstructed from which $T_1$ and $T_L$ are determined
+        \item Dijkstra's algorithm is used to reconstruct the walk of $T_n$ from $T_1$ to $T_L$
+        \item The $K_S$ receipts contained in $B_C$ are verified to have been signed by the private keys of $T_1$..$T_L$
 \end{enumerate}
 
 Assuming these steps are completed successfully, the \emph{Proof-of-Coverage} is verified and $B_C$ can be considered for inclusion in the blockchain [\ref{consensus}].
@@ -293,7 +293,7 @@ We provide a brief overview of the device cycle and the functions available to d
 
 \subsubsection{Miner Cycle}\label{mining}
 
-We provide a brief overview of the mining cycle and the functions available to miners on the network.
+We provide a brief overview of the mining cycle and the functions available to miners on the network in Cycle~\ref{cycle:miner}
 
 \begin{algorithm}[H]
   \SetAlgorithmName{Cycle}{List of Lifecycles}
@@ -367,21 +367,23 @@ We provide a brief overview of the mining cycle and the functions available to m
 
 \end{description}
 
-An overview of the various steps in each part of the lifecycle of a miner is given in Cycle~\ref{cycle:miner}
 
 
-\begin{algorithm}[H]
+\SetKwFunction{Time}{Time}
+\SetKwFunction{Sign}{Sign}
+\SetKwFunction{FindRouters}{FindRouters}
+\SetKwFunction{CalculateDeliverFee}{CalculateDeliverFee}
+\SetKwFunction{DeliverOffer}{DeliverOffer}
+\SetKwFunction{Deliver}{Deliver}
+\SetKwFunction{Transmit}{Transmit}
+\SetKwFunction{Transaction}{Transaction}
+\SetKwFunction{Encrypt}{Encrypt}
+\SetKwFunction{Decrypt}{Decrypt}
+
+\begin{algorithm}
   \SetAlgorithmName{Protocol}{List of Protocols}
   \DontPrintSemicolon
   \SetKwProg{Recv}{\BlankLine Receive}{}{}
-  \SetKwFunction{Time}{Time}
-  \SetKwFunction{Sign}{Sign}
-  \SetKwFunction{FindRouters}{FindRouters}
-  \SetKwFunction{CalculateDeliverFee}{CalculateDeliverFee}
-  \SetKwFunction{DeliverOffer}{DeliverOffer}
-  \SetKwFunction{Deliver}{Deliver}
-  \SetKwFunction{Transmit}{Transmit}
-  \SetKwFunction{Transaction}{Transaction}
   \caption{Receive Protocol}\label{proto:recv}
 
   \Recv{transactions} {
@@ -391,26 +393,50 @@ An overview of the various steps in each part of the lifecycle of a miner is giv
   \Recv{block} {
     Add sender to peer list\;
     Verify block\;
-    Add block to chain\;
-    Gossip block to peers\;
-    Harvest losing block transactions\;
+    \Case{Add block to chain}{
+      \Switch{success}{
+        Gossip block to peers\;
+        Harvest losing block transactions\;
+      }
+      \Switch{unchanged}{
+        ignore block\;
+      }
+    }
   }\label{proto:recv.block}
 
-  \Recv{coverage challenge} {
-
+  \Recv{radio challenge envelope (challenger C, data O), at time TA, signal strength RS} {
+    \Switch{\Decrypt(O, private key $E_{PK}$)} {
+      \Case{Secret $S$, NextTime $TB$, Remainder $R$} {
+        $K_s \leftarrow \ll S:64, TA:32, RS:32 \gg $\;
+        $B \leftarrow \Sign(K_s, E_{pk}) $\;
+        \Deliver(C, B)\;
+        At time $TB$ \Transmit((C, R))\;
+      }
+      \lOther{drop challenge}
+    }
   }
 
   \Recv{serialization challenge K}{
     $T \leftarrow \Time(milliseconds) $\;
     $B \leftarrow \ll K:64, T:64 \gg $\;
-    $R \leftarrow \Sign(B) $\;
+    $R \leftarrow \Sign(B, E_{pk}) $\;
     Respond $R$ to sender\;
   }\label{proto:recv.challenge}
 
-  \Recv{data at gateway G, from device D, data A, data signature $S_a$} {
-    $R \leftarrow R \in \FindRouters(D) $\;
-    $F \leftarrow \CalculateDeliverFee(R, D, A) $\;
-    \Switch{\DeliverOffer(R, $S_a$, F)} {
+\end{algorithm}
+
+
+\begin{algorithm}
+  \SetAlgorithmName{Protocol}{List of Protocols}
+  \DontPrintSemicolon
+  \SetKwProg{RecvData}{\BlankLine Data}{}{}
+  \caption{Receive Data Protocol}\label{proto:recv.data}
+
+  \RecvData{at gateway G, from device D, data A, data signature $S_a$} {
+    Router $R \leftarrow R \in \FindRouters(D) $\;
+    Fee $F \leftarrow \CalculateDeliverFee(R, D, A) $\;
+    Offer $O \leftarrow \Sign(\ll S_a, F \gg) $\;
+    \Switch{\Deliver(R, $O$)} {
       \Case{${IOU}_{FG}$}{
         Validate ${IOU}_{FG}$\;
         \Deliver(R, A)\;
@@ -421,14 +447,13 @@ An overview of the various steps in each part of the lifecycle of a miner is giv
     }
   }\label{proto:recv.data.device}
 
-  \Recv{data at gateway G, from router R, data A, for device D, with ${IOU}_{FG}$} {
-    \emph{This may happen in resonse to G delivering data to R}
+  \RecvData{at gateway G, from router R, data A, for device D, with ${IOU}_{FG}$} {
+    \emph{This can only happen in resonse to G delivering data to R}
 
     Validate ${IOU}_{FG}$\;
     \Transmit(D, A)\;
     $T \leftarrow \Transaction(redemption, G, {IOU}_{FG}) $\;
     Submit $T$ to peers\;
-
   }\label{proto:recv.data.router}
 
 \end{algorithm}
