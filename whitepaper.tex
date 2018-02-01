@@ -8,6 +8,7 @@
 \usepackage{graphicx}
 \usepackage{parskip}
 \usepackage{bytefield}
+\usepackage{amsmath}
 
 \graphicspath{ {images/} }
 
@@ -364,7 +365,7 @@ An overview of the various steps in each part of the lifecycle of a miner is giv
 
   \B{on location change} {
     Construct transaction with new location\;
-    Submit transaction to a ramdom peer\;
+    Submit transaction to a random peer\;
   }
 \end{algorithm}
 
@@ -382,6 +383,45 @@ We provide a brief overview of the router cycle and the functions available to r
 \section{Consensus Protocol}\label{consensus}
 
 \todo{Explain how consensus works in the system, using PoC to create scores, how blocks have scores based on proofs and uncles (?) and submitting blocks that the network can somehow agree on.}
+
+\subsection{Scoring Algorithm}\label{scoring}
+
+\todo{define these terms before as well}\newline
+Given,\newline
+\begin{tabular}{l l}
+	g, &gateway \\
+	h, &height of the blockchain \\
+	P(g), &probability of g being selected as target\\
+	$\phi$\textsubscript{G}, &score of god gateway\\
+	$\phi$\textsubscript{0}, &score of g initially\\
+	$\phi$\textsubscript{h}, &score of g at height h\\
+	$\phi'$\textsubscript{h}, &depreciation value of $\phi$\textsubscript{h}\\
+	$\delta$\textsubscript{h}, &rate of decay of $\phi$\textsubscript{h}\\
+	$\epsilon$\textsubscript{h}, &boost for $\phi$\textsubscript{h} on successful verification\\
+	$\alpha$\textsubscript{h}, &boost factor\\
+	$\eta$\textsubscript{h}, &trusted gateways\\
+\end{tabular}
+
+Constraints,
+\begin{equation*} \label{constraints}
+\begin{split}
+0 \leq P(M) < 1 \\
+\phi\textsubscript{h} < 1
+\end{split}
+\end{equation*}
+
+Relationships,
+\begin{equation*} \label{functions}
+\begin{split}
+\alpha\textsubscript{h} &= e(\phi\textsubscript{h-1}, \eta\textsubscript{h-1}) \\
+&= \lvert1 - \sqrt{1 - (\phi\textsubscript{h-1} - 1)^2}\rvert \cdot \eta\textsubscript{h-1}\\
+\epsilon\textsubscript{h} &= f(\phi\textsubscript{h-1}, \alpha\textsubscript{h})\\
+&= \frac{\phi\textsubscript{h-1}}{\sqrt{\phi\textsubscript{h-1}} + \frac{1}{(\alpha\textsubscript{h})^2}}\\
+\phi\textsubscript{h} &= g(\phi\textsubscript{h-1}, \eta\textsubscript{h-1}, \phi\textsubscript{max})\\
+&= \phi\textsubscript{h-1} + \epsilon\textsubscript{h}
+\end{split}
+\end{equation*}\newline
+
 
 \newpage
 
