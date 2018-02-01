@@ -404,13 +404,13 @@ We provide a brief overview of the mining cycle and the functions available to m
     }
   }\label{proto:recv.block}
 
-  \Recv{radio challenge envelope (challenger C, data O), at time TA, signal strength RS} {
+  \Recv{radio challenge envelope (challenger C, data O), at time $\beta$, signal strength $\upsilon$} {
     \Switch{\Decrypt(O, private key $E_{PK}$)} {
-      \Case{Secret $S$, NextTime $TB$, Remainder $R$} {
-        $K_s \leftarrow \ll S:64, TA:32, RS:32 \gg $\;
+      \Case{Secret $S$, NextTime $\psi$, Remainder $R$} {
+        $K_s \leftarrow \ll S:64, \beta:32, \upsilon:32 \gg $\;
         $B \leftarrow \Sign(K_s, E_{pk}) $\;
         \Deliver(C, B)\;
-        At time $TB$ \Transmit((C, R))\;
+        At time $\psi$ \Transmit((C, R))\;
       }
       \lOther{drop challenge}
     }
@@ -435,7 +435,7 @@ We provide a brief overview of the mining cycle and the functions available to m
   \RecvData{at gateway G, from device D, data A, data signature $S_a$} {
     Router $R \leftarrow R \in \FindRouters(D) $\;
     Fee $F \leftarrow \CalculateDeliverFee(R, D, A) $\;
-    Offer $O \leftarrow \Sign(\ll S_a, F \gg) $\;
+    Offer $O \leftarrow \Sign(\ll S_a, F \gg, E_{pk}) $\;
     \Switch{\Deliver(R, $O$)} {
       \Case{${IOU}_{FG}$}{
         Validate ${IOU}_{FG}$\;
@@ -448,7 +448,7 @@ We provide a brief overview of the mining cycle and the functions available to m
   }\label{proto:recv.data.device}
 
   \RecvData{at gateway G, from router R, data A, for device D, with ${IOU}_{FG}$} {
-    \emph{This can only happen in resonse to G delivering data to R}
+    \emph{This can only happen in response to G delivering data to R}
 
     Validate ${IOU}_{FG}$\;
     \Transmit(D, A)\;
