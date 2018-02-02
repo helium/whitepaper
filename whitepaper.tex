@@ -392,12 +392,12 @@ We provide a brief overview of the mining cycle and the functions available to m
   \Recv{block} {
     Add sender to peer list\;
     Verify block\;
-    \Case{Add block to chain}{
-      \Switch{success}{
+    \Switch{Add block to chain}{
+      \Case{success}{
         Gossip block to peers\;
         Harvest losing block transactions\;
       }
-      \Switch{unchanged}{
+      \Case{unchanged}{
         ignore block\;
       }
     }
