@@ -512,7 +512,7 @@ Now that we have discussed the requirements of the Helium Network, let's look at
 The first option is fine for larger transactions as the service fee is smaller than the payment. This doesn't work well for very small transactions as whoever pays the transaction fee ends up possibly paying more for the transaction fees than the value being exchanged. This is why you can't buy a packet of gum with a credit card. The gas station pays a minimum fee on each credit card transaction, and under a certain charge they lose money. This option is clearly not suitable for micro transactions.
 
 \paragraph{Zero-fee Transactions}
-Could we simply remove fees? A true zero-fee blockchain would be frought with spam transactions. It would be trivial to write a script to pollute the blockchain with garbage transactions. Some ostensibly zero-fee blockchain implemetations get around this issue in clever ways, such as by offloading the work of processing and verifying transactions to the transactors (iota). But those implementations aren't perfect, for example, IOTA hasn't yet proved it is capable of operating fully decentralized. \todo{fill this out a bit more}
+If heavyweight fees aren't feasible, could we go to the other extreme and simply remove fees for payment transactions? Unfortunately, a true zero-fee blockchain would be frought with spam transactions. It would be trivial to write a script to pollute the blockchain with garbage transactions. Some ostensibly zero-fee blockchain implemetations get around this issue in clever ways, such as offloading the work of processing and verifying transactions to the transactors themselves \cite{iota}. But those implementations aren't perfect, for example, IOTA hasn't yet proved it is capable of operating in a fully decentralized manner.
 
 \paragraph{State Channels}
 State channels allow two parties to exchange value, small increments at a time, with very limited risk. If one party thinks the other is cheating them, they can publish the final transaction in the state channel to the blockchain and shut it down. At most one payment is usually at risk. However, there are several downsides: the payer has to lock up significant funds for the lifetime of the state channel, meaning they may be unable to open state channels with other parties or pay other dues; transactions in the state channel do not appear on the main chain at all; and they're relatively complex to get right (note that neither Lightning nor Raiden have become widely used yet).
@@ -520,36 +520,17 @@ State channels allow two parties to exchange value, small increments at a time, 
 \paragraph{Payment in Arrear}
 Payment in arrear, after the services have been rendered, is extremely risky in a decentralized pseudo-anonymous system. You don't know if the person who is supposed to pay you will ever pay you, nor do you know if they'll even have the money when the debt comes due. This model only works when the parties involved trust each other, or have some recourse to recover funds (lawyers!).
 
-\subsubsection{Light Clients \& Full Nodes}
-
-One requirement for the Helium Network is that all transactions occur on-chain. This means that the size of the full blockchain will grow quite large. This issue is compounded by the fact that all miners on the network are hardware gateways, limited in computation power and storage space.
-
-We will solve this constraint by allowing mining nodes to operate as \textbf{light clients} on the blockchain, pruning old blocks as needed and keeping only the latest ledger values. They will communicate over the p2p network with \textbf{full nodes} which maintain a complete history of the blockchain to verify transactions.
-
-This begs the question of who is responsible for operating full nodes, and what their incentive to do so is. Routers are software-only applications with access to scalable, cloud-based storage and will be required to operate full nodes in order to fulfill their stated purpose. Helium will operate a router that will make it easy for developers to launch products without needing to deploy their own router. However, many enterprise developers, who are required to maintain a higher standard of privacy, will want to host their own router. Together, these routers will form a network of full nodes capable of supporting resource constrained gateways and wallets operating light clients.
-
-
 \subsubsection{A Proposed Solution Based on Staking \& Chits}
 
-I propose they push their pile of chips on the table and proceed to issue IOUs against their pile of tokens until it is exhausted. These IOUs are linked to each other, the blockchain needs to have seen the previous ones before subsequent ones will be accepted. Each IOU references the sequence number, the amount to pay, the hash of the packet, etc. These IOUs are returned in response to a gateway offering a packet for delivery.
+In order to our previously-stated requirement of on-blockchain microtransactions with zero fees, we propose a system that takes inspiration from staking, as well as state channels.
 
-Because the gateway concerned wants to get paid for transport, it will add the IOU transaction to its mempool, along with any previous IOUs that it depends on. This means that several gateways are all incentivized to include these IOUs in their blockchain. The entity issuing IOUs can even use the final IOU in the transaction chain to incentivize a miner to include all the previous (or missing) IOUs in a block. If previous transactions are not included in the chain, nobody gets paid.
+In order for a network user to issue zero fee payments to gateways, they must first stake a \emph{deposit} of tokens using the \emph{create\_deposit} transaction. This transaction has a fee. Once that deposit has been created, the network user can proceed to issue \emph{chits} against their deposit until it is exhaused. These chits are returned in response to a gateway offering a packet for delivery. Chits are linked to each other, the blockchain needs to have seen the previous ones before subsequent ones will be accepted. Each chit references the deposit, the sequence number (nonce), the amount to pay and any additional information about the packet.
 
-On the face of things, this is similar to how state channels work, but with a couple notable differences. State channels are one to one, this is one to many. Additionally, this keeps the record of the transactions on the chain. The crucial advantage here is that we can likely eliminate transaction fees for most, if not all of these payments. The first, staking transaction, can be sent along with the first IOU transaction, so the gateway is incentivized to add it to their block. If the first miner doesn't include it, the second IOU can be accompanied with the staking transaction and the first IOU when communicating with the next miner, etc. Eventually the advantage of including the transactions outweighs the disadvantages.
+Because the gateway concerned wants to get paid for transport, it will add the chit to its mempool, along with any previous chits that it depends on. This means that several gateways are all incentivized to include these chits in their blockchain. The entity issuing chits can even use the final IOU in the transaction chain to incentivize a miner to include all the previous (or missing) chits in a block. If previous chits are not included in the chain, nobody gets paid.
 
-In theory, it is possible for the IOU issuer to spend all the staked tokens and not have anything left to incentivize a miner to include the final transaction. All the miners involved in the IOU chain have an incentive to get it included in a block, and because we have a fairer chance any individual miner winning a block, this should eventually clear.
+On the face of things, this is similar to how state channels work, but with a couple notable differences. State channels are one to one, this is one to many. Additionally, this keeps the record of the transactions on the chain. The crucial advantage here is that we can eliminate transaction fees for all of these payments. The first staking transaction can be sent along with the first chit, so the gateway is incentivized to add it to their block. If the first miner doesn't include it, the second IOU can be accompanied with the staking transaction and the first chit when communicating with the next miner. Eventually the advantage of including the transactions outweighs the disadvantages.
 
-Note that nobody gets paid until everybody gets paid. IOUs should not be issued after the ExpiryHeight. If the stake is not distributed N blocks (like a week?) after the ExpiryHeight, the stake is disbursed as much as possible and any remaining balance is destroyed. This provides an incentive for everyone involved to settle the balance. Entities allowing their remaining stake to be destroyed would also potentially lose standing among gateways.
-
-\todo{Edit this section}
-
-\todo{how does the redemption period after the expiration work? we want to balance not wanting to hold onto deposits for a long time with preventing gateways from getting screwed out of their owed balance if they aren't chosen for a block in time}
-
-
-\todo{can a router close a deposit prior to expiration and reclaim the remainder? how would that work if it has issued chits that haven't been published yet?}
-
-\todo{what would a geolocation transaction that consults multiple gateways look like?}
-
+Note that nobody gets paid until everybody gets paid. Chits should not be issued after the ExpiryHeight. If the deposit is not distributed N blocks (like a week?) after the ExpiryHeight, the deposit is disbursed as much as possible and any remaining balance is destroyed. This provides an incentive for everyone involved to settle the balance. Entities allowing their remaining deposit to be destroyed would also potentially lose standing among gateways.
 
 \subsubsection{Example Deposit Lifecycle}
 
@@ -578,6 +559,10 @@ In this section, we will walk through an example lifecycle of a router staking a
 \item Once $S$ is closed either through depletion or expiration, all gateways owning chits against $S$ receive their payment
 \end{enumerate}
 
+\todo{can a router close a deposit prior to expiration and reclaim the remainder? how would that work if it has issued chits that haven't been published yet?}
+
+\todo{what would a geolocation transaction that consults multiple gateways look like?}
+
 \subsubsection{Problems \& Solutions}
 
 Here, we address potential problems that could arise with the deposit \& chit approach and present solutions to these problems.
@@ -586,7 +571,18 @@ Here, we address potential problems that could arise with the deposit \& chit ap
 
 \paragraph{Chit Bomb} A malicious actor could stake a deposit and then proceed to issue a near limitless amount of miniscule chits against that deposit without incurring transaction fees. This could flood mempools and pollute the blockchain with spam transactions. Assuming we trust our network of gateways (see trust/scoring section?), this could never happen. Gateways are the only mining entity on the network, and chits can only be issued to gateways in payment for their services. Because all gateways are selfish, they will only include transactions that benefit themselves. These are either transactions with fees attached, or chits that they have a direct investment in (either because they will get paid, or it's attached to a stake in which they have chits). Therefore, they would ignore any spam chits that were not issued in exchange for a service provided.
 
+\paragraph{Final Transaction}
+In theory, it is possible for the chit issuer to spend all the staked tokens and not have anything left to incentivize a miner to include the final transaction. All the miners involved in the chain of chits have an incentive to get it included in a block, and because there is a fair chance of any individual miner winning a block, this should eventually clear.
+
 \todo{Other problems we want to address?}
+
+\subsubsection{Light Clients \& Full Nodes}
+
+Up to now, we've discussed how to deal with microtransactions in a cost-effective way, however we haven't yet addressed how to deal with the size of the blockchain. One requirement we discussed for the Helium Network is that all transactions occur on-chain. This means that the size of the full blockchain will grow quite large. This issue is compounded by the fact that all miners on the network are gateways devices, limited in computation power and storage space.
+
+We solve this constraint by allowing mining nodes to operate as \emph{light clients} on the blockchain, pruning old blocks as needed and keeping only the latest ledger values. They will communicate over the p2p network with \emph{full nodes} which maintain a complete history of the blockchain to verify transactions.
+
+This raises a question: who is responsible for operating full nodes, and what is their incentive to do so? Routers are software-only applications with access to scalable, cloud-based storage and will be required to operate full nodes in order to fulfill their purpose. Helium will operate a router that will make it easy for developers to launch products without needing to deploy their own router. However, many enterprise developers, who are required to maintain a higher standard of privacy, will want to host their own router. Together, these routers will form a network of full nodes capable of supporting resource constrained gateways and wallets operating light clients.
 
 \newpage
 
