@@ -279,15 +279,14 @@ In this section we provide an overview of the Helium \verb|DWN| and the function
 We provide a brief overview of the device cycle and the functions available to devices on the network.
 
 \begin{enumerate}
-  \item \textbf{Join}: A device joins the \verb|DWN|.
-  Devices join the network by \todo{professor to complete these}
+  \item \textbf{Provisioning}: A device is provisioned on the \verb|DWN|.
+   Devices join the network by being programmed with keying material by their owner. This key material includes a private key known only by the device, the public key of the root-of-trust for the organization and a 64-bit MAC address.The MAC address consists of 32 bits of an Organizationally Unique Identifier (OUI) and 32 bits of an organizationally managed device identifier. Via an out of band mechanism the device's public key is added to the organization's device registry, indexed by the MAC address. Details of the management of device identifiers and keys are implementation defined and out of scope of this document.
 
   \item \textbf{Send}: A device sends data to a router on the internet, via a miner.
   Devices can send data to their specified router on the internet by paying miners Helium tokens.
-  A device initiates the sending process by broadcasting a packet via the wireless protocol. When a device broadcasts a packet any miners in a reasonable geographic area hear it. Each packet header contains the devices address, and miners inspect the blockchain using this address to determine which router this devices data should be delivered to. \todo{how does the price the device is willing to pay and the miner willing to accept get determined? is it stored in the blockchain as a type of transaction?}
+        A device initiates the sending process by broadcasting a packet via the wireless protocol. When a device broadcasts a packet any miners in a reasonable geographic area hear it. Each packet header contains the device's MAC address, and miners inspect the blockchain using this address to determine which routers are listed for the OUI component of the MAC address. See the Deliver section in the Mining Cycle \todo{cite?}.
 
-  \item \textbf{Receive}: A device receives data from a router on the internet, via a miner.
-
+    \item \textbf{Receive}: After a device has performed a Send, the device will listen for a response. The response can be a single acknowledgement or a queued up command or data packet. If the device gets a signalling packet describing a downlink message, it will stay awake until the entire packet has been received, otherwise it is free to turn its radio off or go into power-save mode. \todo{I propose we device LoRa class B style semantics later}
 
 \end{enumerate}
 
@@ -353,7 +352,7 @@ We provide a brief overview of the mining cycle and the functions available to m
 
     The miner uses their public key to sign a digest of their partially completed block to obtain some verifiable randomness. This randomness is used to choose the Target. Once the Target is selected the proof of coverage is constructed as in section 2.3 \todo{link this?}
 
-  \item [Deliver] A miner delivers data from a device to a router on the internet.
+\item [Deliver] A miner delivers data from a device to a router on the internet.\label{cycle:miner:deliver}
 
     Once a miner has received a packet from an end device, along with the precise timestamp it was received, it looks up the routers for the organization owning that device and offers the packet to one of those routers, for a fee. The router can accept the fee and return an IOU or it can reject the offer if it already has a copy of the packet or it is unwilling to pay the offered price. A router may pay for several copies of the packet if it wishes to solve for the position of the end device.
 
@@ -425,7 +424,6 @@ We provide a brief overview of the mining cycle and the functions available to m
 
 \end{algorithm}
 
-
 \begin{algorithm}
   \SetAlgorithmName{Protocol}{List of Protocols}
   \DontPrintSemicolon
@@ -458,17 +456,17 @@ We provide a brief overview of the mining cycle and the functions available to m
 
 \end{algorithm}
 
-
-
 \subsubsection{Routing Cycle}
 
 We provide a brief overview of the router cycle and the functions available to routers on the network.
 
-\begin{enumerate}
-  \item \todo{lay these out as above}
-\end{enumerate}
-
-\newpage
+\begin{description}
+    \item [Receive Bid] A router receives an offer to deliver a device packet. This offer includes the MAC address, the hash of the payload, the device's signature of the packet and the proposed delivery fee. The router can determine the authenticity of the packet, know if it already has a copy of the packet and decide on if the delivery price is acceptable.
+    \item [Accept Bid] If the price is acceptable the router can reply with a \emph{chit} that serves as both a payment as well as an anchoring the proof the packet existed at that point in time.
+    \item [Counter Bid] If the router isn't willing to pay the asked price, it can offer an alternative bid.
+    \item [Decline Bid] If the router doesn't accept the authenticity of the packet, or already has a copy of the packet, it can decline the offer.
+    \item [Send downlink message] Regardless of the accept/decline of the actual packet, the router can leverage the fact that it knows the gateway is in-range of the end-device to send a message down to it. Along with the packet to send, the router includes a \emph{chit} to pay for the transmission.
+\end{description}
 
 \section{Consensus Protocol}\label{consensus}
 
