@@ -169,7 +169,7 @@ The resulting $O$ can be visually represented as the following:
 
 \todo{new diagram}
 
-\textbf{Creating the Proof}. Once $O$ has been constructed and delivered to $T$, $T$ immediately broadcasts it. The Helium wireless protocol is not a point-to-point system, so several miners within proximity of $T$ will hear $O$. As described prior, each layer $O_l$ of $O$ contains the following three-tuple: \[\mathit{E\left(S, \psi, R\right)}\] where $E$ is a secure public key encryption function, $S$ is a secret value, $\psi$ is a time at which to transmit the next layer of the packet and $R$ is the remainder of $O$ consisting of recursive three-tuples. In this specific example, only the specific target $T_1$ will be able to decrypt $E$ and send a valid receipt back to the challenger, $C$.
+\textbf{Creating the Proof}. Once $O$ has been constructed and delivered to $T$, $T$ immediately broadcasts it. The Helium wireless protocol is not a point-to-point system, so several miners within proximity of $T$ will hear $O$. As described prior, each layer $O_l$ of $O$ contains the three-tuple ${E\left(S, \psi, R\right)}$ where $E$ is a secure public key encryption function, $S$ is a secret value, $\psi$ is a time at which to transmit the next layer of the packet and $R$ is the remainder of $O$ consisting of recursive three-tuples. In this specific example, only the specific target $T_1$ will be able to decrypt $E$ and send a valid receipt back to the challenger, $C$.
 
 We describe the approximate flow of \emph{Proof-of-Coverage} creation as follows:
 
@@ -182,7 +182,7 @@ We describe the approximate flow of \emph{Proof-of-Coverage} creation as follows
   \item These steps repeat for $T_2$..$T_L$, with $T_L$ being the last target constructed by $C$
 \end{enumerate}
 
-$C$ expects to hear responses from $T_n$ within a time threshold $\lambda$, otherwise it considers the \emph{Proof-of-Coverage} to have concluded. Because $C$ is the only party with complete knowledge of $O$, it can assign upper bounds to the values for $\beta$ and $\upsilon$ and thus verify that each layer of $O$ was transmitted approximately where and when it was expected. The upper bound for $\beta$ ls limited by the speed of light $\tau$ between $T_n$ and $T_n-1$. Thus we know that, subject to some slight delays from reflection or multipath, the packet should not arrive at $T_n$ later than $\tau$ multiplied by the geographical distance $D$ plus some small episilon value, $\upsilon = \tau \times \Big(D + \epsilon\Big)$. For $\upsilon$, because of the inverse-square law, we can calculate the maximum RSSI possible for a packet transmitted, $\mu$, from $T_n-1$ to $T_n$ as $\mu = \frac{1}{D^2}$. Gateways that are closer than expected, or which are transmitting at a higher power to mask their location disparity, are unlikely to get $\mu$ correct, given that they do not know who the next layer of $O$ is addressed to.
+$C$ expects to hear responses from $T_n$ within a time threshold $\lambda$, otherwise it considers the \emph{Proof-of-Coverage} to have concluded. Because $C$ is the only party with complete knowledge of $O$, upper bounds of the values for $\beta$ and $\upsilon$ are assigned by $C$ which are used to verify that each layer of $O$ was transmitted approximately where and when it was expected. The upper bound for $\beta$ ls limited by the speed of light $\tau$ between $T_n$ and $T_n-1$. Thus we know that, subject to some slight delays from reflection or multipath, the packet should not arrive at $T_n$ later than $\tau$ multiplied by the geographical distance $D$ plus some small episilon value, $\upsilon = \tau \times \Big(D + \epsilon\Big)$. For $\upsilon$, because of the inverse-square law, we can calculate the maximum RSSI possible for a packet transmitted, $\mu$, from $T_n-1$ to $T_n$ as $\mu = \frac{1}{D^2}$. Gateways that are closer than expected, or which are transmitting at a higher power to mask their location disparity, are unlikely to get $\mu$ correct, given that they do not know who the next layer of $O$ is addressed to.
 
 Once $T_L$ has delivered receipt to $C$, or $\lambda$ has elapsed, the \emph{Proof-of-Coverage} is completed. The collection of signed receipts, $K_S$, constitute the \emph{Proof-of-Coverage} that $C$ will include when attempting to mine the next block in the blockchain [\ref{mining}].
 
@@ -203,12 +203,12 @@ For every target $T_n$ that hears $O$ in the \emph{Proof-of-Coverage} and submit
 Verifying miners who see $B_C$ are able to verify the \emph{Proof-of-Coverage} prior to considering the block by recreating the following steps:
 
 \begin{enumerate}
-	\item The verifying miner, $V$, reconstructs the hash ring of miners $\omega$
-	\item Because $V$ is able to now see $B_C$, the random seed $\eta$ can be verified to have been created by the private key of $C$
-	\item $V$ then selects $T$ from $\omega$, as seeding with $\eta$ will result in the same target selection
-	\item The set of candidate $T_n$ are reconstructed from which $T_1$ and $T_L$ are determined
-	\item Dijkstra's algorithm is used to reconstruct the walk of $T_n$ from $T_1$ to $T_L$
-	\item The $K_S$ receipts contained in $B_C$ are verified to have been signed by the private keys of $T_1$..$T_L$
+        \item The verifying miner, $V$, reconstructs the hash ring of miners $\omega$
+        \item Because $V$ is able to now see $B_C$, the random seed $\eta$ can be verified to have been created by the private key of $C$
+        \item $V$ then selects $T$ from $\omega$, as seeding with $\eta$ will result in the same target selection
+        \item The set of candidate $T_n$ are reconstructed from which $T_1$ and $T_L$ are determined
+        \item Dijkstra's algorithm is used to reconstruct the walk of $T_n$ from $T_1$ to $T_L$
+        \item The $K_S$ receipts contained in $B_C$ are verified to have been signed by the private keys of $T_1$..$T_L$
 \end{enumerate}
 
 Assuming these steps are completed successfully, the \emph{Proof-of-Coverage} is verified and $B_C$ can be considered for inclusion in the blockchain [\ref{consensus}].
@@ -217,13 +217,13 @@ Assuming these steps are completed successfully, the \emph{Proof-of-Coverage} is
 
 This section describes the construction of the \emph{Proof-of-Serialization} protocol.
 
-\textbf{Creating the Proof}. First, a miner $M$ pseudo-randomly picks two miners $M^1$ and $M^2$, to prove contact serialization with. It is assumed $M$ has a public key for $M^1$ and $M^2$ (otherwise $M$ should obtain it from the blockchain). $M$ then generates a salted\footnote{the salt is a 512-bit SHA of $T^t$ of $b^n R$} hash commitment $K$ called the \emph{proof-kernel}. The proof-kernel is a commitment to what claim is desired to be proven. \[\mathit{K = H\left(R || M^1 || M^2\right)}\] $M$ sends $K$ to $M^1$. $M^1$ replies with $T$, a signed message including the current time and $K$. $M$ knows that the reply from $M^1$ was not pre-generated because it includes the nonce $R$ that the $M$ generated. Because $M$ doesn't completely trust $M^1$ it will ask for another time from $M^2$.
+\textbf{Creating the Proof}. First, a miner $M$ pseudo-randomly picks two miners $M_1$ and $M_2$, to prove contact serialization with. It is assumed $M$ has a public key for $M_1$ and $M_2$ (otherwise $M$ should obtain it from the blockchain). $M$ then generates a salted\footnote{the salt is a 512-bit SHA of $T_t$ of $b_n R$} hash commitment $K$ called the \emph{proof-kernel}. The proof-kernel is a commitment to what claim is desired to be proven. \[\mathit{K = H\left(R || M_1 || M_2\right)}\] $M$ sends $K$ to $M_1$. $M_1$ replies with $T$, a signed message including the current time and $K$. $M$ knows that the reply from $M_1$ was not pre-generated because it includes the nonce $R$ that the $M$ generated. Because $M$ doesn't completely trust $M_1$ it will ask for another time from $M_2$.
 
-For the second request, $M$ generates a sub-proof-kernel, $L = H\left(R || T || K\right)$, and sends it to $M^2$. $M^2$ replies with $U$, a signed message including the current time and $L$. $U$ is now a proof artifact that shows that $M$ desired and then proved a serialization between $M^1$ and $M^2$. Let's assume that the times from $M^1$ and $M^2$ are significantly different. If the time from $M^2$ is before $M^1$, then $M$ has proof of misbehaviour; the reply from $M^2$ implicitly shows that it was created later because of the way that $M$ constructed the nonce. If the time from $M^2$ is after, then $M$ can reverse the roles of $M^1$ and $M^2$ and repeat the process to obtain, assuming steady clocks, a misordered proof as in the other case.
+For the second request, $M$ generates a sub-proof-kernel, $L = H\left(R || T || K\right)$, and sends it to $M_2$. $M_2$ replies with $U$, a signed message including the current time and $L$. $U$ is now a proof artifact that shows that $M$ desired and then proved a serialization between $M_1$ and $M_2$. Let's assume that the times from $M_1$ and $M_2$ are significantly different. If the time from $M_2$ is before $M_1$, then $M$ has proof of misbehaviour; the reply from $M_2$ implicitly shows that it was created later because of the way that $M$ constructed the nonce. If the time from $M_2$ is after, then $M$ can reverse the roles of $M_1$ and $M_2$ and repeat the process to obtain, assuming steady clocks, a misordered proof as in the other case.
 
-With only two servers, $M$ can end up with proof that something is wrong, but no idea what the correct time is. But with half a dozen or more independent servers, $M$ will end up with chain of proof of any server's misbehaviour, signed by several others, and enough accurate replies to establish what the correct time is, $T^t$.
+With only two servers, $M$ can end up with proof that something is wrong, but no idea what the correct time is. But with half a dozen or more independent servers, $M$ will end up with chain of proof of any server's misbehaviour, signed by several others, and enough accurate replies to establish what the correct time is, $T_t$.
 
-\textbf{Utilizing the Proven Time}. The proven time allows us to prove, with relative certainty, that some piece of data $D$ was created between the time of the previous block $PbT^t$ and $T^t$. $D$ in this case is the proof-of-coverage. The randomness used to compute $O$ and thus obtain the proof-of-coverage is tied to the previous block, which contains $PbT^t$. Thus we know that $D$ must have been constructed between $PbT^t$ and $T^t$. This ensures that the proof-of-coverage cannot be pre-computed and that that blocks in the blockchain must have a minimum spacing in time; the \emph{blocktime}. Blocks which do not have at least \emph{blocktime} distance in time from their parent block are considered invalid.
+\textbf{Utilizing the Proven Time}. The proven time allows us to prove, with relative certainty, that some piece of data $D$ was created between the time of the previous block $PbT_t$ and $T_t$. $D$ in this case is the proof-of-coverage. The randomness used to compute $O$ and thus obtain the proof-of-coverage is tied to the previous block, which contains $PbT_t$. Thus we know that $D$ must have been constructed between $PbT_t$ and $T_t$. This ensures that the proof-of-coverage cannot be pre-computed and that that blocks in the blockchain must have a minimum spacing in time; the \emph{blocktime}. Blocks which do not have at least \emph{blocktime} distance in time from their parent block are considered invalid.
 
 \newpage
 
@@ -280,21 +280,57 @@ In this section we provide an overview of the Helium \verb|DWN| and the function
 We provide a brief overview of the device cycle and the functions available to devices on the network.
 
 \begin{enumerate}
-  \item \textbf{Join}: A device joins the \verb|DWN|.
-  Devices join the network by \todo{professor to complete these}
+  \item \textbf{Provisioning}: A device is provisioned on the \verb|DWN|.
+   Devices join the network by being programmed with keying material by their owner. This key material includes a private key known only by the device, the public key of the root-of-trust for the organization and a 64-bit MAC address.The MAC address consists of 32 bits of an Organizationally Unique Identifier (OUI) and 32 bits of an organizationally managed device identifier. Via an out of band mechanism the device's public key is added to the organization's device registry, indexed by the MAC address. Details of the management of device identifiers and keys are implementation defined and out of scope of this document.
 
   \item \textbf{Send}: A device sends data to a router on the internet, via a miner.
   Devices can send data to their specified router on the internet by paying miners Helium tokens.
-  A device initiates the sending process by broadcasting a packet via the wireless protocol. When a device broadcasts a packet any miners in a reasonable geographic area hear it. Each packet header contains the devices address, and miners inspect the blockchain using this address to determine which router this devices data should be delivered to. \todo{how does the price the device is willing to pay and the miner willing to accept get determined? is it stored in the blockchain as a type of transaction?}
+        A device initiates the sending process by broadcasting a packet via the wireless protocol. When a device broadcasts a packet any miners in a reasonable geographic area hear it. Each packet header contains the device's MAC address, and miners inspect the blockchain using this address to determine which routers are listed for the OUI component of the MAC address. See the Deliver section in the Mining Cycle \todo{cite?}.
 
-  \item \textbf{Receive}: A device receives data from a router on the internet, via a miner.
-
+    \item \textbf{Receive}: After a device has performed a Send, the device will listen for a response. The response can be a single acknowledgement or a queued up command or data packet. If the device gets a signalling packet describing a downlink message, it will stay awake until the entire packet has been received, otherwise it is free to turn its radio off or go into power-save mode. \todo{I propose we device LoRa class B style semantics later}
 
 \end{enumerate}
 
 \subsubsection{Miner Cycle}\label{mining}
 
-We provide a brief overview of the mining cycle and the functions available to miners on the network.
+We provide a brief overview of the mining cycle and the functions available to miners on the network in Cycle~\ref{cycle:miner}
+
+\begin{algorithm}[H]
+  \SetAlgorithmName{Cycle}{List of Lifecycles}
+  \DontPrintSemicolon
+  \SetKwProg{Miner}{\BlankLine Miner}{}{}
+  \caption{Miner Cycle Overview}\label{cycle:miner}
+
+  \Miner{At every epoch \emph{blocktime}} {
+    Construct a block\;
+    Add transactions from non-winning blocks\;
+    Add transactions from mempool\;
+    Construct \emph{Proof-of-Coverage}\;
+    Construct \emph{Proof-of-Serialization}\;
+    Submit block to peers\;
+  }
+
+  \Miner{At any time} {
+    Receive transactions\;
+    Receive block\;
+    Receive coverage challenge\;
+    Receive serialization challenge\;
+    Receive data from device\;
+    Receive data from router\;
+  }
+
+  \Miner{when joining} {
+    Construct transaction with address, public key, and payee\;
+    Construct transaction with location\;
+    Submit transactions to a random peer\;
+  }
+
+  \Miner{on location change} {
+    Construct transaction with new location\;
+    Submit transaction to a ramdom peer\;
+  }
+\end{algorithm}
+
 
 \begin{description}
   \item [Join] A miner joins the network.
@@ -317,7 +353,7 @@ We provide a brief overview of the mining cycle and the functions available to m
 
     The miner uses their public key to sign a digest of their partially completed block to obtain some verifiable randomness. This randomness is used to choose the Target. Once the Target is selected the proof of coverage is constructed as in section 2.3 \todo{link this?}
 
-  \item [Deliver] A miner delivers data from a device to a router on the internet.
+\item [Deliver] A miner delivers data from a device to a router on the internet.\label{cycle:miner:deliver}
 
     Once a miner has received a packet from an end device, along with the precise timestamp it was received, it looks up the routers for the organization owning that device and offers the packet to one of those routers, for a fee. The router can accept the fee and return an IOU or it can reject the offer if it already has a copy of the packet or it is unwilling to pay the offered price. A router may pay for several copies of the packet if it wishes to solve for the position of the end device.
 
@@ -331,58 +367,123 @@ We provide a brief overview of the mining cycle and the functions available to m
 
 \end{description}
 
-An overview of the various steps in each part of the lifecycle of a miner is given in Cycle~\ref{cycle:miner}
 
-\begin{algorithm}[H]
-  \SetAlgorithmName{Cycle}{List of Lifecycles}
+
+\SetKwFunction{Time}{Time}
+\SetKwFunction{Sign}{Sign}
+\SetKwFunction{FindRouters}{FindRouters}
+\SetKwFunction{CalculateDeliverFee}{CalculateDeliverFee}
+\SetKwFunction{DeliverOffer}{DeliverOffer}
+\SetKwFunction{Deliver}{Deliver}
+\SetKwFunction{Transmit}{Transmit}
+\SetKwFunction{Transaction}{Transaction}
+\SetKwFunction{Encrypt}{Encrypt}
+\SetKwFunction{Decrypt}{Decrypt}
+
+\begin{algorithm}
+  \SetAlgorithmName{Protocol}{List of Protocols}
   \DontPrintSemicolon
-  \SetKwProg{B}{\BlankLine Miner}{}{}
-  \caption{Miner Cycle Overview}\label{cycle:miner}
+  \SetKwProg{Recv}{\BlankLine Receive}{}{}
+  \caption{Receive Protocol}\label{proto:recv}
 
-  \B{At every epoch \emph{blocktime}} {
-    Construct a block\;
-    Add transactions from non-winning blocks\;
-    Add transactions from mempool\;
-    Construct \emph{Proof-of-Coverage}\;
-    Construct \emph{Proof-of-Serialization}\;
-    Submit block to peers\;
+  \Recv{transactions} {
+    Add transactions to mempool\;
+  }\label{proto:recv.trans}
+
+  \Recv{block} {
+    Add sender to peer list\;
+    Verify block\;
+    \Case{Add block to chain}{
+      \Switch{success}{
+        Gossip block to peers\;
+        Harvest losing block transactions\;
+      }
+      \Switch{unchanged}{
+        ignore block\;
+      }
+    }
+  }\label{proto:recv.block}
+
+  \Recv{radio challenge envelope (challenger C, data O), at time $\beta$, signal strength $\upsilon$} {
+    \Switch{\Decrypt(O, private key $E_{PK}$)} {
+      \Case{Secret $S$, NextTime $\psi$, Remainder $R$} {
+        $K_s \leftarrow \ll S:64, \beta:32, \upsilon:32 \gg $\;
+        $B \leftarrow \Sign(K_s, E_{pk}) $\;
+        \Deliver(C, B)\;
+        At time $\psi$ \Transmit((C, R))\;
+      }
+      \lOther{drop challenge}
+    }
   }
 
-  \B{At any time} {
-    Receive transactions\;
-    Receive block to add to chain or harvest\;
-    Receive coverage challenge\;
-    Receive time request\;
-    Receive data from device\;
-    Receive data from router\;
-  }
+  \Recv{serialization challenge K}{
+    $T \leftarrow \Time(milliseconds) $\;
+    $B \leftarrow \ll K:64, T:64 \gg $\;
+    $R \leftarrow \Sign(B, E_{pk}) $\;
+    Respond $R$ to sender\;
+  }\label{proto:recv.challenge}
 
-  \B{when joining} {
-    Construct transaction with address, public key, and payee\;
-    Construct transaction with location\;
-    Submit transaction to a random peer\;
-  }
-
-  \B{on location change} {
-    Construct transaction with new location\;
-    Submit transaction to a random peer\;
-  }
 \end{algorithm}
 
+\begin{algorithm}
+  \SetAlgorithmName{Protocol}{List of Protocols}
+  \DontPrintSemicolon
+  \SetKwProg{RecvData}{\BlankLine Data}{}{}
+  \caption{Receive Data Protocol}\label{proto:recv.data}
+
+  \RecvData{at gateway G, from device D, data A, data signature $S_a$} {
+    Router $R \leftarrow R \in \FindRouters(D) $\;
+    Fee $F \leftarrow \CalculateDeliverFee(R, D, A) $\;
+    Offer $O \leftarrow \Sign(\ll S_a, F \gg, E_{pk}) $\;
+    \Switch{\Deliver(R, $O$)} {
+      \Case{${IOU}_{FG}$}{
+        Validate ${IOU}_{FG}$\;
+        \Deliver(R, A)\;
+        $T \leftarrow \Transaction(redemption, G, {IOU}_{FG}) $\;
+        Submit $T$ to peers\;
+      }
+      \lOther{drop A}
+    }
+  }\label{proto:recv.data.device}
+
+  \RecvData{at gateway G, from router R, data A, for device D, with ${IOU}_{FG}$} {
+    \emph{This can only happen in response to G delivering data to R}
+
+    Validate ${IOU}_{FG}$\;
+    \Transmit(D, A)\;
+    $T \leftarrow \Transaction(redemption, G, {IOU}_{FG}) $\;
+    Submit $T$ to peers\;
+  }\label{proto:recv.data.router}
+
+\end{algorithm}
 
 \subsubsection{Routing Cycle}
 
 We provide a brief overview of the router cycle and the functions available to routers on the network.
 
-\begin{enumerate}
-  \item \todo{lay these out as above}
-\end{enumerate}
-
-\newpage
+\begin{description}
+    \item [Receive Bid] A router receives an offer to deliver a device packet. This offer includes the MAC address, the hash of the payload, the device's signature of the packet and the proposed delivery fee. The router can determine the authenticity of the packet, know if it already has a copy of the packet and decide on if the delivery price is acceptable.
+    \item [Accept Bid] If the price is acceptable the router can reply with a \emph{chit} that serves as both a payment as well as an anchoring the proof the packet existed at that point in time.
+    \item [Counter Bid] If the router isn't willing to pay the asked price, it can offer an alternative bid.
+    \item [Decline Bid] If the router doesn't accept the authenticity of the packet, or already has a copy of the packet, it can decline the offer.
+    \item [Send downlink message] Regardless of the accept/decline of the actual packet, the router can leverage the fact that it knows the gateway is in-range of the end-device to send a message down to it. Along with the packet to send, the router includes a \emph{chit} to pay for the transmission.
+\end{description}
 
 \section{Consensus Protocol}\label{consensus}
 
-\todo{Explain how consensus works in the system, using PoC to create scores, how blocks have scores based on proofs and uncles (?) and submitting blocks that the network can somehow agree on.}
+Many current generation blockchains rely on a computationally difficult Proof-of-Work to protect the network against sybil attacks. The fact that the PoW is computationally expensive to create, but cheap to verify means that in order to propose a new valid block to the network you have evidence that a significant amount of computation has been expended. Due to the fact that computation is limited by hardware cost, power cost, physical space and computational efficiency of modern technology, sybil attacks become impossible. However, this approach, while fundamental to the mainstream adoption of blockchain technology, has several downsides. Chief among the downsides is the power consumption; it is estimated that the Bitcoin network is consuming more power than many small countries. Bitcoin's PoW is so wasteful it is now on the list of the top uses of electricity in the world and whenever the value of Bitcoin goes up, so do the resources devoted to mining it.
+
+Related to the power problem is the mining pool problem. Many blockchains have mining pools where users band together to, in parallel, mine a single block; listing the pool's address as the party to get paid. The pool then shares the block reward with the members of the pool. This ends up defeating many of the advantages of decentralization as both Bitcoin and Ethereum have come to be dominated by less than 10 mining pools each. These large pools effectively prevent independent parties from mining blocks on their own. This means that the consensus protocol for these blockchains is effectively controlled by a very small number of mining pools.
+
+More recently there has been increased momentum around making blockchain consensus protocols less wasteful and more useful to the network. Filecoin has a Proof-of-Spacetime and Ethereum is moving towards a Proof-of-Stake approach. Helium has designed a unique consensus protocol around Proof-of-Coverage to capture the useful but still difficult work of verifying the network of Helium gateways as a replacement for Proof-of-Work. In fact this proof is so valuable and fundamental to the network that we attempt to capture valid, but not winning, proofs in the main chain by the use of uncle blocks.
+
+In addition, because each proof is unique to the miner producing it, pooling can not occur. This dramatically equalizes the chances that any particular miner can win a block and reduces the ability for any single entity to exert undue influence over the network or its consensus.
+
+Each miner has a score assigned to it by the blockchain. A score is a value between 0 and 1. When miners join the network they're assigned a default score \todo{is it 0.5?}. This score changes over time in response to Proof-of-Coverage challenges. A gateway that successfully answers a challenge is granted a boost to its score. Gateways with a higher score have a larger chance of submitting the winning block and gateways with a lower score have a higher chance of being challenged. Thus the Helium consensus protocol rewards good behavior on the network and punishes bad behavior.
+
+At each blocktime, a subset of miners are allowed to submit a candidate block. The chances of being chosen to submit a block are proportional to the miner's current score. Once all the blocks for that interval have been submitted (or time runs out) the network of miners each choose the block they think is the best, according to a scoring algorithm. The scoring algorithm favors blocks that are valuable to the network. The primary dimension affecting score is the Proof-of-Coverage. A high scoring proof should either use successful, valid challenge responses to raise the score of as many gateways as possible, or it should contain irrefutable proof of misbehavior. It should also come from a miner that has a good reputation itself. Secondarily, it should include references to high-quality uncle blocks that, while not winners at the time, contain highly valuable proofs themselves that would be wasteful to discard. Finally a good block should include as many valid transactions as possible, transactions are the life blood of a blockchain and it is vital miners are incentivized to include them.
+
+The criteria on which blocks are validated and scored must be agreed upon by all participants in the network. If there's a disagreement then the blockchain will split. Because Helium miners have a reputation attached, a simple 51\% attack is insufficient to derail the consensus algorithm. Additionally the inclusion of uncle blocks, according to the GHOST protocol, further increases the difficulty of a malicious consensus fork. Uncle blocks on the Helium blockchain are only eligible for inclusion if the uncle block and the block referencing it share a common ancestor within the last 7 generations. This means that after 7 generations the chain fork can no longer obtain a boost from including uncle blocks from the honest chain.
 
 \subsection{Scoring Algorithm}\label{scoring}
 
@@ -402,40 +503,53 @@ Given,\newline
 	$\phi$\textsubscript{max}, &local maximum score for $\eta$\textsubscript{h}
 \end{tabular}
 
-Constraints,
+At every height h in the blockchain we have the following constraints:
+
+The probability of a gateway being selected as a target is bounded by:
 \begin{equation*} \label{constraint1}
 \begin{split}
 0 \leq &P(\tau) < 1.0 \\
-&\phi\textsubscript{h} < 1.0, \hspace{1cm} \forall h > 0
 \end{split}
 \end{equation*}
 
-Goal,
+The score of a gateway at height h always follows:
 \begin{equation*} \label{constraint2}
+\begin{split}
+\phi\textsubscript{h} < 1.0, \hspace{1cm} \forall h > 0
+\end{split}
+\end{equation*}
+
+As the blockchain increases in height, every gateway's score should tend towards 1.0. This implies that legitimate gateways contributing to the proof-of-coverage in the network always gain score.
+\begin{equation*} \label{goal}
 \begin{split}
 \lim_{h \to \infty} & \phi\textsubscript{h} \rightarrow 1.0
 \end{split}
 \end{equation*}
 
-Relationships,
+In order to satisfy the above defined constraints, we construct the following relationships:
+
+The boost factor depends on the previous score and number of trusted gateways, it can be defined as:
 \begin{equation} \label{alpha}
 \begin{split}
 \alpha\textsubscript{h} &= g(\phi\textsubscript{h-1}, \eta\textsubscript{h-1}) = \lvert1 - \sqrt{1 - (\phi\textsubscript{h-1} - 1)^2}\rvert \cdot \eta\textsubscript{h-1}\\
 \end{split}
 \end{equation}
 
+Similarly, the boost alloted to each gateway depends on the score and boost factor,
 \begin{equation} \label{epsilon}
 \begin{split}
 \epsilon\textsubscript{h} &= f(\phi\textsubscript{h-1}, \alpha\textsubscript{h}) = \frac{\phi\textsubscript{h-1}}{\sqrt{\phi\textsubscript{h-1}} + \frac{1}{(\alpha\textsubscript{h})^2}}\\
 \end{split}
 \end{equation}
 
+Finally, the rate of decrease of score is linearly proportional to the previous score. Doing so allows an equal opportunity for supposedly illegitimate gateways to gain score to be considered legitimate while also making sure that legit gateways can never reach the maximum possible score as the height of the blockchain increases.
 \begin{equation} \label{delta}
 \begin{split}
-\delta\textsubscript{h} &\propto \frac{1}{\phi\textsubscript{h-1}}
+\delta\textsubscript{h} &\propto \phi\textsubscript{h-1}
 \end{split}
 \end{equation}
 
+From the above defined relationships, we construct the following recurrence for the score of the gateways:
 \begin{equation} \label{score}
 	\phi\textsubscript{h} = \begin{cases}
 		\phi\textsubscript{h-1} - \delta\textsubscript{h}, &if \phi\textsubscript{h-1} = \phi\textsubscript{max}.\\
@@ -443,7 +557,7 @@ Relationships,
 	\end{cases}
 \end{equation}
 
-Substituting the values from (\ref{alpha}), (\ref{epsilon}), (\ref{delta}) to (\ref{score}), we get the following recurrence relationship:
+Substituting the values from (\ref{alpha}), (\ref{epsilon}), (\ref{delta}) to (\ref{score}), we get the following relationship as the score of gateways:
 \begin{equation} \label{recurrence}
 	\phi\textsubscript{h} = \begin{cases}
 		\phi\textsubscript{h-1} - \delta\textsubscript{h}, &if \phi\textsubscript{h-1} = \phi\textsubscript{max}.\\
