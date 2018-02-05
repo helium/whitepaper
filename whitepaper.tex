@@ -98,138 +98,6 @@ Helium is built around the following key components:
 
 \newpage
 
-\section{\emph{Proof-of-Coverage} \& \emph{Proof-of-Serialization}}\label{poc}
-
-In the Helium network, miners must prove that they are providing wireless network coverage that devices are able to use to communicate with the internet. Miners do this by complying with the \emph{Proof-of-Coverage} protocol which the blockchain network and other miners audit and verify. We use a \emph{Proof-of-Serialization} to ensure that miners are correctly representing their time in relation to others on the network, and obtain cryptographic proof of dishonest behavior. Several components of the Helium network, such as blocks in the blockchain, use \emph{Proof-of-Serialization} as a cryptographic ``anchor'' that root those occurrences  with a cryptographic time proof. With a combination of \emph{Proof-of-Coverage} and \emph{Proof-of-Serialization} we can obtain cryptographic proof of the approximate location and time of events occurring within Helium.
-
-In this section we outline the motivation and implementation for \emph{Proof-of-Coverage} and \emph{Proof-of-Serialization}.
-
-\subsection{Motivation}
-
-Most existing blockchain networks such as Bitcoin~\cite{bitcoin} and Ethereum~\cite{ethereum} use a \emph{Proof-of-Work} system that relies on an algorithmic puzzle that is asymmetric in nature. These proofs are extremely difficult to generate, but simple for a third party to verify. Security on these networks is achieved by the network-wide \emph{consensus} that the amount of computing power required to generate a valid proof is difficult to forge, and as subsequent blocks are added, the cumulative difficulty of the chain becoming realistically impossible to fabricate.
-
-These computation-heavy proofs are, however, not otherwise \emph{useful} to the network. We define useful as work that is valuable to the network beyond securing the blockchain. While there have been attempts in other networks to turn mining power into something useful, such as Ethereum executing small programs, the majority of the work is not useful or reusable. The mining process is also extremely wasteful, as the determining factor in the work is typically computational power which consumes massive amounts of power and hardware to execute.
-
-The proofs used in Helium must be resistant to \emph{Sybil Attacks} in which dishonest miners create pseudonymous identities and use them to subvert the network and gain access to block rewards to which they should not be entitled. This is a particularly difficult attack vector to manage in a physical network like Helium. We must also be resistant to a new attack vector: \emph{Alternate Reality Attacks} exist where a dishonest group of miners are able to simulate that wireless network coverage exists in the physical world when it in fact does not. An example of this would be running the mining software on a set of virtual machines and simulating GPS coordinates and RF networking.
-
-We later propose a consensus protocol [\ref{consensus}] that uses \emph{Proof-of-Coverage} to both secure the blockchain and provide an extremely useful service to the network; providing wireless network coverage that devices can use to send data to and from the internet.
-
-\subsection{Inspiration}
-
-\emph{Proof-of-Coverage} (\verb|PoC|) is an innovative proof which allows miners to prove that they are providing wireless network coverage $W$ in a specific region to a challenger, $C$. \verb|PoC| is an interactive protocol where a set of targets $T_n$ assert that $W$ exists in a specific GPS location $L$ and then convinces $C$ that $T_n$ are in fact creating $W$ and that said coverage must have been created using the wireless RF network. \verb|PoC| is the first such protocol that attempts to prove the veracity of miners in a physical space, and then use it to achieve consensus on a blockchain network.
-
-With \verb|PoC| we aim to solve for the following:
-
-\begin{itemize}
-    \item Our goal is to prove that miners are operating radio frequency (RF) hardware and firmware compatible with the wireless protocol
-    \item Our goal is to prove that miners are located in the geography they claim by having them communicate via RF
-    \item Our goal is to correctly identify which reality is honest when there is a conflict
-\end{itemize}
-
-\emph{Proof-of-Coverage} is inspired by the \emph{Guided Tour Protocol (GTP)} which devises a system for denial of service prevention by requiring a client $c$ to make a request to a variety of ``tour guide'' computers $G_n$ in order to gain access to a server $s$. The tour guides must be visited in a specific order and a hash of data exchanged which reveals the location of the next $G_n$ in order. Only after every $G_n$ has been visited can $c$ gain access to $s$.
-
-Once $c$ gets to the last stop of the tour, it submits evidence of the first and last stop to $s$ who is able to verify that the first and last stops of the tour are correct without needing to contact $G_n$, and that $c$ could only know the first and last stops if it had completed the tour correctly.
-
-While an extremely clever and innovative system, GTP is not directly suitable as a proof in our wireless network as radio frequency (RF) networking has limited range and therefore cannot communicate with peers anywhere on the network. We aim to construct a proof loosely based on the ideas presented in GTP, but applicable to our protocol. We refer the interested reader to~\cite{gtp} for a detailed articulation of the GTP protocol.
-
-We combine \emph{Proof-of-Coverage} with \emph{Proof-of-Serialization}---a proof that allows miners on the network to achieve cryptographic time consensus among decentralized clients. We aim to achieve rough time synchronization in a secure way that does not depend on any particular time server, and in such a way that, if a time server does misbehave, clients end up with cryptographic proof of that behavior.
-
-\subsection{Constructing \emph{Proof-of-Coverage}}
-
-This section describes the construction of the \emph{Proof-of-Coverage} protocol.
-
-We aim to construct a proof that takes advantage of the following characteristics of radio frequency (RF) communication that are unique and different to internet communication:
-
-\begin{enumerate}
-    \item RF has limited physical propagation and therefore distance
-    \item RF travels at the speed of light with (effectively) no latency
-\end{enumerate}
-
-Our goal is to verify whether miners in a physical region are acting honestly and creating wireless network coverage compatible with the Helium wireless protocol (WHIP). To do this, a challenger $C$ deterministically constructs a multi-layer data packet $O$ which begins at an initial target, $T$, and is broadcast wirelessly to a set of sequential targets, $T_n$, each of which are only able to decrypt the outer-most layer of $O$ if they were the intended recipient. Each target acknowledges receipt, $K_S$, back to $C$, removes their layer of $O$, $O$\textsubscript{L-N}, and broadcasts it for receipt by the next target. Essentially, an ``envelope of envelopes'' only openable by the intended recipient.
-
-\begin{figure}[H]
-    \begin{center}
-          \includegraphics[width=\textwidth]{diagram2.eps}
-          \caption{\emph{Multi-Layer Data Packet Deconstruction}}
-          \label{fig:poc-construction}
-     \end{center}
-\end{figure}
-
-\textbf{Selecting the Initial Target}. We aim to deterministically locate an initial target, $T$, for the challenger, $C$. $T$ does not need to be geographically proximate to $C$. To locate $T$, $C$ uses a \emph{consistent hash ring} $\omega$, of potential miners. $\omega$ only contains miners eligible as targets as described in [\ref{mining}], and miners are allocated portions of $\omega$ that are inversely proportional to their score, increasing the probability of potentially dishonest miners being targeted. Given that a miners score is diminishing linearly over time [\ref{scores}], it is necessary to create this inverse relationship to give low-scoring miners an opportunity to participate in the process and increase their score. We seed verifiable randomness, $\eta$, into the selection process using a signed digest of the partial block from $C$ - thus, it is necessary for $C$ to have begun forming a new candidate block for the blockchain before the \emph{Proof-of-Coverage} process can begin [\ref{mining}].
-
-\textbf{Constructing the multi-layer challenge}. Once $T$ has been selected, $C$ must construct a multi-layer challenge, $O$. $O$ is a data packet broadcast by $T$ over the wireless network and received by geographcially proximate targets $T_n$. Each layer of $O$, $O_l$, consists of a three-tuple of $E\left(S, \psi, R\right)$, where $E$ is a secure public key encryption function, $S$ is a secret value, $\psi$ is the time to broadcast the next layer of the challenge and $R$ is the remainder of $O$ consisting of recursive three-tuples.
-
-The construction logic of $O$ is as follows:
-
-\begin{enumerate}
-  \item A set of candidates, $T_n$, are constructed such that all members of $T_n$ are within a contiguous radio network that also contains $T$
-  \item Two targets, $T_1$ and $T_L$, are selected by finding the highest scoring targets in $T_n$ furthest from $T$
-  \item A weighted graph is constructed from $T_n$ such that members of $T_n$ in radio range of each other are connected by an edge weighted by the value of \(1 - \Big({score(T_a) - score(T_b)}\Big)\)
-  \item The shortest path between $T_1$ to $T$ to $T_L$ is computed using Dijkstra's algorithm\cite{dijkstra}
-\end{enumerate}
-
-The resulting $O$ can be visually represented as the following:
-
-\todo{new diagram}
-
-\textbf{Creating the Proof}. Once $O$ has been constructed and delivered to $T$, $T$ immediately broadcasts it. The Helium wireless protocol is not a point-to-point system, so several miners within proximity of $T$ will hear $O$. As described prior, each layer $O_l$ of $O$ contains the three-tuple ${E\left(S, \psi, R\right)}$ where $E$ is a secure public key encryption function, $S$ is a secret value, $\psi$ is a time at which to transmit the next layer of the packet and $R$ is the remainder of $O$ consisting of recursive three-tuples. In this specific example, only the specific target $T_1$ will be able to decrypt $E$ and send a valid receipt back to the challenger, $C$.
-
-We describe the approximate flow of \emph{Proof-of-Coverage} creation as follows:
-
-\begin{enumerate}
-  \item $T$ receives $O$ from $C$ via the peer-to-peer internet network and immediately broadcasts it via the wireless network
-  \item $T_1$ hears $O$ and attempts to decrypt the value of $E$ by using its public key $pk:\ E_{pk}\left(S, \psi, R\right)$
-  \item $T_1$ records both the time of arrival $\beta$ and the signal strength $\upsilon$ of $O$
-  \item If successful, $T_1$ then creates signed receipt $K_S$, $\mathit{K_S = \left(S || \beta || \upsilon\right)}$ signed by the private key of $T_1$
-  \item $T_1$ submits $K_S$ to $C$ via the peer-to-peer internet network, removes the outer most layer, and wirelessly broadcasts the remainder $O$
-  \item These steps repeat for $T_2$..$T_L$, with $T_L$ being the last target constructed by $C$
-\end{enumerate}
-
-$C$ expects to hear responses from $T_n$ within a time threshold $\lambda$, otherwise it considers the \emph{Proof-of-Coverage} to have concluded. Because $C$ is the only party with complete knowledge of $O$, upper bounds of the values for $\beta$ and $\upsilon$ are assigned by $C$ which are used to verify that each layer of $O$ was transmitted approximately where and when it was expected. The upper bound for $\beta$ ls limited by the speed of light $\tau$ between $T_n$ and $T_n-1$. Thus we know that, subject to some slight delays from reflection or multipath, the packet should not arrive at $T_n$ later than $\tau$ multiplied by the geographical distance $D$ plus some small episilon value, $\upsilon = \tau \times \Big(D + \epsilon\Big)$. For $\upsilon$, because of the inverse-square law, we can calculate the maximum RSSI possible for a packet transmitted, $\mu$, from $T_n-1$ to $T_n$ as $\mu = \frac{1}{D^2}$. Gateways that are closer than expected, or which are transmitting at a higher power to mask their location disparity, are unlikely to get $\mu$ correct, given that they do not know who the next layer of $O$ is addressed to.
-
-Once $T_L$ has delivered receipt to $C$, or $\lambda$ has elapsed, the \emph{Proof-of-Coverage} is completed. The collection of signed receipts, $K_S$, constitute the \emph{Proof-of-Coverage} that $C$ will include when attempting to mine the next block in the blockchain [\ref{mining}].
-
-\begin{figure}[H]
-    \begin{center}
-          \includegraphics[width=\textwidth]{diagram4.eps}
-          \caption{\emph{Proof-of-Coverage} flow}
-          \label{fig:poc-flow}
-     \end{center}
-\end{figure}
-
-\textbf{Scoring} \label{scores} When miners join the Helium network, they are assigned a score, $\phi$, with a value of \textbf{0.500}. This score depreciates linearly per block at a rate of $\phi = \phi - \frac{\phi}{10}$. As $\phi$ decreases the probability of the miner $M$ being the target for $C$ increases such that the network continually attempts to prove that the lowest scoring miners are acting honestly, and giving miners a reasonable chance to improve their score.
-
-For every target $T_n$ that hears $O$ in the \emph{Proof-of-Coverage} and submits a signed receipt to $C$, $T_n$ gains a score equal to \todo{some amount relational to the previous target in the chain}.
-
-\textbf{Verifying the Proof}. Once $T_L$ has delivered $K_S$, or $\lambda$ has elapsed, the \emph{Proof-of-Coverage} is considered complete. When $C$ attempts to mine the next block [\ref{mining}], all receipts $K_S$ from $T_1$...$T_L$ are included in the candidate block, $B_C$, published to the blockchain network [\ref{blockchain}]. As all the steps originally completed by $C$ are deterministic in nature with verifiable and recreatable randomness, it is simple for a verifying miners, $V$, to recreate the original steps and verify that the proof is legitimate.
-
-Verifying miners who see $B_C$ are able to verify the \emph{Proof-of-Coverage} prior to considering the block by recreating the following steps:
-
-\begin{enumerate}
-        \item The verifying miner, $V$, reconstructs the hash ring of miners $\omega$
-        \item Because $V$ is able to now see $B_C$, the random seed $\eta$ can be verified to have been created by the private key of $C$
-        \item $V$ then selects $T$ from $\omega$, as seeding with $\eta$ will result in the same target selection
-        \item The set of candidate $T_n$ are reconstructed from which $T_1$ and $T_L$ are determined
-        \item Dijkstra's algorithm is used to reconstruct the walk of $T_n$ from $T_1$ to $T_L$
-        \item The $K_S$ receipts contained in $B_C$ are verified to have been signed by the private keys of $T_1$..$T_L$
-\end{enumerate}
-
-Assuming these steps are completed successfully, the \emph{Proof-of-Coverage} is verified and $B_C$ can be considered for inclusion in the blockchain [\ref{consensus}].
-
-\subsection{Constructing \emph{Proof-of-Serialization}}
-
-This section describes the construction of the \emph{Proof-of-Serialization} protocol.
-
-\textbf{Creating the Proof}. First, a miner $M$ pseudo-randomly picks two miners $M_1$ and $M_2$, to prove contact serialization with. It is assumed $M$ has a public key for $M_1$ and $M_2$ (otherwise $M$ should obtain it from the blockchain). $M$ then generates a salted\footnote{the salt is a 512-bit SHA of $T_t$ of $b_n R$} hash commitment $K$ called the \emph{proof-kernel}. The proof-kernel is a commitment to what claim is desired to be proven. \[\mathit{K = H\left(R || M_1 || M_2\right)}\] $M$ sends $K$ to $M_1$. $M_1$ replies with $T$, a signed message including the current time and $K$. $M$ knows that the reply from $M_1$ was not pre-generated because it includes the nonce $R$ that the $M$ generated. Because $M$ doesn't completely trust $M_1$ it will ask for another time from $M_2$.
-
-For the second request, $M$ generates a sub-proof-kernel, $L = H\left(R || T || K\right)$, and sends it to $M_2$. $M_2$ replies with $U$, a signed message including the current time and $L$. $U$ is now a proof artifact that shows that $M$ desired and then proved a serialization between $M_1$ and $M_2$. Let's assume that the times from $M_1$ and $M_2$ are significantly different. If the time from $M_2$ is before $M_1$, then $M$ has proof of misbehaviour; the reply from $M_2$ implicitly shows that it was created later because of the way that $M$ constructed the nonce. If the time from $M_2$ is after, then $M$ can reverse the roles of $M_1$ and $M_2$ and repeat the process to obtain, assuming steady clocks, a misordered proof as in the other case.
-
-With only two servers, $M$ can end up with proof that something is wrong, but no idea what the correct time is. But with half a dozen or more independent servers, $M$ will end up with chain of proof of any server's misbehaviour, signed by several others, and enough accurate replies to establish what the correct time is, $T_t$.
-
-\textbf{Utilizing the Proven Time}. The proven time allows us to prove, with relative certainty, that some piece of data $D$ was created between the time of the previous block $PbT_t$ and $T_t$. $D$ in this case is the proof-of-coverage. The randomness used to compute $O$ and thus obtain the proof-of-coverage is tied to the previous block, which contains $PbT_t$. Thus we know that $D$ must have been constructed between $PbT_t$ and $T_t$. This ensures that the proof-of-coverage cannot be pre-computed and that that blocks in the blockchain must have a minimum spacing in time; the \emph{blocktime}. Blocks which do not have at least \emph{blocktime} distance in time from their parent block are considered invalid.
-
-\newpage
-
 \section{The Helium DWN}
 
 We introduce the Helium Decentralized Wireless Network (\verb|DWN|). The \verb|DWN| provides wireless access to the internet for devices by way of multiple independent miners, and outlines a network and wireless protocol specification by which participants in the network should conform. Devices pay this network of miners for sending data to and from the internet, and miners are paid for continuously providing network coverage and delivering device data to the internet.
@@ -474,6 +342,233 @@ We provide a brief overview of the router cycle and the functions available to r
     \item [Send downlink message] Regardless of the accept/decline of the actual packet, the router can leverage the fact that it knows the gateway is in-range of the end-device to send a message down to it. Along with the packet to send, the router includes a \emph{chit} to pay for the transmission.
 \end{description}
 
+\newpage
+
+\section{Physical Implementation}
+
+In addition to the blockchain network, Helium is a \emph{physical} wireless network instantiation. The participants in the network, from a physical hardware perspective, can be thought of as follows:
+
+\textbf{Wireless Protocol (\emph{WHIP})}: The wireless network uses a new open wireless protocol, called \emph{WHIP}. WHIP is a long-range, low-power, wireless network protocol suitable for use with commodity open-standards hardware. WHIP compatible hardware can communicate over many square miles in dense urban environments or hundreds of square miles in rural settings. WHIP compatible hardware can also last for several years using standard batteries. WHIP uses strong public key cryptography and authentication occurs using the Helium blockchain, with end-to-end encryption.
+
+\textbf{Gateways}: Gateways are physical network devices that provide wide-area wireless coverage and participate in the blockchain network. Gateways transmit data back and forth between routers on the internet and devices while generating \emph{Proofs-of-Coverage} for the blockchain network [\ref{poc}]. Gateways are manufactured using commodity open-standards components with no proprietary hardware. Gateways can cooperate and geolocate devices using the wireless network without any additional required hardware. Each Gateway can support thousands of connected devices, and provide coverage over many square miles. Miners operating gateways specify the price they are willing to accept for transport and geolocation services for devices.
+
+\textbf{Devices}: Devices exist in the form of hardware products that contain a WHIP-compatible radio transceiver and communicate with gateways on the wireless network. WHIP is designed to facilitate low power data transmission and reception, so typically devices would exist in the form of battery-powered sensors that can live for several years using standard batteries (although mains-powered devices also work quite well). Devices can exist in a variety of forms, depending on the product or use case, and a variety of transmission and reception strategies can be employed to optimize for transmission/reception frequency or battery life. Device manufacturers should use hardware-based key storage which can securely generate, store, and authenticate public/private key pairs without leaking the private key.
+
+In this section, we expand on the components of the wireless network.
+
+\subsection{Wireless Protocol (\emph{WHIP})}\label{whip}
+
+\textbf{Motivation}: Several Low Power Wide Area Network (LPWAN) technologies are available today. These wireless technologies focus on creating extremely long-range, low-power internet communication for sensors and other smart devices. Typically these technologies trade throughput for range, with data rates as low as 18~bits~per~second (bps) and range measured in miles. In comparison, a typical WiFi network has significantly higher data rates but ranges limited to only a few hundred feet. Several of these new technologies, such as LoRa~\cite{lora} and RPMA~\cite{rpma}, have gained good traction and there are many commercial products available compatible with these systems. However, we believe that the future IoT economy should use non-proprietary protocols and modulation schemes and that participants in this ecosystem should have the freedom to choose between competing hardware vendors. We do not consider an open alliance built on top of proprietary hardware to be an acceptable compromise. While there are many open-standard wireless networking stacks, such as IEEE~802.15.4~\cite{ieee802_15_4} used in the first generation of Helium wireless products, none meet our extremely long range and low power criteria. It is this lack of open solutions that drove the creation of a new protocol.
+
+\textbf{Outline}: We introduce a new open-source Low Power Wide Area Network (LPWAN) protocol called \emph{WHIP}. WHIP is a highly secure, long range, low power wireless network protocol that is compatible with any Frequency Shift Keying (FSK) radio transceiver operating in the sub-GHz unlicensed frequency spectrum. Authentication with the wireless network uses modern public-key encryption and NIST~P-256 ECC~\cite{ecc} key pairs, with the public keys for all participants stored in the blockchain.
+
+FSK is a simple and widely supported modulation format which easy to implement and has excellent resistance to RF noise. There are dozens of vendors implementing FSK radio transceivers compatible with WHIP, such as Texas Instruments, Microchip, and Silicon Labs.
+
+WHIP is a \emph{narrowband} wireless protocol which creates several channels within the unlicensed spectrum and employs frequency hopping to hop between channels. Typically frequency hopping requires a complex time-synchronized system that is limited in capacity, however, devices using WHIP do not need to coordinate with gateways on channel selection as gateways are capable of hearing all channels within the available spectrum at any time. We choose narrow-band to accomplish the following goals:
+
+\begin{description}
+  \item[Spectral Efficiency] it is necessary to operate within unlicensed RF spectrum very efficiently. RF is a shared, limited resource, and therefore a focus on efficiency to increase capacity and improve robustness is a must.
+  \item[Co-Existence Performance] as the number of devices and networks increase, the ability to operate in \emph{noisy} RF environments without interference is a critical consideration.
+  \item[Range] narrowband allows for extremely long-range communications, with data rates that scale both up and down depending on the density of gateways.
+\end{description}
+
+\textbf{Implementation}: WHIP supports several data rates, channel bandwidths, and error-correction techniques. Gateways and devices dynamically negotiate the combination of these options using a \emph{signalling packet} delivered at the lowest bandwidth and symbol rate to ensure maximum range for the initial communication.
+The full WHIP specification will be made available by the Helium Alliance~\cite{alliance}.
+
+\subsection{Gateways}\label{gateways}
+
+Gateways are physical network devices operated by miners, that create wireless RF coverage over wide areas. They transmit data back and forth between routers on the Internet and devices on the network, process blockchain transactions, and create \emph{Proofs-of-Coverage} for the blockchain network [\ref{poc}]. Gateways can connect to the Internet using any TCP/IP capable backhaul, such as Ethernet, WiFi or Cellular. Each gateway contains a radio frontend capable of listening to several MHz of radio spectrum at a time, and is able to hear all network traffic transmitted within that spectrum. In this configuration modulation and demodulation is done in software, which is typically referred to as a \emph{Software Defined Radio (SDR)}. The benefit of this structure is that gateways can hear any device traffic transmitted within the frequency range, and no synchronization between the gateway and device needs to occur. This allows devices to remain inexpensive and relatively simple, and reduces wireless protocol overhead. If a miner wishes to minimize their gateway hardware costs, synchronized frequency hopping schemes are also permitted within the specification as a cheaper alternative to a more expensive radio frontend.
+
+Gateways require a GPS or GNSS transceiver to obtain accurate position and date/time information. This satellite-derived location will be used in conjunction with other techniques to verify that a gateway is in fact providing wireless network coverage in the location it claims. Because satellite location messages are easy to fabricate and do not necessarily prove that wireless RF coverage is being created, multiple mechanisms are required to validate this work as described in more detail in [\ref{poc}].
+
+Satellite location information is also correlated with packet arrival events to provide \emph{Time Differential of Arrival (TDoA)} location for devices if multiple gateways observe the same packet. This allows devices to physically locate themselves without requiring a GPS/GNSS transceiver, and therefore provide accurate location data at a fraction of the battery life and cost of competing methods. This method is described in detail in [\ref{geolocation}].
+
+Helium Systems Inc.\ will make both a complete open-source reference design and a finished product available for immediate participation in the network.
+
+\subsection{Devices}\label{devices}
+
+A \emph{device} is any wireless hardware capable of communicating with gateways on the network. WHIP is designed to facilitate low power data transmission and reception, so typically devices would exist in the form of battery-powered sensors that can function for several years using standard batteries.
+
+WHIP is designed such that devices can be manufactured using commodity hardware available from a wide variety of vendors, and for an extremely low-cost bill of materials (BOM). The technology in modern radio transceivers, such as the Texas Instruments CC1125 or STMicroelectronics S2-LP, enables extremely long-range network systems that can be built without the need for proprietary modulation schemes or physical layers. Some of these radios are available for around \$1 at reasonable volumes.
+
+Each device will use the Microchip ECC508A\cite{ecc} or equivalent hardware-based key storage device, which is able to securely generate, store, and authenticate public/private \emph{NIST P-256 ECC} [\ref{ecc}] key pairs without leaking the private key. In addition, a wide array of defense mechanisms prevent logical attacks on the encrypted data between the key storage device and its host device, along with physical protections on the security device itself. Users program their key storage device as part of the onboarding process defined in the WHIP wireless specification using a simple SDK\@.
+
+\subsection{Routers}
+
+Routers are internet-deployed applications that receive packets from devices via gateways and route them to appropriate destinations such as an HTTP or MQTT endpoint.
+
+There are several functions that routers serve on the network, which include:
+
+\begin{itemize}
+    \item Authenticating devices with the wireless network
+    \item Receiving packets from gateways and routing them to the Internet
+    \item Delivering downlink messages, including OTA updates, to devices via gateways
+    \item Providing delivery confirmations to ensure transport transactions are honest
+    \item Providing authentication and routing mechanisms into third-party cloud services such as Amazon AWS or Microsoft Azure
+\end{itemize}
+
+When a gateway receives a data packet from an device on the network, it will query the blockchain to determine which router to use given the devices network address. Anyone anywhere is free to host their own router and define their devices traffic to be delivered there by any gateway on the network. This allows users of the network to essentially create VPN-like functionality whereby encrypted data is delivered only to a router (or set of routers) that they specify and can optionally host themselves.
+
+Routers can implement a system called a \emph{Channel} which handles the authentication and routing of data to a specific third party Internet application, such as Microsoft's Azure IoT Hub\cite{azure}. These channel implementations can take advantage of a devices onboard hardware security to create a secure, hardware-authenticated connection to a third party which would otherwise be difficult to implement directly on an embedded microcontroller. Helium will make available an open source reference implementation of a Channel that can be used to build additional interfaces to Internet services.
+
+Helium Systems Inc hosts a high-availability cloud router for anyone to use, and also provides and maintains an open-source router that is available either as source code or a binary package for a variety of operating systems and distributions.
+
+The protocol specification required for implementing a router is defined in the WHIP Wireless Specification document that will be made available by the Helium Alliance\cite{alliance}.
+
+\subsection{Geolocation}\label{geolocation}
+
+WHIP-compatible gateways are expected to include hardware and software to enable not only location of the gateway (via GPS/GNSS) but also hardware and software to triangulate the location of an end node. This method is typically called \emph{Time Differential of Arrival (TDoA)}. Gateways accomplish TDoA location using a radio frontend configured to output raw sample data, which can then be post-processed and compared to GPS location and time to calculate the radio packet's time of flight. With enough of these time-of-flight calculations from several gateways, the position of the device can be calculated to within several meters.
+
+Because of the expense and power consumption of a typical GPS module, and the fact that they require a view of the sky, providing geolocation as a network service makes devices cheaper, more power efficient, and able to located accurately indoors. Additionally, because these data transmission events occur in the context of a blockchain, unforgeable cryptographic proof of location for a device can be obtained. Devices being able to prove they were in a specific place at a specific time has tremendous potential for a wide variety of IoT applications.
+
+\begin{figure}[H]
+    \begin{center}
+          \includegraphics[scale=0.3]{tdoa.eps}
+          \caption{\emph{Geolocation via TDoA}}
+          \label{fig:tdoa}
+     \end{center}
+\end{figure}
+
+Geolocation requires a density of gateways such that at least three gateways can hear the same packet at the same time. Because each gateway on the network is capable of listening on a wide range of radio spectrum, every gateway in range should hear the same packet with a nanosecond-level variance in the timing which can be used to solve for location via an internet application.
+
+Gateways synchronize their clocks via GPS such that all gateways have the same nanosecond-synchronized clock source with which to timestamp packets.
+
+We refer the interested reader to\cite{tdoa} for a detailed description of TDoA techniques.
+
+\newpage
+
+\section{\emph{Proof-of-Coverage} \& \emph{Proof-of-Serialization}}\label{poc}
+
+In the Helium network, miners must prove that they are providing wireless network coverage that devices are able to use to communicate with the internet. Miners do this by complying with the \emph{Proof-of-Coverage} protocol which the blockchain network and other miners audit and verify. We use a \emph{Proof-of-Serialization} to ensure that miners are correctly representing their time in relation to others on the network, and obtain cryptographic proof of dishonest behavior. Several components of the Helium network, such as blocks in the blockchain, use \emph{Proof-of-Serialization} as a cryptographic ``anchor'' that root those occurrences  with a cryptographic time proof. With a combination of \emph{Proof-of-Coverage} and \emph{Proof-of-Serialization} we can obtain cryptographic proof of the approximate location and time of events occurring within Helium.
+
+In this section we outline the motivation and implementation for \emph{Proof-of-Coverage} and \emph{Proof-of-Serialization}.
+
+\subsection{Motivation}
+
+Most existing blockchain networks such as Bitcoin~\cite{bitcoin} and Ethereum~\cite{ethereum} use a \emph{Proof-of-Work} system that relies on an algorithmic puzzle that is asymmetric in nature. These proofs are extremely difficult to generate, but simple for a third party to verify. Security on these networks is achieved by the network-wide \emph{consensus} that the amount of computing power required to generate a valid proof is difficult to forge, and as subsequent blocks are added, the cumulative difficulty of the chain becoming realistically impossible to fabricate.
+
+These computation-heavy proofs are, however, not otherwise \emph{useful} to the network. We define useful as work that is valuable to the network beyond securing the blockchain. While there have been attempts in other networks to turn mining power into something useful, such as Ethereum executing small programs, the majority of the work is not useful or reusable. The mining process is also extremely wasteful, as the determining factor in the work is typically computational power which consumes massive amounts of power and hardware to execute.
+
+The proofs used in Helium must be resistant to \emph{Sybil Attacks} in which dishonest miners create pseudonymous identities and use them to subvert the network and gain access to block rewards to which they should not be entitled. This is a particularly difficult attack vector to manage in a physical network like Helium. We must also be resistant to a new attack vector: \emph{Alternate Reality Attacks} exist where a dishonest group of miners are able to simulate that wireless network coverage exists in the physical world when it in fact does not. An example of this would be running the mining software on a set of virtual machines and simulating GPS coordinates and RF networking.
+
+We later propose a consensus protocol [\ref{consensus}] that uses \emph{Proof-of-Coverage} to both secure the blockchain and provide an extremely useful service to the network; providing wireless network coverage that devices can use to send data to and from the internet.
+
+\subsection{Inspiration}
+
+\emph{Proof-of-Coverage} (\verb|PoC|) is an innovative proof which allows miners to prove that they are providing wireless network coverage $W$ in a specific region to a challenger, $C$. \verb|PoC| is an interactive protocol where a set of targets $T_n$ assert that $W$ exists in a specific GPS location $L$ and then convinces $C$ that $T_n$ are in fact creating $W$ and that said coverage must have been created using the wireless RF network. \verb|PoC| is the first such protocol that attempts to prove the veracity of miners in a physical space, and then use it to achieve consensus on a blockchain network.
+
+With \verb|PoC| we aim to solve for the following:
+
+\begin{itemize}
+    \item Our goal is to prove that miners are operating radio frequency (RF) hardware and firmware compatible with the wireless protocol
+    \item Our goal is to prove that miners are located in the geography they claim by having them communicate via RF
+    \item Our goal is to correctly identify which reality is honest when there is a conflict
+\end{itemize}
+
+\emph{Proof-of-Coverage} is inspired by the \emph{Guided Tour Protocol (GTP)} which devises a system for denial of service prevention by requiring a client $c$ to make a request to a variety of ``tour guide'' computers $G_n$ in order to gain access to a server $s$. The tour guides must be visited in a specific order and a hash of data exchanged which reveals the location of the next $G_n$ in order. Only after every $G_n$ has been visited can $c$ gain access to $s$.
+
+Once $c$ gets to the last stop of the tour, it submits evidence of the first and last stop to $s$ who is able to verify that the first and last stops of the tour are correct without needing to contact $G_n$, and that $c$ could only know the first and last stops if it had completed the tour correctly.
+
+While an extremely clever and innovative system, GTP is not directly suitable as a proof in our wireless network as radio frequency (RF) networking has limited range and therefore cannot communicate with peers anywhere on the network. We aim to construct a proof loosely based on the ideas presented in GTP, but applicable to our protocol. We refer the interested reader to~\cite{gtp} for a detailed articulation of the GTP protocol.
+
+We combine \emph{Proof-of-Coverage} with \emph{Proof-of-Serialization}---a proof that allows miners on the network to achieve cryptographic time consensus among decentralized clients. We aim to achieve rough time synchronization in a secure way that does not depend on any particular time server, and in such a way that, if a time server does misbehave, clients end up with cryptographic proof of that behavior.
+
+\subsection{Constructing \emph{Proof-of-Coverage}}
+
+This section describes the construction of the \emph{Proof-of-Coverage} protocol.
+
+We aim to construct a proof that takes advantage of the following characteristics of radio frequency (RF) communication that are unique and different to internet communication:
+
+\begin{enumerate}
+    \item RF has limited physical propagation and therefore distance
+    \item RF travels at the speed of light with (effectively) no latency
+\end{enumerate}
+
+Our goal is to verify whether miners in a physical region are acting honestly and creating wireless network coverage compatible with the Helium wireless protocol (WHIP). To do this, a challenger $C$ deterministically constructs a multi-layer data packet $O$ which begins at an initial target, $T$, and is broadcast wirelessly to a set of sequential targets, $T_n$, each of which are only able to decrypt the outer-most layer of $O$ if they were the intended recipient. Each target acknowledges receipt, $K_S$, back to $C$, removes their layer of $O$, $O$\textsubscript{L-N}, and broadcasts it for receipt by the next target. Essentially, an ``envelope of envelopes'' only openable by the intended recipient.
+
+\begin{figure}[H]
+    \begin{center}
+          \includegraphics[width=\textwidth]{diagram2.eps}
+          \caption{\emph{Multi-Layer Data Packet Deconstruction}}
+          \label{fig:poc-construction}
+     \end{center}
+\end{figure}
+
+\textbf{Selecting the Initial Target}. We aim to deterministically locate an initial target, $T$, for the challenger, $C$. $T$ does not need to be geographically proximate to $C$. To locate $T$, $C$ uses a \emph{consistent hash ring} $\omega$, of potential miners. $\omega$ only contains miners eligible as targets as described in [\ref{mining}], and miners are allocated portions of $\omega$ that are inversely proportional to their score, increasing the probability of potentially dishonest miners being targeted. Given that a miners score is diminishing linearly over time [\ref{scores}], it is necessary to create this inverse relationship to give low-scoring miners an opportunity to participate in the process and increase their score. We seed verifiable randomness, $\eta$, into the selection process using a signed digest of the partial block from $C$ - thus, it is necessary for $C$ to have begun forming a new candidate block for the blockchain before the \emph{Proof-of-Coverage} process can begin [\ref{mining}].
+
+\textbf{Constructing the multi-layer challenge}. Once $T$ has been selected, $C$ must construct a multi-layer challenge, $O$. $O$ is a data packet broadcast by $T$ over the wireless network and received by geographcially proximate targets $T_n$. Each layer of $O$, $O_l$, consists of a three-tuple of $E\left(S, \psi, R\right)$, where $E$ is a secure public key encryption function, $S$ is a secret value, $\psi$ is the time to broadcast the next layer of the challenge and $R$ is the remainder of $O$ consisting of recursive three-tuples.
+
+The construction logic of $O$ is as follows:
+
+\begin{enumerate}
+  \item A set of candidates, $T_n$, are constructed such that all members of $T_n$ are within a contiguous radio network that also contains $T$
+  \item Two targets, $T_1$ and $T_L$, are selected by finding the highest scoring targets in $T_n$ furthest from $T$
+  \item A weighted graph is constructed from $T_n$ such that members of $T_n$ in radio range of each other are connected by an edge weighted by the value of \(1 - \Big({score(T_a) - score(T_b)}\Big)\)
+  \item The shortest path between $T_1$ to $T$ to $T_L$ is computed using Dijkstra's algorithm\cite{dijkstra}
+\end{enumerate}
+
+The resulting $O$ can be visually represented as the following:
+
+\todo{new diagram}
+
+\textbf{Creating the Proof}. Once $O$ has been constructed and delivered to $T$, $T$ immediately broadcasts it. The Helium wireless protocol is not a point-to-point system, so several miners within proximity of $T$ will hear $O$. As described prior, each layer $O_l$ of $O$ contains the three-tuple ${E\left(S, \psi, R\right)}$ where $E$ is a secure public key encryption function, $S$ is a secret value, $\psi$ is a time at which to transmit the next layer of the packet and $R$ is the remainder of $O$ consisting of recursive three-tuples. In this specific example, only the specific target $T_1$ will be able to decrypt $E$ and send a valid receipt back to the challenger, $C$.
+
+We describe the approximate flow of \emph{Proof-of-Coverage} creation as follows:
+
+\begin{enumerate}
+  \item $T$ receives $O$ from $C$ via the peer-to-peer internet network and immediately broadcasts it via the wireless network
+  \item $T_1$ hears $O$ and attempts to decrypt the value of $E$ by using its public key $pk:\ E_{pk}\left(S, \psi, R\right)$
+  \item $T_1$ records both the time of arrival $\beta$ and the signal strength $\upsilon$ of $O$
+  \item If successful, $T_1$ then creates signed receipt $K_S$, $\mathit{K_S = \left(S || \beta || \upsilon\right)}$ signed by the private key of $T_1$
+  \item $T_1$ submits $K_S$ to $C$ via the peer-to-peer internet network, removes the outer most layer, and wirelessly broadcasts the remainder $O$
+  \item These steps repeat for $T_2$..$T_L$, with $T_L$ being the last target constructed by $C$
+\end{enumerate}
+
+$C$ expects to hear responses from $T_n$ within a time threshold $\lambda$, otherwise it considers the \emph{Proof-of-Coverage} to have concluded. Because $C$ is the only party with complete knowledge of $O$, upper bounds of the values for $\beta$ and $\upsilon$ are assigned by $C$ which are used to verify that each layer of $O$ was transmitted approximately where and when it was expected. The upper bound for $\beta$ ls limited by the speed of light $\tau$ between $T_n$ and $T_n-1$. Thus we know that, subject to some slight delays from reflection or multipath, the packet should not arrive at $T_n$ later than $\tau$ multiplied by the geographical distance $D$ plus some small episilon value, $\upsilon = \tau \times \Big(D + \epsilon\Big)$. For $\upsilon$, because of the inverse-square law, we can calculate the maximum RSSI possible for a packet transmitted, $\mu$, from $T_n-1$ to $T_n$ as $\mu = \frac{1}{D^2}$. Gateways that are closer than expected, or which are transmitting at a higher power to mask their location disparity, are unlikely to get $\mu$ correct, given that they do not know who the next layer of $O$ is addressed to.
+
+Once $T_L$ has delivered receipt to $C$, or $\lambda$ has elapsed, the \emph{Proof-of-Coverage} is completed. The collection of signed receipts, $K_S$, constitute the \emph{Proof-of-Coverage} that $C$ will include when attempting to mine the next block in the blockchain [\ref{mining}].
+
+\begin{figure}[H]
+    \begin{center}
+          \includegraphics[width=\textwidth]{diagram4.eps}
+          \caption{\emph{Proof-of-Coverage} flow}
+          \label{fig:poc-flow}
+     \end{center}
+\end{figure}
+
+\textbf{Scoring} \label{scores} When miners join the Helium network, they are assigned a score, $\phi$, with a value of \textbf{0.500}. This score depreciates linearly per block at a rate of $\phi = \phi - \frac{\phi}{10}$. As $\phi$ decreases the probability of the miner $M$ being the target for $C$ increases such that the network continually attempts to prove that the lowest scoring miners are acting honestly, and giving miners a reasonable chance to improve their score.
+
+For every target $T_n$ that hears $O$ in the \emph{Proof-of-Coverage} and submits a signed receipt to $C$, $T_n$ gains a score equal to \todo{some amount relational to the previous target in the chain}.
+
+\textbf{Verifying the Proof}. Once $T_L$ has delivered $K_S$, or $\lambda$ has elapsed, the \emph{Proof-of-Coverage} is considered complete. When $C$ attempts to mine the next block [\ref{mining}], all receipts $K_S$ from $T_1$...$T_L$ are included in the candidate block, $B_C$, published to the blockchain network [\ref{blockchain}]. As all the steps originally completed by $C$ are deterministic in nature with verifiable and recreatable randomness, it is simple for a verifying miners, $V$, to recreate the original steps and verify that the proof is legitimate.
+
+Verifying miners who see $B_C$ are able to verify the \emph{Proof-of-Coverage} prior to considering the block by recreating the following steps:
+
+\begin{enumerate}
+        \item The verifying miner, $V$, reconstructs the hash ring of miners $\omega$
+        \item Because $V$ is able to now see $B_C$, the random seed $\eta$ can be verified to have been created by the private key of $C$
+        \item $V$ then selects $T$ from $\omega$, as seeding with $\eta$ will result in the same target selection
+        \item The set of candidate $T_n$ are reconstructed from which $T_1$ and $T_L$ are determined
+        \item Dijkstra's algorithm is used to reconstruct the walk of $T_n$ from $T_1$ to $T_L$
+        \item The $K_S$ receipts contained in $B_C$ are verified to have been signed by the private keys of $T_1$..$T_L$
+\end{enumerate}
+
+Assuming these steps are completed successfully, the \emph{Proof-of-Coverage} is verified and $B_C$ can be considered for inclusion in the blockchain [\ref{consensus}].
+
+\subsection{Constructing \emph{Proof-of-Serialization}}
+
+This section describes the construction of the \emph{Proof-of-Serialization} protocol.
+
+\textbf{Creating the Proof}. First, a miner $M$ pseudo-randomly picks two miners $M_1$ and $M_2$, to prove contact serialization with. It is assumed $M$ has a public key for $M_1$ and $M_2$ (otherwise $M$ should obtain it from the blockchain). $M$ then generates a salted\footnote{the salt is a 512-bit SHA of $T_t$ of $b_n R$} hash commitment $K$ called the \emph{proof-kernel}. The proof-kernel is a commitment to what claim is desired to be proven. \[\mathit{K = H\left(R || M_1 || M_2\right)}\] $M$ sends $K$ to $M_1$. $M_1$ replies with $T$, a signed message including the current time and $K$. $M$ knows that the reply from $M_1$ was not pre-generated because it includes the nonce $R$ that the $M$ generated. Because $M$ doesn't completely trust $M_1$ it will ask for another time from $M_2$.
+
+For the second request, $M$ generates a sub-proof-kernel, $L = H\left(R || T || K\right)$, and sends it to $M_2$. $M_2$ replies with $U$, a signed message including the current time and $L$. $U$ is now a proof artifact that shows that $M$ desired and then proved a serialization between $M_1$ and $M_2$. Let's assume that the times from $M_1$ and $M_2$ are significantly different. If the time from $M_2$ is before $M_1$, then $M$ has proof of misbehaviour; the reply from $M_2$ implicitly shows that it was created later because of the way that $M$ constructed the nonce. If the time from $M_2$ is after, then $M$ can reverse the roles of $M_1$ and $M_2$ and repeat the process to obtain, assuming steady clocks, a misordered proof as in the other case.
+
+With only two servers, $M$ can end up with proof that something is wrong, but no idea what the correct time is. But with half a dozen or more independent servers, $M$ will end up with chain of proof of any server's misbehaviour, signed by several others, and enough accurate replies to establish what the correct time is, $T_t$.
+
+\textbf{Utilizing the Proven Time}. The proven time allows us to prove, with relative certainty, that some piece of data $D$ was created between the time of the previous block $PbT_t$ and $T_t$. $D$ in this case is the proof-of-coverage. The randomness used to compute $O$ and thus obtain the proof-of-coverage is tied to the previous block, which contains $PbT_t$. Thus we know that $D$ must have been constructed between $PbT_t$ and $T_t$. This ensures that the proof-of-coverage cannot be pre-computed and that that blocks in the blockchain must have a minimum spacing in time; the \emph{blocktime}. Blocks which do not have at least \emph{blocktime} distance in time from their parent block are considered invalid.
+
+\newpage
+
 \section{Consensus Protocol}\label{consensus}
 
 Many current generation blockchains rely on a computationally difficult Proof-of-Work to protect the network against sybil attacks. The fact that the PoW is computationally expensive to create, but cheap to verify means that in order to propose a new valid block to the network you have evidence that a significant amount of computation has been expended. Due to the fact that computation is limited by hardware cost, power cost, physical space and computational efficiency of modern technology, sybil attacks become impossible. However, this approach, while fundamental to the mainstream adoption of blockchain technology, has several downsides. Chief among the downsides is the power consumption; it is estimated that the Bitcoin network is consuming more power than many small countries. Bitcoin's PoW is so wasteful it is now on the list of the top uses of electricity in the world and whenever the value of Bitcoin goes up, so do the resources devoted to mining it.
@@ -692,99 +787,6 @@ Issues a chit against a previously staked deposit in payment for transport or ot
       signature & the signature of the depositor
   \end{tabularx}
 \end{table}
-
-\newpage
-
-\section{Physical Implementation}
-
-In addition to the blockchain network, Helium is a \emph{physical} wireless network instantiation. The participants in the network, from a physical hardware perspective, can be thought of as follows:
-
-\textbf{Wireless Protocol (\emph{WHIP})}: The wireless network uses a new open wireless protocol, called \emph{WHIP}. WHIP is a long-range, low-power, wireless network protocol suitable for use with commodity open-standards hardware. WHIP compatible hardware can communicate over many square miles in dense urban environments or hundreds of square miles in rural settings. WHIP compatible hardware can also last for several years using standard batteries. WHIP uses strong public key cryptography and authentication occurs using the Helium blockchain, with end-to-end encryption.
-
-\textbf{Gateways}: Gateways are physical network devices that provide wide-area wireless coverage and participate in the blockchain network. Gateways transmit data back and forth between routers on the internet and devices while generating \emph{Proofs-of-Coverage} for the blockchain network [\ref{poc}]. Gateways are manufactured using commodity open-standards components with no proprietary hardware. Gateways can cooperate and geolocate devices using the wireless network without any additional required hardware. Each Gateway can support thousands of connected devices, and provide coverage over many square miles. Miners operating gateways specify the price they are willing to accept for transport and geolocation services for devices.
-
-\textbf{Devices}: Devices exist in the form of hardware products that contain a WHIP-compatible radio transceiver and communicate with gateways on the wireless network. WHIP is designed to facilitate low power data transmission and reception, so typically devices would exist in the form of battery-powered sensors that can live for several years using standard batteries (although mains-powered devices also work quite well). Devices can exist in a variety of forms, depending on the product or use case, and a variety of transmission and reception strategies can be employed to optimize for transmission/reception frequency or battery life. Device manufacturers should use hardware-based key storage which can securely generate, store, and authenticate public/private key pairs without leaking the private key.
-
-In this section, we expand on the components of the wireless network.
-
-\subsection{Wireless Protocol (\emph{WHIP})}\label{whip}
-
-\textbf{Motivation}: Several Low Power Wide Area Network (LPWAN) technologies are available today. These wireless technologies focus on creating extremely long-range, low-power internet communication for sensors and other smart devices. Typically these technologies trade throughput for range, with data rates as low as 18~bits~per~second (bps) and range measured in miles. In comparison, a typical WiFi network has significantly higher data rates but ranges limited to only a few hundred feet. Several of these new technologies, such as LoRa~\cite{lora} and RPMA~\cite{rpma}, have gained good traction and there are many commercial products available compatible with these systems. However, we believe that the future IoT economy should use non-proprietary protocols and modulation schemes and that participants in this ecosystem should have the freedom to choose between competing hardware vendors. We do not consider an open alliance built on top of proprietary hardware to be an acceptable compromise. While there are many open-standard wireless networking stacks, such as IEEE~802.15.4~\cite{ieee802_15_4} used in the first generation of Helium wireless products, none meet our extremely long range and low power criteria. It is this lack of open solutions that drove the creation of a new protocol.
-
-\textbf{Outline}: We introduce a new open-source Low Power Wide Area Network (LPWAN) protocol called \emph{WHIP}. WHIP is a highly secure, long range, low power wireless network protocol that is compatible with any Frequency Shift Keying (FSK) radio transceiver operating in the sub-GHz unlicensed frequency spectrum. Authentication with the wireless network uses modern public-key encryption and NIST~P-256 ECC~\cite{ecc} key pairs, with the public keys for all participants stored in the blockchain.
-
-FSK is a simple and widely supported modulation format which easy to implement and has excellent resistance to RF noise. There are dozens of vendors implementing FSK radio transceivers compatible with WHIP, such as Texas Instruments, Microchip, and Silicon Labs.
-
-WHIP is a \emph{narrowband} wireless protocol which creates several channels within the unlicensed spectrum and employs frequency hopping to hop between channels. Typically frequency hopping requires a complex time-synchronized system that is limited in capacity, however, devices using WHIP do not need to coordinate with gateways on channel selection as gateways are capable of hearing all channels within the available spectrum at any time. We choose narrow-band to accomplish the following goals:
-
-\begin{description}
-  \item[Spectral Efficiency] it is necessary to operate within unlicensed RF spectrum very efficiently. RF is a shared, limited resource, and therefore a focus on efficiency to increase capacity and improve robustness is a must.
-  \item[Co-Existence Performance] as the number of devices and networks increase, the ability to operate in \emph{noisy} RF environments without interference is a critical consideration.
-  \item[Range] narrowband allows for extremely long-range communications, with data rates that scale both up and down depending on the density of gateways.
-\end{description}
-
-\textbf{Implementation}: WHIP supports several data rates, channel bandwidths, and error-correction techniques. Gateways and devices dynamically negotiate the combination of these options using a \emph{signalling packet} delivered at the lowest bandwidth and symbol rate to ensure maximum range for the initial communication.
-The full WHIP specification will be made available by the Helium Alliance~\cite{alliance}.
-
-\subsection{Gateways}\label{gateways}
-
-Gateways are physical network devices operated by miners, that create wireless RF coverage over wide areas. They transmit data back and forth between routers on the Internet and devices on the network, process blockchain transactions, and create \emph{Proofs-of-Coverage} for the blockchain network [\ref{poc}]. Gateways can connect to the Internet using any TCP/IP capable backhaul, such as Ethernet, WiFi or Cellular. Each gateway contains a radio frontend capable of listening to several MHz of radio spectrum at a time, and is able to hear all network traffic transmitted within that spectrum. In this configuration modulation and demodulation is done in software, which is typically referred to as a \emph{Software Defined Radio (SDR)}. The benefit of this structure is that gateways can hear any device traffic transmitted within the frequency range, and no synchronization between the gateway and device needs to occur. This allows devices to remain inexpensive and relatively simple, and reduces wireless protocol overhead. If a miner wishes to minimize their gateway hardware costs, synchronized frequency hopping schemes are also permitted within the specification as a cheaper alternative to a more expensive radio frontend.
-
-Gateways require a GPS or GNSS transceiver to obtain accurate position and date/time information. This satellite-derived location will be used in conjunction with other techniques to verify that a gateway is in fact providing wireless network coverage in the location it claims. Because satellite location messages are easy to fabricate and do not necessarily prove that wireless RF coverage is being created, multiple mechanisms are required to validate this work as described in more detail in [\ref{poc}].
-
-Satellite location information is also correlated with packet arrival events to provide \emph{Time Differential of Arrival (TDoA)} location for devices if multiple gateways observe the same packet. This allows devices to physically locate themselves without requiring a GPS/GNSS transceiver, and therefore provide accurate location data at a fraction of the battery life and cost of competing methods. This method is described in detail in [\ref{geolocation}].
-
-Helium Systems Inc.\ will make both a complete open-source reference design and a finished product available for immediate participation in the network.
-
-\subsection{Devices}\label{devices}
-
-A \emph{device} is any wireless hardware capable of communicating with gateways on the network. WHIP is designed to facilitate low power data transmission and reception, so typically devices would exist in the form of battery-powered sensors that can function for several years using standard batteries.
-
-WHIP is designed such that devices can be manufactured using commodity hardware available from a wide variety of vendors, and for an extremely low-cost bill of materials (BOM). The technology in modern radio transceivers, such as the Texas Instruments CC1125 or STMicroelectronics S2-LP, enables extremely long-range network systems that can be built without the need for proprietary modulation schemes or physical layers. Some of these radios are available for around \$1 at reasonable volumes.
-
-Each device will use the Microchip ECC508A\cite{ecc} or equivalent hardware-based key storage device, which is able to securely generate, store, and authenticate public/private \emph{NIST P-256 ECC} [\ref{ecc}] key pairs without leaking the private key. In addition, a wide array of defense mechanisms prevent logical attacks on the encrypted data between the key storage device and its host device, along with physical protections on the security device itself. Users program their key storage device as part of the onboarding process defined in the WHIP wireless specification using a simple SDK\@.
-
-\subsection{Routers}
-
-Routers are internet-deployed applications that receive packets from devices via gateways and route them to appropriate destinations such as an HTTP or MQTT endpoint.
-
-There are several functions that routers serve on the network, which include:
-
-\begin{itemize}
-    \item Authenticating devices with the wireless network
-    \item Receiving packets from gateways and routing them to the Internet
-    \item Delivering downlink messages, including OTA updates, to devices via gateways
-    \item Providing delivery confirmations to ensure transport transactions are honest
-    \item Providing authentication and routing mechanisms into third-party cloud services such as Amazon AWS or Microsoft Azure
-\end{itemize}
-
-When a gateway receives a data packet from an device on the network, it will query the blockchain to determine which router to use given the devices network address. Anyone anywhere is free to host their own router and define their devices traffic to be delivered there by any gateway on the network. This allows users of the network to essentially create VPN-like functionality whereby encrypted data is delivered only to a router (or set of routers) that they specify and can optionally host themselves.
-
-Routers can implement a system called a \emph{Channel} which handles the authentication and routing of data to a specific third party Internet application, such as Microsoft's Azure IoT Hub\cite{azure}. These channel implementations can take advantage of a devices onboard hardware security to create a secure, hardware-authenticated connection to a third party which would otherwise be difficult to implement directly on an embedded microcontroller. Helium will make available an open source reference implementation of a Channel that can be used to build additional interfaces to Internet services.
-
-Helium Systems Inc hosts a high-availability cloud router for anyone to use, and also provides and maintains an open-source router that is available either as source code or a binary package for a variety of operating systems and distributions.
-
-The protocol specification required for implementing a router is defined in the WHIP Wireless Specification document that will be made available by the Helium Alliance\cite{alliance}.
-
-\subsection{Geolocation}\label{geolocation}
-
-WHIP-compatible gateways are expected to include hardware and software to enable not only location of the gateway (via GPS/GNSS) but also hardware and software to triangulate the location of an end node. This method is typically called \emph{Time Differential of Arrival (TDoA)}. Gateways accomplish TDoA location using a radio frontend configured to output raw sample data, which can then be post-processed and compared to GPS location and time to calculate the radio packet's time of flight. With enough of these time-of-flight calculations from several gateways, the position of the device can be calculated to within several meters.
-
-Because of the expense and power consumption of a typical GPS module, and the fact that they require a view of the sky, providing geolocation as a network service makes devices cheaper, more power efficient, and able to located accurately indoors. Additionally, because these data transmission events occur in the context of a blockchain, unforgeable cryptographic proof of location for a device can be obtained. Devices being able to prove they were in a specific place at a specific time has tremendous potential for a wide variety of IoT applications.
-
-\begin{figure}[H]
-    \begin{center}
-          \includegraphics[scale=0.3]{tdoa.eps}
-          \caption{\emph{Geolocation via TDoA}}
-          \label{fig:tdoa}
-     \end{center}
-\end{figure}
-
-Geolocation requires a density of gateways such that at least three gateways can hear the same packet at the same time. Because each gateway on the network is capable of listening on a wide range of radio spectrum, every gateway in range should hear the same packet with a nanosecond-level variance in the timing which can be used to solve for location via an internet application.
-
-Gateways synchronize their clocks via GPS such that all gateways have the same nanosecond-synchronized clock source with which to timestamp packets.
-
-We refer the interested reader to\cite{tdoa} for a detailed description of TDoA techniques.
 
 \newpage
 
