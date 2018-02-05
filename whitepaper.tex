@@ -704,9 +704,8 @@ As can be seen, gateways near the ideal network density are cheap to add, but es
 \subsection{Primitives in Helium} \label{primitives}
 Having discussed the philosophy of our transaction system and presented our approach to facilitating zero-fee mictrotransactions on the Helium network, we now delineate the transaction primitives and their properties.
 
-\subsubsection{add\_gateway}
-
-Registers a new gateway on the network, adding it to an existing account which will be responsible for supplying its stake (required for mining) and will receive mining rewards [\ref{mining}] and fees earned by the gateway
+\begin{description}
+  \item [add\_gateway] Registers a new gateway on the network, adding it to an existing account which will be responsible for supplying its stake (required for mining) and will receive mining rewards [\ref{mining}] and fees earned by the gateway
 
 \begin{table}[H]
   \centering
@@ -720,9 +719,7 @@ Registers a new gateway on the network, adding it to an existing account which w
   \end{tabularx}
 \end{table}
 
-\subsubsection{assert\_location}
-
-Asserts a gateway's location in the form of geographic coordinates
+\item [assert\_location] Asserts a gateway's location in the form of geographic coordinates
 
 \begin{table}[H]
   \centering
@@ -738,9 +735,7 @@ Asserts a gateway's location in the form of geographic coordinates
   \end{tabularx}
 \end{table}
 
-\subsubsection{payment} \label{payment}
-
-Moves tokens from one account, the \emph{payer}, to another account, the \emph{payee}. N.B. this payment transaction requires a fee, while \emph{chit} [\ref{chit}] does not.
+\item [payment] \label{payment} Moves tokens from one account, the \emph{payer}, to another account, the \emph{payee}. N.B. this payment transaction requires a fee, while \emph{chit} [\ref{chit}] does not.
 
 \begin{table}[H]
   \centering
@@ -755,8 +750,7 @@ Moves tokens from one account, the \emph{payer}, to another account, the \emph{p
   \end{tabularx}
 \end{table}
 
-\subsubsection{create\_deposit}
-Creates a staked deposit which can later be fractionally issued and redeemed in the form of \emph{chits} [\ref{chit}] without incurring transaction fees. Any unused portion of the deposit will be burned after some time.
+\item [create\_deposit] Creates a staked deposit which can later be fractionally issued and redeemed in the form of \emph{chits} [\ref{chit}] without incurring transaction fees. Any unused portion of the deposit will be burned after some time.
 
 \begin{table}[H]
   \centering
@@ -771,8 +765,7 @@ Creates a staked deposit which can later be fractionally issued and redeemed in 
   \end{tabularx}
 \end{table}
 
-\subsubsection{chit} \label{chit}
-Issues a chit against a previously staked deposit in payment for transport or other services. N.B. this payment transaction does not require a fee, while \emph{payment} [\ref{payment}] does.
+\item [chit] \label{chit} Issues a chit against a previously staked deposit in payment for transport or other services. N.B. this payment transaction does not require a fee, while \emph{payment} [\ref{payment}] does.
 
 \begin{table}[H]
   \centering
@@ -787,6 +780,8 @@ Issues a chit against a previously staked deposit in payment for transport or ot
       signature & the signature of the depositor
   \end{tabularx}
 \end{table}
+
+\end{description}
 
 \newpage
 
