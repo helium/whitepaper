@@ -259,6 +259,8 @@ As in other implementations, $b_n$ consist of a hash of the previous block in th
     \end{tabular}
 \end{center}
 
+Due to the fact that miners are only able to add transactions to the block during the early phases of the mining cycle or that the block may be full, the miner holds pending transactions that it has seen, but that do not appear on the main chain, in a temporary storage area, called the \emph{mempool}. The mempool is consulted every time a new block is constructed, and the most valuable transactions for the miner are included in the new block. Because each miner has a different set of incentives, network topology and resources the mempools may not be consistent between any two miners.
+
 As the \emph{Proof-of-Coverage} [\ref{poc}] is valuable to the network, we store as many $b_n$ and their associated proof to $B$ as \emph{Uncle Blocks}, $U_n$. $U_n$, as described in the \emph{Greedy Heaviest-Observed Sub-Tree (GHOST)}~\cite{ghost} paper and implemented in Ethereum~\cite{ethereum}, allow a miner to earn block rewards even if their submitted block did not become the tip of the chain. $U_n$ help the winning chain accumulate `weight' in terms of both the length and quality of the chain, but also including the amount and quality of $U_n$ and their associated proofs. This means that longer chain forks, either mined maliciously or on the smaller side of a partitioned network, will not be selected over a shorter, weightier chain. This also means that valuable proofs of work aren't lost and can be used by the chain to calculate trust.
 
 \begin{figure}[H]
