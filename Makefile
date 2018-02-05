@@ -1,7 +1,10 @@
-.PHONY: build
+.PHONY: build clean open
+
 build:
 	@latexmk -pdf -output-directory=build whitepaper.tex
 
-.PHONY: clean
 clean:
 	@rm -rf build
+
+open:
+	@open build/whitepaper.pdf
