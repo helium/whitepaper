@@ -390,106 +390,10 @@ We provide a brief overview of the router cycle and the functions available to r
 
 \section{Transactions}\label{transactions}
 
-Transactions in the Helium blockchain provide functionality that enables address-to-address transfers of Helium tokens, similar to many existing blockchain networks, but also provide a set of primitives that enable core functionality that is critical to the operation of a \verb|DWN|. In this section we address the philosophy behind our transaction system, the primitives, and the way fees on the network work. We will also address Helium's need for microtransactions and propose a new solution.
+Transactions in the Helium blockchain provide functionality that enables address-to-address transfers of Helium tokens, similar to many existing blockchain networks, but also provide a set of primitives that enable core functionality that is critical to the operation of a \verb|DWN|. In this section we address the philosophy behind our transaction system, the primitives, and the way fees on the network work. We will first address Helium's need for microtransactions and propose a new solution.
 
-\subsection{Primitives in Helium}
 
-In this section we describe the various transaction primitives.
-
-\subsubsection{add\_gateway}
-
-Registers a new gateway on the network, adding it to an existing account which will be responsible for supplying its stake (required for mining) and will receive mining rewards and fees earned by the gateway
-
-\begin{table}[H]
-  \centering
-  \begin{tabularx}{\textwidth}{l X}
-    \toprule
-    Property & Description \\ \midrule
-    gateway\_address & the address of the gateway being added to the network \\
-    public\_key & the public key of the gateway being added to the network \\
-    owner\_address & the address of the owner account \\
-    signatures & mutual signatures of the owner and gateway
-  \end{tabularx}
-\end{table}
-
-\subsubsection{assert\_location}
-
-An assertion of a gateway's location in the form of geographic coordinates
-
-\begin{table}[H]
-  \centering
-  \begin{tabularx}{\textwidth}{l X}
-      \toprule
-      Property & Description \\ \midrule
-      gateway\_address & the address asserting its location \\
-      nonce & a monotoically increasing integer \\
-      lat & the latitude of the gateway \\
-      lng & the longitude of the gateway \\
-      signature & the signature of the gateway
-  \end{tabularx}
-\end{table}
-
-\subsubsection{payment}
-
-A generic payment transaction, used to move tokens between two accounts
-
-\begin{table}[H]
-  \centering
-  \begin{tabularx}{\textwidth}{l X}
-      \toprule
-      Property & Description \\ \midrule
-      payer\_address & the address of the sender \\
-      payee\_address & the address of the recipient \\
-      nonce & a monotoically increasing integer \\
-      value & an integer-based representation of the tokens to send \\
-      signature & the signature of the sender
-  \end{tabularx}
-\end{table}
-
-\subsubsection{create\_deposit}
-Creates a staked deposit which can later be fractionally issued and redeemed in the form of chits without incurring transaction fees. Any unused portion of the deposit will be burned after some time.
-
-\begin{table}[H]
-  \centering
-  \begin{tabularx}{\textwidth}{l X}
-      \toprule
-      Property & Description \\ \midrule
-      address & the address of the account creating the deposit \\
-      value & an integer-based representation of the deposit amount \\
-      public\_key & an ephemeral public key used for signing chits for this deposit \\
-      expiry\_height & the block height at which this stake expires \\
-      signature & the signature of the depositor
-  \end{tabularx}
-\end{table}
-
-\todo{is expiry height a fixed value? or configurable?}
-
-\subsubsection{chit}
-Issues a chit against a previously staked deposit in payment for transport or other services
-
-\begin{table}[H]
-  \centering
-  \begin{tabularx}{\textwidth}{l X}
-      \toprule
-      Property & Description \\ \midrule
-      public\_key & the public key used to create the deposit \\
-      value & an integer-based representaion of the value of the chit \\
-      nonce & a monotoically increasing integer \\
-      packet\_reference & a derivative reference to the packet being paid for \\
-      payee\_address & the address of the recipient \\
-      signature & the signature of the depositor
-  \end{tabularx}
-\end{table}
-
-\todo{what's the packet reference? can it include metadata that could be referenced in the blockchain later?}
-
-\subsection{Fees}
-
-Transaction fees are an essential part of most blockchain implementations. They incentivize miners to include a transaction in their draft block and ensure that spam transactions don't pollute the blockchain and network. All transactions on the \verb|DWN| require transaction fees, with the exception of the \textbf{chit} transaction (covered in the Microtransactions section). Transaction fees are determined by...
-
-\todo{How do we determine fees? are they just arbitrary and determined by demand? how do we specify that?}
-
-\subsection{Microtransactions}
+\subsection{Microtransactions} \label{microtransactions}
 
 In this section we discuss Helium's need for microtransactions, the limitations of existing solutions, and propose a solution based on staking and burning.
 
@@ -518,7 +422,7 @@ If heavyweight fees aren't feasible, could we go to the other extreme and simply
 State channels allow two parties to exchange value, small increments at a time, with very limited risk. If one party thinks the other is cheating them, they can publish the final transaction in the state channel to the blockchain and shut it down. At most one payment is usually at risk. However, there are several downsides: the payer has to lock up significant funds for the lifetime of the state channel, meaning they may be unable to open state channels with other parties or pay other dues; transactions in the state channel do not appear on the main chain at all; and they're relatively complex to get right (note that neither Lightning nor Raiden have become widely used yet).
 
 \paragraph{Payment in Arrear}
-Payment in arrear, after the services have been rendered, is extremely risky in a decentralized pseudo-anonymous system. You don't know if the person who is supposed to pay you will ever pay you, nor do you know if they'll even have the money when the debt comes due. This model only works when the parties involved trust each other, or have some recourse to recover funds (lawyers!).
+Payment in arrear, after the services have been rendered, is extremely risky in a decentralized pseudo-anonymous system. You don't know if the person who is supposed to pay you will ever pay you, nor do you know if they'll even have the money when the debt comes due. This model only works when the parties involved trust each other, or have some recourse to recover funds (e.g. lawyers).
 
 \subsubsection{A Proposed Solution Based on Staking \& Chits}
 
@@ -559,10 +463,6 @@ In this section, we will walk through an example lifecycle of a router staking a
 \item Once $S$ is closed either through depletion or expiration, all gateways owning chits against $S$ receive their payment
 \end{enumerate}
 
-\todo{can a router close a deposit prior to expiration and reclaim the remainder? how would that work if it has issued chits that haven't been published yet?}
-
-\todo{what would a geolocation transaction that consults multiple gateways look like?}
-
 \subsubsection{Problems \& Solutions}
 
 Here, we address potential problems that could arise with the deposit \& chit approach and present solutions to these problems.
@@ -574,15 +474,109 @@ Here, we address potential problems that could arise with the deposit \& chit ap
 \paragraph{Final Transaction}
 In theory, it is possible for the chit issuer to spend all the staked tokens and not have anything left to incentivize a miner to include the final transaction. All the miners involved in the chain of chits have an incentive to get it included in a block, and because there is a fair chance of any individual miner winning a block, this should eventually clear.
 
-\todo{Other problems we want to address?}
+\subsection{Light Clients \& Full Nodes} \label{full nodes}
 
-\subsubsection{Light Clients \& Full Nodes}
+Up until now, we've discussed how to deal with microtransactions in a cost-effective way, however we haven't yet addressed how to deal with the size of the blockchain. One requirement we discussed for the Helium Network is that all transactions occur on-chain. This means that the size of the full blockchain will grow quite large. This issue is compounded by the fact that all miners on the network are gateways devices, limited in computation power and storage space.
 
-Up to now, we've discussed how to deal with microtransactions in a cost-effective way, however we haven't yet addressed how to deal with the size of the blockchain. One requirement we discussed for the Helium Network is that all transactions occur on-chain. This means that the size of the full blockchain will grow quite large. This issue is compounded by the fact that all miners on the network are gateways devices, limited in computation power and storage space.
-
-We solve this constraint by allowing mining nodes to operate as \emph{light clients} on the blockchain, pruning old blocks as needed and keeping only the latest ledger values. They will communicate over the p2p network with \emph{full nodes} which maintain a complete history of the blockchain to verify transactions.
+We solve this constraint by allowing mining nodes to operate as \emph{light clients} on the blockchain, pruning old blocks and transactions as needed and keeping only the latest ledger values. They will communicate over the p2p network with \emph{full nodes} which maintain a complete history of the blockchain to verify transactions.
 
 This raises a question: who is responsible for operating full nodes, and what is their incentive to do so? Routers are software-only applications with access to scalable, cloud-based storage and will be required to operate full nodes in order to fulfill their purpose. Helium will operate a router that will make it easy for developers to launch products without needing to deploy their own router. However, many enterprise developers, who are required to maintain a higher standard of privacy, will want to host their own router. Together, these routers will form a network of full nodes capable of supporting resource constrained gateways and wallets operating light clients.
+
+
+\subsection{Fees}
+
+Transaction fees are an essential part of most blockchain implementations. They incentivize miners to include a transaction in their draft block and ensure that spam transactions don't pollute the blockchain and network. We've discussed at length how the \emph{chit} transaction [\ref{chit}] is able to eliminate fees in the prior section on Microtransactions [\ref{microtransactions}]. However, all other transactions on the \verb|DWN| require transaction fees.
+
+To determine the appropriate fee for a new transaction, the transactor will take the median of the past 1,000 packet transport fees, within some margin of error. Until 1,000 packet transports have been completed, the fee will be fixed at some constant. By anchoring the transaction fee to the current fees being charged for transport on the network, we root them in reality. Helium's primary purpose is to facilitate a network of IoT coverage. In order to accomplish this in the long term, all of the economics of the system must align to make it practical for the primary users (i.e. companies building and deploying devices) to transact on the network. If one set of fees were to outstrip the other, the network would quickly lose its utility for this key user segment.
+
+To enable gateways and other light clients to determine an appropriate fee, full nodes [\ref{full nodes}] will expose a fee suggestion API. This way, resource constrained entities that don't maintain a complete copy of the blockchain will not need to compute the fee from the most recent transactions. When submitting a block, peer gateways will verify the correctness of the block and ensure that no fee deviates by more than the acceptable amount.
+
+\subsection{Primitives in Helium}
+Having discussed the philosophy of our transaction system and presented our approach to facilitate zero-fee mictrotransactions on the Helium network, we will finally delineate the transaction primitives and their properties.
+
+\subsubsection{add\_gateway}
+
+Registers a new gateway on the network, adding it to an existing account which will be responsible for supplying its stake (required for mining) and will receive mining rewards [\ref{mining}] and fees earned by the gateway
+
+\begin{table}[H]
+  \centering
+  \begin{tabularx}{\textwidth}{l X}
+    \toprule
+    Property & Description \\ \midrule
+    gateway\_address & the address of the gateway being added to the network \\
+    public\_key & the public key of the gateway being added to the network \\
+    owner\_address & the address of the owner account \\
+    signatures & mutual signatures of the owner and gateway
+  \end{tabularx}
+\end{table}
+
+\subsubsection{assert\_location}
+
+Asserts a gateway's location in the form of geographic coordinates
+
+\begin{table}[H]
+  \centering
+  \begin{tabularx}{\textwidth}{l X}
+      \toprule
+      Property & Description \\ \midrule
+      gateway\_address & the address asserting its location \\
+      nonce & a monotoically increasing integer \\
+      latitude & the latitude of the gateway \\
+      longitude & the longitude of the gateway \\
+      altitude & the altitude of the gateway \\
+      signature & the signature of the gateway
+  \end{tabularx}
+\end{table}
+
+\subsubsection{payment} \label{payment}
+
+Moves tokens from one account, the \emph{payer}, to another account, the \emph{payee}. N.B. this payment transaction requires a fee, while \emph{chit} [\ref{chit}] does not.
+
+\begin{table}[H]
+  \centering
+  \begin{tabularx}{\textwidth}{l X}
+      \toprule
+      Property & Description \\ \midrule
+      payer\_address & the address of the sender \\
+      payee\_address & the address of the recipient \\
+      nonce & a monotoically increasing integer \\
+      value & an integer-based representation of the tokens to send \\
+      signature & the signature of the sender
+  \end{tabularx}
+\end{table}
+
+\subsubsection{create\_deposit}
+Creates a staked deposit which can later be fractionally issued and redeemed in the form of \emph{chits} \ref{chit} without incurring transaction fees. Any unused portion of the deposit will be burned after some time.
+
+\begin{table}[H]
+  \centering
+  \begin{tabularx}{\textwidth}{l X}
+      \toprule
+      Property & Description \\ \midrule
+      address & the address of the account creating the deposit \\
+      value & an integer-based representation of the deposit amount \\
+      public\_key & an ephemeral public key used for signing chits for this deposit \\
+      expiry\_height & the block height at which this stake expires \\
+      signature & the signature of the depositor
+  \end{tabularx}
+\end{table}
+
+\subsubsection{chit} \label{chit}
+Issues a chit against a previously staked deposit in payment for transport or other services. N.B. this payment transaction does not require a fee, while \emph{payment} [\ref{payment}] does.
+
+\begin{table}[H]
+  \centering
+  \begin{tabularx}{\textwidth}{l X}
+      \toprule
+      Property & Description \\ \midrule
+      public\_key & the public key used to create the deposit \\
+      value & an integer-based representaion of the value of the chit \\
+      nonce & a monotoically increasing integer \\
+      packet\_reference & a hash of the packet being paid for \\
+      payee\_address & the address of the recipient \\
+      signature & the signature of the depositor
+  \end{tabularx}
+\end{table}
 
 \newpage
 
