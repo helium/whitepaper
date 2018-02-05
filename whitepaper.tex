@@ -492,40 +492,35 @@ The criteria on which blocks are validated and scored must be agreed upon by all
 \todo{define these terms before as well}\newline
 Given,\newline
 \begin{tabular}{l l}
-	$\tau$, &gateway \\
-	h, &height of the blockchain \\
-	P($\tau$), &probability of $\tau$ being selected as target\\
-	$\phi$\textsubscript{0}, &score of $\tau$ initially\\
-	$\phi$\textsubscript{h}, &score of $\tau$ at height h\\
-	$\phi'$\textsubscript{h}, &depreciation value of $\phi$\textsubscript{h}\\
-	$\delta$\textsubscript{h}, &rate of decay of $\phi$\textsubscript{h}\\
-	$\epsilon$\textsubscript{h}, &boost for $\phi$\textsubscript{h} on successful verification\\
-	$\alpha$\textsubscript{h}, &boost factor\\
-	$\eta$\textsubscript{h}, &trusted gateways\\
-	$\phi$\textsubscript{max}, &local maximum score for $\eta$\textsubscript{h}
+	$\tau$,       & gateway                                        \\
+	$h$,          & height of the blockchain                       \\
+	$P(\tau)$,    & probability of $\tau$ being selected as target \\
+	$\phi_0$,     & score of $\tau$ initially                      \\
+	$\phi_h$,     & score of $\tau$ at height h                    \\
+	$\phi'_h$,    & depreciation value of $\phi_h$                 \\
+	$\delta_h$,   & rate of decay of $\phi_h$                      \\
+	$\epsilon_h$, & boost for $\phi_h$ on successful verification  \\
+	$\alpha_h$,   & boost factor                                   \\
+	$\eta_h$,     & trusted gateways                               \\
+	$\phi_{max}$, & local maximum score for $\eta_h$               \\
 \end{tabular}
 
 At every height h in the blockchain we have the following constraints:
 
+
 The probability of a gateway being selected as a target is bounded by:
 \begin{equation*} \label{constraint1}
-\begin{split}
-0 \leq &P(\tau) < 1.0 \\
-\end{split}
+0 \leq P(\tau) < 1.0 \\
 \end{equation*}
 
 The score of a gateway at height h always follows:
 \begin{equation*} \label{constraint2}
-\begin{split}
-\phi\textsubscript{h} < 1.0, \hspace{1cm} \forall h > 0
-\end{split}
+\phi_h < 1.0, \hspace{0.5cm} \forall h > 0
 \end{equation*}
 
 As the blockchain increases in height, every gateway's score should tend towards 1.0. This implies that legitimate gateways contributing to the proof-of-coverage in the network always gain score.
 \begin{equation*} \label{goal}
-\begin{split}
-\lim_{h \to \infty} & \phi\textsubscript{h} \rightarrow 1.0
-\end{split}
+\lim_{h \to \infty} \phi_h = 1.0
 \end{equation*}
 
 In order to satisfy the above defined constraints, we construct the following relationships:
@@ -533,37 +528,37 @@ In order to satisfy the above defined constraints, we construct the following re
 The boost factor depends on the previous score and number of trusted gateways, it can be defined as:
 \begin{equation} \label{alpha}
 \begin{split}
-\alpha\textsubscript{h} &= g(\phi\textsubscript{h-1}, \eta\textsubscript{h-1}) = \lvert1 - \sqrt{1 - (\phi\textsubscript{h-1} - 1)^2}\rvert \cdot \eta\textsubscript{h-1}\\
+    \alpha_h & = g(\phi_{h-1}, \eta_{h-1}) \\
+    & = \left\lvert 1 - \sqrt{1 - {(\phi_{h-1} - 1)}^2} \right\rvert \eta_{h-1} \\
 \end{split}
 \end{equation}
 
 Similarly, the boost alloted to each gateway depends on the score and boost factor,
 \begin{equation} \label{epsilon}
 \begin{split}
-\epsilon\textsubscript{h} &= f(\phi\textsubscript{h-1}, \alpha\textsubscript{h}) = \frac{\phi\textsubscript{h-1}}{\sqrt{\phi\textsubscript{h-1}} + \frac{1}{(\alpha\textsubscript{h})^2}}\\
+    \epsilon_h & = f(\phi_{h-1}, \alpha_h) \\
+    & = \frac{\phi_{h-1}}{\sqrt{\phi_{h-1}} + \alpha_h^-2}\\
 \end{split}
 \end{equation}
 
 Finally, the rate of decrease of score is linearly proportional to the previous score. Doing so allows an equal opportunity for supposedly illegitimate gateways to gain score to be considered legitimate while also making sure that legit gateways can never reach the maximum possible score as the height of the blockchain increases.
 \begin{equation} \label{delta}
-\begin{split}
-\delta\textsubscript{h} &\propto \phi\textsubscript{h-1}
-\end{split}
+\delta_h \propto \phi_{h-1}
 \end{equation}
 
 From the above defined relationships, we construct the following recurrence for the score of the gateways:
 \begin{equation} \label{score}
-	\phi\textsubscript{h} = \begin{cases}
-		\phi\textsubscript{h-1} - \delta\textsubscript{h}, &if \phi\textsubscript{h-1} = \phi\textsubscript{max}.\\
-		\phi\textsubscript{h-1} + \epsilon\textsubscript{h-1} - \delta\textsubscript{h}, &{otherwise}.
+	\phi_h = \begin{cases}
+		\phi_{h-1} - \delta_h, &if \phi_{h-1} = \phi_max.\\
+		\phi_{h-1} + \epsilon_{h-1} - \delta_h, &{otherwise}.
 	\end{cases}
 \end{equation}
 
 Substituting the values from (\ref{alpha}), (\ref{epsilon}), (\ref{delta}) to (\ref{score}), we get the following relationship as the score of gateways:
 \begin{equation} \label{recurrence}
-	\phi\textsubscript{h} = \begin{cases}
-		\phi\textsubscript{h-1} - \delta\textsubscript{h}, &if \phi\textsubscript{h-1} = \phi\textsubscript{max}.\\
-		\phi\textsubscript{h-1} + \frac{\phi\textsubscript{h-1}}{\sqrt{\phi\textsubscript{h-1}} + (\lvert1 - \sqrt{1 - (\phi\textsubscript{h-1} - 1)^2}\rvert \cdot \eta\textsubscript{h-1})^{-2}} -\delta\textsubscript{h}, &{otherwise}.
+	\phi_h = \begin{cases}
+		\phi_{h-1} - \delta_h, &if \phi_{h-1} = \phi_max.\\
+		\phi_{h-1} + \frac{\phi_{h-1}}{\sqrt{\phi_{h-1}} + (\left\lvert1 - \sqrt{1 - (\phi_{h-1} - 1)^2}\right\rvert \eta_{h-1})^{-2}} -\delta_h, &{otherwise}.
 	\end{cases}
 \end{equation}
 
