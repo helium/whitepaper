@@ -8,6 +8,7 @@
 \usepackage{graphicx}
 \usepackage{parskip}
 \usepackage{bytefield}
+\usepackage{amsmath}
 
 \graphicspath{ {images/} }
 
@@ -485,6 +486,87 @@ Each miner has a score assigned to it by the blockchain. A score is a value betw
 At each blocktime, a subset of miners are allowed to submit a candidate block. The chances of being chosen to submit a block are proportional to the miner's current score. Once all the blocks for that interval have been submitted (or time runs out) the network of miners each choose the block they think is the best, according to a scoring algorithm. The scoring algorithm favors blocks that are valuable to the network. The primary dimension affecting score is the Proof-of-Coverage. A high scoring proof should either use successful, valid challenge responses to raise the score of as many gateways as possible, or it should contain irrefutable proof of misbehavior. It should also come from a miner that has a good reputation itself. Secondarily, it should include references to high-quality uncle blocks that, while not winners at the time, contain highly valuable proofs themselves that would be wasteful to discard. Finally a good block should include as many valid transactions as possible, transactions are the life blood of a blockchain and it is vital miners are incentivized to include them.
 
 The criteria on which blocks are validated and scored must be agreed upon by all participants in the network. If there's a disagreement then the blockchain will split. Because Helium miners have a reputation attached, a simple 51\% attack is insufficient to derail the consensus algorithm. Additionally the inclusion of uncle blocks, according to the GHOST protocol, further increases the difficulty of a malicious consensus fork. Uncle blocks on the Helium blockchain are only eligible for inclusion if the uncle block and the block referencing it share a common ancestor within the last 7 generations. This means that after 7 generations the chain fork can no longer obtain a boost from including uncle blocks from the honest chain.
+
+\subsection{Scoring Algorithm}\label{scoring}
+
+\todo{define these terms before as well}\newline
+Given,\newline
+\begin{tabular}{l l}
+	$\tau$, &gateway \\
+	h, &height of the blockchain \\
+	P($\tau$), &probability of $\tau$ being selected as target\\
+	$\phi$\textsubscript{0}, &score of $\tau$ initially\\
+	$\phi$\textsubscript{h}, &score of $\tau$ at height h\\
+	$\phi'$\textsubscript{h}, &depreciation value of $\phi$\textsubscript{h}\\
+	$\delta$\textsubscript{h}, &rate of decay of $\phi$\textsubscript{h}\\
+	$\epsilon$\textsubscript{h}, &boost for $\phi$\textsubscript{h} on successful verification\\
+	$\alpha$\textsubscript{h}, &boost factor\\
+	$\eta$\textsubscript{h}, &trusted gateways\\
+	$\phi$\textsubscript{max}, &local maximum score for $\eta$\textsubscript{h}
+\end{tabular}
+
+At every height h in the blockchain we have the following constraints:
+
+The probability of a gateway being selected as a target is bounded by:
+\begin{equation*} \label{constraint1}
+\begin{split}
+0 \leq &P(\tau) < 1.0 \\
+\end{split}
+\end{equation*}
+
+The score of a gateway at height h always follows:
+\begin{equation*} \label{constraint2}
+\begin{split}
+\phi\textsubscript{h} < 1.0, \hspace{1cm} \forall h > 0
+\end{split}
+\end{equation*}
+
+As the blockchain increases in height, every gateway's score should tend towards 1.0. This implies that legitimate gateways contributing to the proof-of-coverage in the network always gain score.
+\begin{equation*} \label{goal}
+\begin{split}
+\lim_{h \to \infty} & \phi\textsubscript{h} \rightarrow 1.0
+\end{split}
+\end{equation*}
+
+In order to satisfy the above defined constraints, we construct the following relationships:
+
+The boost factor depends on the previous score and number of trusted gateways, it can be defined as:
+\begin{equation} \label{alpha}
+\begin{split}
+\alpha\textsubscript{h} &= g(\phi\textsubscript{h-1}, \eta\textsubscript{h-1}) = \lvert1 - \sqrt{1 - (\phi\textsubscript{h-1} - 1)^2}\rvert \cdot \eta\textsubscript{h-1}\\
+\end{split}
+\end{equation}
+
+Similarly, the boost alloted to each gateway depends on the score and boost factor,
+\begin{equation} \label{epsilon}
+\begin{split}
+\epsilon\textsubscript{h} &= f(\phi\textsubscript{h-1}, \alpha\textsubscript{h}) = \frac{\phi\textsubscript{h-1}}{\sqrt{\phi\textsubscript{h-1}} + \frac{1}{(\alpha\textsubscript{h})^2}}\\
+\end{split}
+\end{equation}
+
+Finally, the rate of decrease of score is linearly proportional to the previous score. Doing so allows an equal opportunity for supposedly illegitimate gateways to gain score to be considered legitimate while also making sure that legit gateways can never reach the maximum possible score as the height of the blockchain increases.
+\begin{equation} \label{delta}
+\begin{split}
+\delta\textsubscript{h} &\propto \phi\textsubscript{h-1}
+\end{split}
+\end{equation}
+
+From the above defined relationships, we construct the following recurrence for the score of the gateways:
+\begin{equation} \label{score}
+	\phi\textsubscript{h} = \begin{cases}
+		\phi\textsubscript{h-1} - \delta\textsubscript{h}, &if \phi\textsubscript{h-1} = \phi\textsubscript{max}.\\
+		\phi\textsubscript{h-1} + \epsilon\textsubscript{h-1} - \delta\textsubscript{h}, &{otherwise}.
+	\end{cases}
+\end{equation}
+
+Substituting the values from (\ref{alpha}), (\ref{epsilon}), (\ref{delta}) to (\ref{score}), we get the following relationship as the score of gateways:
+\begin{equation} \label{recurrence}
+	\phi\textsubscript{h} = \begin{cases}
+		\phi\textsubscript{h-1} - \delta\textsubscript{h}, &if \phi\textsubscript{h-1} = \phi\textsubscript{max}.\\
+		\phi\textsubscript{h-1} + \frac{\phi\textsubscript{h-1}}{\sqrt{\phi\textsubscript{h-1}} + (\lvert1 - \sqrt{1 - (\phi\textsubscript{h-1} - 1)^2}\rvert \cdot \eta\textsubscript{h-1})^{-2}} -\delta\textsubscript{h}, &{otherwise}.
+	\end{cases}
+\end{equation}
+
 
 \newpage
 
