@@ -666,7 +666,7 @@ A \emph{device} is any wireless hardware capable of communicating with gateways 
 
 WHIP is designed such that devices can be manufactured using commodity hardware available from a wide variety of vendors, and for an extremely low-cost bill of materials (BOM). The technology in modern radio transceivers, such as the Texas Instruments CC1125 or STMicroelectronics S2-LP, enables extremely long-range network systems that can be built without the need for proprietary modulation schemes or physical layers. Some of these radios are available for around \$1 at reasonable volumes.
 
-Each device will use the Microchip ECC508A\cite{ecc} or equivalent hardware-based key storage device, which is able to securely generate, store, and authenticate public/private \emph{NIST P-256 ECC} [\ref{ecc}] key pairs without leaking the private key. In addition, a wide array of defense mechanisms prevent logical attacks on the encrypted data between the key storage device and its host device, along with physical protections on the security device itself. Users program their key storage device as part of the onboarding process defined in the WHIP wireless specification using a simple SDK\@.
+Each device will use the Microchip ECC508A\cite{ecc} or equivalent hardware-based key storage device, which is able to securely generate, store, and authenticate public/private \emph{NIST P-256 ECC} \cite{nist} key pairs without leaking the private key. In addition, a wide array of defense mechanisms prevent logical attacks on the encrypted data between the key storage device and its host device, along with physical protections on the security device itself. Users program their key storage device as part of the onboarding process defined in the WHIP wireless specification using a simple SDK\@.
 
 \subsection{Routers}
 
@@ -1266,6 +1266,11 @@ We would also like to acknowledge many of the prior works and inventions that ha
     Microchip
         \emph{ATECC508A}, \\
         \url{http://www.microchip.com/wwwproducts/en/ATECC508A}
+
+\bibitem{nist}
+    Mehmet Adalier
+        \emph{Efficient and Secure Elliptic Curve Cryptography Implementation of Curve P-256}
+        \url{https://csrc.nist.gov/csrc/media/events/workshop-on-elliptic-curve-cryptography-standards/documents/papers/session6-adalier-mehmet.pdf}
 
 \bibitem{azure}
     Microsoft
