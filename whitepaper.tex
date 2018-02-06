@@ -533,7 +533,7 @@ The boost factor depends on the previous score and number of trusted gateways, i
 \end{split}
 \end{equation}
 
-Similarly, the boost alloted to each gateway depends on the score and boost factor,
+Similarly, the boost allotted to each gateway depends on the score and boost factor,
 \begin{equation} \label{epsilon}
 \begin{split}
     \epsilon_h & = f(\phi_{h-1}, \alpha_h) \\
@@ -554,7 +554,7 @@ From the above defined relationships, we construct the following recurrence for 
 	\end{cases}
 \end{equation}
 
-Substituting the values from (\ref{alpha}), (\ref{epsilon}), (\ref{delta}) to (\ref{score}), we get the following relationship as the score of gateways:
+Substituting the values for $\alpha_h$ and $\epsilon_h$, we get the following recurrence relationship as the score of gateways:
 \begin{equation} \label{recurrence}
 	\phi_h = \begin{cases}
 		\phi_{h-1} - \delta_h, &\text{if $\phi_{h-1}$ = $\phi_{max}$.}\\
