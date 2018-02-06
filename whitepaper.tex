@@ -236,7 +236,7 @@ We provide a brief overview of the device cycle and the functions available to d
 
   \item [Receive] After a device has performed a Send, the device will listen for a response. See Protocol~\ref{proto:device.data.recv}
 
-    The response can be a single acknowledgement or a queued up command or data packet. If the device gets a signalling packet describing a downlink message, it will stay awake until the entire packet has been received, otherwise it is free to turn its radio off or go into power-save mode. \todo{I propose we device LoRa class B style semantics later}
+    The response can be a single acknowledgement or a queued up command or data packet. If the device gets a signalling packet describing a downlink message, it will stay awake until the entire packet has been received, otherwise it is free to turn its radio off or go into power-saving mode.
 
     \begin{algorithm}[!htb]
       \SetAlgorithmName{Protocol}{List of Protocols}
@@ -386,7 +386,7 @@ We provide a brief overview of the mining cycle and the functions available to m
 
   \item [Deliver] A miner delivers data from a device to a router on the internet.
 
-    Once a miner has received a packet from an end device, along with the precise timestamp it was received, it looks up the routers for the organization owning that device and offers the packet to one of those routers, for a fee. The router can accept the fee and return an IOU or it can reject the offer if it already has a copy of the packet or it is unwilling to pay the offered price. A router may pay for several copies of the packet if it wishes to solve for the position of the end device.
+    Once a miner has received a packet from an end device, along with the precise timestamp it was received, it looks up the routers for the organization owning that device and offers the packet to one of those routers, for a fee. The router can accept the fee and return a \emph{chit} or it can reject the offer if it already has a copy of the packet or it is unwilling to pay the offered price. A router may pay for several copies of the packet if it wishes to solve for the position of the end device.
 
     \begin{algorithm}[!htb]
       \SetAlgorithmName{Protocol}{List of Protocols}
@@ -404,10 +404,10 @@ We provide a brief overview of the mining cycle and the functions available to m
         Fee $F \leftarrow $ \CalculateDeliverFee{R, D, A} \;
         Offer $O \leftarrow $ \Sign{$\ll S_a, F \gg $, $E_{pk}$} \;
         \Switch{\Deliver{R, $O$}} {
-          \Case{${IOU}_{FG}$}{
-            Validate ${IOU}_{FG}$\;
+          \Case{${Chit}_{FG}$}{
+            Validate ${Chit}_{FG}$\;
             \Deliver{R, A}\;
-            $T \leftarrow $ \Transaction{redemption, M, ${IOU}_{FG}$} \;
+            $T \leftarrow $ \Transaction{redemption, M, ${Chit}_{FG}$} \;
             Submit $T$ to peers\;
           }
           \lOther{drop A}
@@ -419,7 +419,7 @@ We provide a brief overview of the mining cycle and the functions available to m
 
   \item [Receive Data] A miner receives data from a router on the internet for delivery to a device.
 
-    In response to an uplink packet offer, the router can also respond with a downlink packet, with an attached IOU to have the gateway deliver a downlink packet to the end device. The end device will listen for a downlink packet after transmitting.
+    In response to an uplink packet offer, the router can also respond with a downlink packet, with an attached \emph{chit} to have the gateway deliver a downlink packet to the end device. The end device will listen for a downlink packet after transmitting.
 
     \begin{algorithm}[!htb]
       \SetAlgorithmName{Protocol}{List of Protocols}
@@ -429,12 +429,12 @@ We provide a brief overview of the mining cycle and the functions available to m
       \SetKwFunction{Transaction}{Transaction}
       \caption{Miner Receive Router Data}\label{proto:miner.data.receive}
 
-      \Recv{at miner M, from router R, data A, for device D, with ${IOU}_{FG}$} {
+      \Recv{at miner M, from router R, data A, for device D, with ${Chit}_{FG}$} {
         \emph{This can only happen in response to G delivering data to R}
 
-        Validate ${IOU}_{FG}$\;
+        Validate ${Chit}_{FG}$\;
         \Transmit{D, A} \;
-        $T \leftarrow $ \Transaction{redemption, M, ${IOU}_{FG}$} \;
+        $T \leftarrow $ \Transaction{redemption, M, ${Chit}_{FG}$} \;
         Submit $T$ to peers\;
       }
     \end{algorithm}
@@ -784,9 +784,9 @@ In order to satisfy our requirement of on-blockchain micro transactions with no 
 
 In order for devices to issue zero fee payments to miners, they must first stake a \emph{deposit} of tokens using the \emph{create\_deposit} transaction [\ref{primitives}]. This transaction has a fee. Once the initial deposit has been created, the network user can proceed to issue \emph{chits} against their deposit until it is exhaused. These chits are returned in response to a gateway offering a packet for delivery. Chits are linked to each other; the blockchain needs to have seen the previous chits before subsequent ones will be accepted. Each chit references the deposit, the sequence number (nonce), the amount to pay and any additional information about the packet.
 
-Because the miner concerned wants to be paid for transport, it will add the chit to its mempool, along with any previous chits that it depends on. This means that several miners are all incentivized to include these chits in their current blockchain. The entity issuing chits can use the final IOU in the transaction chain to incentivize a miner to include all the previous (or missing) chits in a block. If previous chits are not included in the chain, nobody gets paid.
+Because the miner concerned wants to be paid for transport, it will add the chit to its mempool, along with any previous chits that it depends on. This means that several miners are all incentivized to include these chits in their current blockchain. The entity issuing \emph[chits] can use the final \emph[chit] in the transaction chain to incentivize a miner to include all the previous (or missing) chits in a block. If previous chits are not included in the chain, nobody gets paid.
 
-At first glance this is similar to how state channels work, but with a couple of significant differences. State channels are a one to one construct, while chits can be one to many. Critically, this method keeps the record of all included transactions on-chain. The crucial benefit to this design is that all transaction fees for these payments can be eliminated. The first staking transaction can be sent along with the first chit, so the gateway is incentivized to add it to their block. If the first miner doesn't include it, the second IOU can be accompanied with the staking transaction and the first chit when communicating with the next miner. Eventually the advantage of including the transactions outweighs the disadvantages.
+At first glance this is similar to how state channels work, but with a couple of significant differences. State channels are a one to one construct, while chits can be one to many. Critically, this method keeps the record of all included transactions on-chain. The crucial benefit to this design is that all transaction fees for these payments can be eliminated. The first staking transaction can be sent along with the first chit, so the gateway is incentivized to add it to their block. If the first miner doesn't include it, the second \emph{chit} can be accompanied with the staking transaction and the first chit when communicating with the next miner. Eventually the advantage of including the transactions outweighs the disadvantages.
 
 It is important to note that nobody gets paid until everybody gets paid. Chits should not be issued after the \emph{ExpiryHeight}. If the deposit is not distributed $n$ blocks after the ExpiryHeight, the deposit is disbursed as much as possible and any remaining balance is destroyed. This provides an incentive for everyone involved to settle the balance.
 
