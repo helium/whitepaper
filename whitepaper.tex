@@ -148,22 +148,6 @@ Blocks are given a \emph{score} that is used as part of the consensus protocol t
 
 \subsection{Protocol}
 
-\SetKwFunction{Time}{Time}
-\SetKwFunction{Sign}{Sign}
-\SetKwFunction{FindRouters}{FindRouters}
-\SetKwFunction{CalculateDeliverFee}{CalculateDeliverFee}
-\SetKwFunction{DeliverOffer}{DeliverOffer}
-\SetKwFunction{Deliver}{Deliver}
-\SetKwFunction{Transmit}{Transmit}
-\SetKwFunction{Transaction}{Transaction}
-\SetKwFunction{Encrypt}{Encrypt}
-\SetKwFunction{Decrypt}{Decrypt}
-\SetKwFunction{SignalData}{SignalData}
-\SetKwFunction{Data}{Data}
-\SetKwFunction{Encode}{Encode}
-\SetKwFunction{Decode}{Decode}
-
-
 In this section we provide an overview of the Helium \verb|DWN| and the functions that Devices, Miners and Routers play in the system.
 
 
@@ -192,80 +176,93 @@ We provide a brief overview of the device cycle and the functions available to d
 \FloatBarrier
 
 \begin{description}
-  \item [Provisioning] A device is provisioned on the \verb|DWN|. See Protocol~\ref{proto:device.provision}
+  \item [Provisioning] A device is provisioned on the \verb|DWN|.
 
     Devices join the network by being programmed with keying material by their owner. This key material includes a private key known only by the device, the public key of the root-of-trust for the organization and a 64-bit MAC address.The MAC address consists of 32 bits of an Organizationally Unique Identifier (OUI) and 32 bits of an organizationally managed device identifier. Via an out of band mechanism the device's public key is added to the organization's device registry, indexed by the MAC address. Details of the management of device identifiers and keys are implementation defined, and out of scope of this document.
 
-  \item [Send] A device sends data to a router on the internet, via a miner. See Protocol~\ref{proto:device.data.send}
+    \begin{algorithm}[!htb]
+      \SetAlgorithmName{Protocol}{List of Protocols}
+      \DontPrintSemicolon
+      \SetKwProg{Prov}{\BlankLine Provision}{}{}
+      \SetKwFunction{Store}{Store}
+      \SetKwFunction{Encrypt}{Encrypt}
+      \caption{Device Provisioning}\label{proto:device.provision}
+
+      \Prov{device D} {
+        $E_K, E_{PK}, \leftarrow $ generate public/private keypair \;
+        Input ${ID}_D \leftarrow $ $ \ll device ID:32 \gg $ \;
+        Input $R_K \leftarrow $ public key for organization \;
+        Input ${OUI}_D \leftarrow $ $ \ll organization ID:32 \gg $ \;
+        \BlankLine
+        Securely \Store{$E_K$, $E_{PK}$, $R_K$, ${OUI}_D$, ${ID}_D$} \;
+        \BlankLine
+        Output $E_{PK}$ \;
+      }
+    \end{algorithm}
+    \FloatBarrier
+
+  \item [Send] A device sends data to a router on the internet, via a miner.
 
     Devices can send data to their specified router on the internet by paying miners Helium tokens.
-    A device initiates the sending process by broadcasting a packet via the wireless protocol. When a device broadcasts a packet any miners in a reasonable geographic area hear it. Each packet header contains the device's MAC address, and miners inspect the blockchain using this address to determine which routers are listed for the OUI component of the MAC address. See the Deliver section in the Mining Cycle \todo{cite?}.
+    A device initiates the sending process by broadcasting a packet via the wireless protocol. When a device broadcasts a packet any miners in a reasonable geographic area hear it. Each packet header contains the device's MAC address, and miners inspect the blockchain using this address to determine which routers are listed for the OUI component of the MAC address. See the Miner Deliver Protocol~[\ref{proto:miner.data.deliver}].
 
-  \item [Receive] After a device has performed a Send, the device will listen for a response. See Protocol~\ref{proto:device.data.recv}
+    \begin{algorithm}[!htb]
+      \SetAlgorithmName{Protocol}{List of Protocols}
+      \DontPrintSemicolon
+      \SetKwProg{Recv}{\BlankLine Receive}{}{}
+      \SetKwProg{Send}{\BlankLine Send}{}{}
+      \SetKwFunction{SignalData}{SignalData}
+      \SetKwFunction{Data}{Data}
+      \SetKwFunction{Transmit}{Transmit}
+      \caption{Device Send Data}\label{proto:device.data.send}
 
-    The response can be a single acknowledgement or a queued up command or data packet. If the device gets a signalling packet describing a downlink message, it will stay awake until the entire packet has been received, otherwise it is free to turn its radio off or go into power-save mode. \todo{I propose we device LoRa class B style semantics later}
+      \Send{from device D, data A} {
+        $M \leftarrow $ \SignalData{A} \;
+        \Transmit{M} \;
+        \BlankLine
+
+        $A_E \leftarrow $ \Encrypt{A, private key $E_{PK}$} \;
+        $B \leftarrow $ \Data{${OUI}_D$, ${ID}_D$, $A_E$} \;
+        \Transmit{B} \;
+        \BlankLine
+
+        \Switch{Wait for response} {
+          \Case{signaling message M} {
+            Recieve Data. See Protocol~[\ref{proto:device.data.recv}]
+          }
+          \Case{timeout} {sleep}
+        }
+      }
+    \end{algorithm}
+    \FloatBarrier
+
+  \item [Receive] After a device has performed a Send, the device will listen for a response.
+
+    The response can be a single acknowledgement or a queued up command or data packet. If the device gets a signalling packet describing a downlink message, it will stay awake until the entire packet has been received, otherwise it is free to turn its radio off or go into power-saving mode.
+
+    \begin{algorithm}[!htb]
+      \SetAlgorithmName{Protocol}{List of Protocols}
+      \DontPrintSemicolon
+      \SetKwProg{Recv}{\BlankLine Receive}{}{}
+      \SetKwFunction{Decode}{Decode}
+      \caption{Device Receive Data}\label{proto:device.data.recv}
+
+      \Recv{at device D, signaling message M} {
+        Size $S \leftarrow $ \Decode{M} \;
+        \Switch{Receive Data D} {
+          \Case{success} {hand to application}
+          \Case{timeout} {sleep}
+        }
+      }
+    \end{algorithm}
+    \FloatBarrier
 
 \end{description}
 
-\begin{algorithm}[!htb]
-  \SetAlgorithmName{Protocol}{List of Protocols}
-  \DontPrintSemicolon
-  \SetKwProg{Prov}{\BlankLine Provision}{}{}
-  \SetKwFunction{Store}{Store}
-  \caption{Device Provisioning Protocol}\label{proto:device.provision}
-
-  \Prov{device D} {
-    $E_K, E_{PK}, \leftarrow $ generate public/private keypair \;
-    Input ${ID}_D \leftarrow $ $ \ll device ID:32 \gg $ \;
-    Input $R_K \leftarrow $ public key for organization \;
-    Input ${OUI}_D \leftarrow $ $ \ll organization ID:32 \gg $ \;
-    \BlankLine
-    Securely \Store{$E_K$, $E_{PK}$, $R_K$, ${OUI}_D$, ${ID}_D$} \;
-    \BlankLine
-    Output $E_{PK}$ \;
-  }
-\end{algorithm}
-
-\begin{algorithm}[!htb]
-  \SetAlgorithmName{Protocol}{List of Protocols}
-  \DontPrintSemicolon
-  \SetKwProg{Recv}{\BlankLine Receive}{}{}
-  \SetKwProg{Send}{\BlankLine Send}{}{}
-  \caption{Device Protocol}\label{proto:device}
-
-  \Recv{at device D, signaling message M} {
-    Size $S \leftarrow $ \Decode{M} \;
-    \Switch{Receive Data D} {
-      \Case{success} {hand to application}
-      \Case{timeout} {sleep}
-    }
-  }\label{proto:device.data.recv}
-
-  \Send{from device D, data A} {
-    $M \leftarrow $ \SignalData{A} \;
-    \Transmit{M} \;
-    \BlankLine
-
-    $A_E \leftarrow $ \Encrypt{A, private key $E_{PK}$} \;
-    $B \leftarrow $ \Data{${OUI}_D$, ${ID}_D$, $A_E$} \;
-    \Transmit{B} \;
-    \BlankLine
-
-    \Switch{Wait for response} {
-      \Case{signaling message M} {
-        Recieve Data. See Protocol~\ref{proto:device.data.recv}
-      }
-      \Case{timeout} {sleep}
-    }
-  }\label{proto:device.data.send}
-\end{algorithm}
-
-
-\FloatBarrier
 
 \subsubsection{Miner Cycle}\label{mining}
 
-We provide a brief overview of the mining cycle and the functions available to miners on the network in Cycle~\ref{cycle:miner}
+We provide a brief overview of the mining cycle and the functions available to miners on the network in Cycle~[\ref{cycle:miner}]
 
 \begin{algorithm}[!htb]
   \SetAlgorithmName{Cycle}{List of Lifecycles}
@@ -302,8 +299,8 @@ We provide a brief overview of the mining cycle and the functions available to m
     Submit transaction to a ramdom peer\;
   }
 \end{algorithm}
-
 \FloatBarrier
+
 
 \begin{description}
   \item [Join] A miner joins the network.
@@ -312,11 +309,23 @@ We provide a brief overview of the mining cycle and the functions available to m
 
   \item [Assert Location] A miner asserts their GPS location to the network.
 
-    Asserting a location indicates that the miner is claiming it is at particular physical coordinates. To assert a location, a dynamic stake is required. The value of the dynamic stake is related to a parabolic curve where the x axis represents the density of the existing network in that area and the y axis is the staking multiplier. Thus for singleton gateways, or very small networks, the staking requirements are high, once the network approaches an ideal density the stake approaches the lowest point and then as the density of the network exceeds the ideal the staking cost increases. This disincentivizes \emph{Alternate Reality Attacks} because asserting a location in a unpopulated region with no way to confirm network presence is very expensive. Similarly constructing a 'mining warehouse', where an extremely high density of miners is deployed also becomes very expensive. Only miners that have asserted a location are allowed to mine. Assertions of location can be retracted and the stake recovered, or they can be confiscated in cases of misbehaviour. \todo{Talk about ideal density, hexagons and stuff. cc Rahul}
+    Asserting a location indicates that the miner is claiming it is at particular physical coordinates. To assert a location, a dynamic stake is required. The value of the dynamic stake is related to a parabolic curve where the x axis represents the density of the existing network in that area and the y axis is the staking multiplier. Thus for singleton gateways, or very small networks, the staking requirements are high, once the network approaches an ideal density the stake approaches the lowest point and then as the density of the network exceeds the ideal the staking cost increases. This disincentivizes \emph{Alternate Reality Attacks} because asserting a location in a unpopulated region with no way to confirm network presence is very expensive. Similarly constructing a 'mining warehouse', where an extremely high density of miners is deployed also becomes very expensive. Only miners that have asserted a location are allowed to mine. Assertions of location can be retracted and the stake recovered, or they can be confiscated in cases of misbehaviour.
 
-  \item [Add transactions to mempool] A miner connects to the p2p network and listens for clients publishing transactions to the network. See Protocol~\ref{proto:miner.recv.trans}
+  \item [Receive Transactions] A miner connects to the p2p network and listens for clients publishing transactions to the network.
 
-    Most blockchains have a transaction fee associated with them that the miner can claim if it publishes the winning block. The miner can also capture transactions from blocks published to the p2p network that did not win.
+    Most blockchains have a transaction fee associated with them that the miner can claim if it publishes the winning block. The miner can also capture transactions from blocks published to the p2p network that did not win as described in Protocol~[\ref{proto:miner.block.recv}].
+
+    \begin{algorithm}[!htb]
+      \SetAlgorithmName{Protocol}{List of Protocols}
+      \DontPrintSemicolon
+      \SetKwProg{Recv}{\BlankLine Receive}{}{}
+      \caption{Miner Receive Transactions}\label{proto:miner.trans.recv}
+
+      \Recv{transactions} {
+        Add transactions to mempool\;
+      }
+    \end{algorithm}
+    \FloatBarrier
 
   \item [Construct a block] The miner takes the current head of the chain and begins to construct a new block.
 
@@ -326,99 +335,159 @@ We provide a brief overview of the mining cycle and the functions available to m
 
     The miner uses their public key to sign a digest of their partially completed block to obtain some verifiable randomness. This randomness is used to choose the Target. Once the Target is selected the proof of coverage is constructed as in section 2.3 \todo{link this?}
 
-\item [Deliver] A miner delivers data from a device to a router on the internet. See Protocol~\ref{proto:miner.recv.data.router}
+  \item [Receive Radio Challenge] A miner receives a \emph{Proof-of-Coverage} radio transmission.
 
-    Once a miner has received a packet from an end device, along with the precise timestamp it was received, it looks up the routers for the organization owning that device and offers the packet to one of those routers, for a fee. The router can accept the fee and return an IOU or it can reject the offer if it already has a copy of the packet or it is unwilling to pay the offered price. A router may pay for several copies of the packet if it wishes to solve for the position of the end device.
+    The miner receives a radio challenge. The challenge contains the original challenger, and encrypted data. The encrypted data includes a secret, a next block of data, and the time at which to transmit that remaining data.
 
-  \item [Receive] A miner receives data from a router on the internet for delivery to a device. See Protocol~\ref{proto:miner.recv.data.router}
+    The miner delivers a signed receipt of the secret, next transmission time, and the perceived signal strength to the challenger. Finally, it transmits the next data block at the indicated time to complete the challenge.
 
-    In response to an uplink packet offer, the router can also respond with a downlink packet, with an attached IOU to have the gateway deliver a downlink packet to the end device. The end device will listen for a downlink packet after transmitting.
+    \begin{algorithm}[!htb]
+      \SetAlgorithmName{Protocol}{List of Protocols}
+      \DontPrintSemicolon
+      \SetKwProg{Recv}{\BlankLine Receive}{}{}
+      \SetKwFunction{Decrypt}{Decrypt}
+      \SetKwFunction{Deliver}{Deliver}
+      \SetKwFunction{Transmit}{Transmit}
+      \SetKwFunction{Sign}{Sign}
+      \caption{Miner Receive Radio Challenge}\label{proto:miner.recv.challenge.radio}
 
-  \item [Submit] A miner submits a new candidate block to the network containing a \emph{Proof-of-Coverage}.
+      \Recv{radio challenge envelope (challenger C, data O), at time $\beta$, signal strength $\upsilon$} {
+        \Switch{\Decrypt(O, private key $E_{PK}$)} {
+          \Case{Secret $S$, NextTime $\psi$, Remainder $R$} {
+            $K_s \leftarrow \ll S:64, \beta:32, \upsilon:32 \gg $\;
+            $B \leftarrow \Sign{$K_s$, $E_{pk}$} $\;
+            \Deliver{C, B}\;
+            At time $\psi$ \Transmit{(C, R)}\;
+          }
+          \lOther{drop challenge}
+        }
+      }
+    \end{algorithm}
+    \FloatBarrier
 
-    Once a miner has completed a block it publishes it to its p2p peers, which, if they consider it valid and have not seen it before, gossip it to their peers, etc. Blocks are ranked in terms of quality; how valuable the proof-of-coverage was, how many transactions were in the block, how many uncles were included and how close to the ideal blocktime was the time difference from the previous block. After a settling period each miner chooses its preferred 'best' block and mines the next block on top of that.
+  \item [Receive Serialization Challenge] A miner will receive serialization challenges from other miners trying to construct a proof.
+
+    The miner will returned a signed envelope including the challenge and the current time. The challenging miner will use a number of these serialization challenges to prove that the final \emph{Proof-of-Coverage} happened at a given time.
+
+    \begin{algorithm}[!htb]
+      \SetAlgorithmName{Protocol}{List of Protocols}
+      \DontPrintSemicolon
+      \SetKwProg{Recv}{\BlankLine Receive}{}{}
+      \SetKwFunction{Time}{Time}
+      \SetKwFunction{Sign}{Sign}
+      \caption{Miner Receive Serialization Challenge}\label{proto:miner.recv.challenge.serialization}
+
+      \Recv{serialization challenge K}{
+        $T \leftarrow \Time{milliseconds} $\;
+        $B \leftarrow \ll K:64, T:64 \gg $\;
+        $R \leftarrow \Sign{B, $E_{pk}$} $\;
+        Respond $R$ to sender\;
+      }
+    \end{algorithm}
+    \FloatBarrier
+
+  \item [Deliver] A miner delivers data from a device to a router on the internet.
+
+    Once a miner has received a packet from an end device, along with the precise timestamp it was received, it looks up the routers for the organization owning that device and offers the packet to one of those routers, for a fee. The router can accept the fee and return a \emph{chit} or it can reject the offer if it already has a copy of the packet or it is unwilling to pay the offered price. A router may pay for several copies of the packet if it wishes to solve for the position of the end device.
+
+    \begin{algorithm}[!htb]
+      \SetAlgorithmName{Protocol}{List of Protocols}
+      \DontPrintSemicolon
+      \SetKwProg{Recv}{\BlankLine Receive}{}{}
+      \SetKwFunction{FindRouters}{FindRouters}
+      \SetKwFunction{CalculateDeliverFee}{CalculateDeliverFee}
+      \SetKwFunction{Sign}{Sign}
+      \SetKwFunction{Deliver}{Deliver}
+      \SetKwFunction{Transaction}{Transaction}
+      \caption{Miner Deliver Device Data}\label{proto:miner.data.deliver}
+
+      \Recv{at miner M, from device D, data A, data signature $S_a$} {
+        Router $R \leftarrow R \in $ \FindRouters{D} \;
+        Fee $F \leftarrow $ \CalculateDeliverFee{R, D, A} \;
+        Offer $O \leftarrow $ \Sign{$\ll S_a, F \gg $, $E_{pk}$} \;
+        \Switch{\Deliver{R, $O$}} {
+          \Case{${Chit}_{FG}$}{
+            Validate ${Chit}_{FG}$\;
+            \Deliver{R, A}\;
+            $T \leftarrow $ \Transaction{redemption, M, ${Chit}_{FG}$} \;
+            Submit $T$ to peers\;
+          }
+          \lOther{drop A}
+        }
+      }
+    \end{algorithm}
+    \FloatBarrier
+
+
+  \item [Receive Data] A miner receives data from a router on the internet for delivery to a device.
+
+    In response to an uplink packet offer, the router can also respond with a downlink packet, with an attached \emph{chit} to have the gateway deliver a downlink packet to the end device. The end device will listen for a downlink packet after transmitting.
+
+    \begin{algorithm}[!htb]
+      \SetAlgorithmName{Protocol}{List of Protocols}
+      \DontPrintSemicolon
+      \SetKwProg{Recv}{\BlankLine Receive}{}{}
+      \SetKwFunction{Transmit}{Transmit}
+      \SetKwFunction{Transaction}{Transaction}
+      \caption{Miner Receive Router Data}\label{proto:miner.data.receive}
+
+      \Recv{at miner M, from router R, data A, for device D, with ${Chit}_{FG}$} {
+        \emph{This can only happen in response to G delivering data to R}
+
+        Validate ${Chit}_{FG}$\;
+        \Transmit{D, A} \;
+        $T \leftarrow $ \Transaction{redemption, M, ${Chit}_{FG}$} \;
+        Submit $T$ to peers\;
+      }
+    \end{algorithm}
+    \FloatBarrier
+
+
+  \item [Submit Block] A miner submits a new candidate block to the network containing a \emph{Proof-of-Coverage}.
+
+    Once a miner has completed a block it publishes it to its p2p peers.
+
+    \begin{algorithm}[!htb]
+      \SetAlgorithmName{Protocol}{List of Protocols}
+      \DontPrintSemicolon
+      \SetKwProg{Submit}{\BlankLine Submit}{}{}
+      \caption{Miner Block Submit}\label{proto:miner.block.submit}
+
+      \Submit{block} {
+        Gossip block to peers\;
+      }
+    \end{algorithm}
+    \FloatBarrier
+
+  \item [Receive Block] A miner receives blocks from one or more of its peers.
+
+    If the received block is considered valid and has not seen it before, the miner will gossip it to its peers. Blocks are ranked in terms of quality; how valuable the proof-of-coverage was, how many transactions were in the block, how many uncles were included and how close to the ideal blocktime was the time difference from the previous block. After a settling period each miner chooses its preferred 'best' block and mines the next block on top of that.
+
+    \begin{algorithm}[!htb]
+      \SetAlgorithmName{Protocol}{List of Protocols}
+      \DontPrintSemicolon
+      \SetKwProg{Recv}{\BlankLine Receive}{}{}
+      \caption{Miner Block Receive}\label{proto:miner.block.recv}
+
+      \Recv{block} {
+        Add sender to peer list\;
+        Verify block\;
+        \Switch{Add block to chain}{
+          \Case{success}{
+            Gossip block to peers\;
+            Harvest losing block transactions\;
+          }
+          \Case{unchanged}{
+            ignore block\;
+          }
+        }
+      }
+    \end{algorithm}
+    \FloatBarrier
 
 \end{description}
 
 
-\begin{algorithm}[!htb]
-  \SetAlgorithmName{Protocol}{List of Protocols}
-  \DontPrintSemicolon
-  \SetKwProg{Recv}{\BlankLine Receive}{}{}
-  \caption{Miner Receive Protocol}\label{proto:miner.recv}
-
-  \Recv{transactions} {
-    Add transactions to mempool\;
-  }\label{proto:miner.recv.trans}
-
-  \Recv{block} {
-    Add sender to peer list\;
-    Verify block\;
-    \Switch{Add block to chain}{
-      \Case{success}{
-        Gossip block to peers\;
-        Harvest losing block transactions\;
-      }
-      \Case{unchanged}{
-        ignore block\;
-      }
-    }
-  }\label{proto:miner.recv.block}
-
-  \Recv{radio challenge envelope (challenger C, data O), at time $\beta$, signal strength $\upsilon$} {
-    \Switch{\Decrypt(O, private key $E_{PK}$)} {
-      \Case{Secret $S$, NextTime $\psi$, Remainder $R$} {
-        $K_s \leftarrow \ll S:64, \beta:32, \upsilon:32 \gg $\;
-        $B \leftarrow \Sign{$K_s$, $E_{pk}$} $\;
-        \Deliver{C, B}\;
-        At time $\psi$ \Transmit{(C, R)}\;
-      }
-      \lOther{drop challenge}
-    }
-  }\label{proto:miner.recv.challenge.radio}
-
-  \Recv{serialization challenge K}{
-    $T \leftarrow \Time{milliseconds} $\;
-    $B \leftarrow \ll K:64, T:64 \gg $\;
-    $R \leftarrow \Sign{B, $E_{pk}$} $\;
-    Respond $R$ to sender\;
-  }\label{proto:miner.recv.challenge.serialization}
-
-\end{algorithm}
-
-\begin{algorithm}[!htb]
-  \SetAlgorithmName{Protocol}{List of Protocols}
-  \DontPrintSemicolon
-  \SetKwProg{RecvData}{\BlankLine Data}{}{}
-  \caption{Miner Receive Data Protocol}\label{proto:miner.recv.data}
-
-  \RecvData{at miner M, from device D, data A, data signature $S_a$} {
-    Router $R \leftarrow R \in $ \FindRouters{D} \;
-    Fee $F \leftarrow $ \CalculateDeliverFee{R, D, A} \;
-    Offer $O \leftarrow $ \Sign{$\ll S_a, F \gg $, $E_{pk}$} \;
-    \Switch{\Deliver{R, $O$}} {
-      \Case{${IOU}_{FG}$}{
-        Validate ${IOU}_{FG}$\;
-        \Deliver{R, A}\;
-        $T \leftarrow $ \Transaction{redemption, M, ${IOU}_{FG}$} \;
-        Submit $T$ to peers\;
-      }
-      \lOther{drop A}
-    }
-  }\label{proto:miner.data.recv.device}
-
-  \RecvData{at miner M, from router R, data A, for device D, with ${IOU}_{FG}$} {
-    \emph{This can only happen in response to G delivering data to R}
-
-    Validate ${IOU}_{FG}$\;
-    \Transmit{D, A} \;
-    $T \leftarrow $ \Transaction{redemption, M, ${IOU}_{FG}$} \;
-    Submit $T$ to peers\;
-  }\label{proto:miner.recv.data.router}
-
-\end{algorithm}
-
-\FloatBarrier
 \subsubsection{Routing Cycle}
 
 We provide a brief overview of the router cycle and the functions available to routers on the network.
@@ -759,9 +828,9 @@ In order to satisfy our requirement of on-blockchain micro transactions with no 
 
 In order for devices to issue zero fee payments to miners, they must first stake a \emph{deposit} of tokens using the \emph{create\_deposit} transaction [\ref{primitives}]. This transaction has a fee. Once the initial deposit has been created, the network user can proceed to issue \emph{chits} against their deposit until it is exhaused. These chits are returned in response to a gateway offering a packet for delivery. Chits are linked to each other; the blockchain needs to have seen the previous chits before subsequent ones will be accepted. Each chit references the deposit, the sequence number (nonce), the amount to pay and any additional information about the packet.
 
-Because the miner concerned wants to be paid for transport, it will add the chit to its mempool, along with any previous chits that it depends on. This means that several miners are all incentivized to include these chits in their current blockchain. The entity issuing chits can use the final IOU in the transaction chain to incentivize a miner to include all the previous (or missing) chits in a block. If previous chits are not included in the chain, nobody gets paid.
+Because the miner concerned wants to be paid for transport, it will add the chit to its mempool, along with any previous chits that it depends on. This means that several miners are all incentivized to include these chits in their current blockchain. The entity issuing \emph[chits] can use the final \emph[chit] in the transaction chain to incentivize a miner to include all the previous (or missing) chits in a block. If previous chits are not included in the chain, nobody gets paid.
 
-At first glance this is similar to how state channels work, but with a couple of significant differences. State channels are a one to one construct, while chits can be one to many. Critically, this method keeps the record of all included transactions on-chain. The crucial benefit to this design is that all transaction fees for these payments can be eliminated. The first staking transaction can be sent along with the first chit, so the gateway is incentivized to add it to their block. If the first miner doesn't include it, the second IOU can be accompanied with the staking transaction and the first chit when communicating with the next miner. Eventually the advantage of including the transactions outweighs the disadvantages.
+At first glance this is similar to how state channels work, but with a couple of significant differences. State channels are a one to one construct, while chits can be one to many. Critically, this method keeps the record of all included transactions on-chain. The crucial benefit to this design is that all transaction fees for these payments can be eliminated. The first staking transaction can be sent along with the first chit, so the gateway is incentivized to add it to their block. If the first miner doesn't include it, the second \emph{chit} can be accompanied with the staking transaction and the first chit when communicating with the next miner. Eventually the advantage of including the transactions outweighs the disadvantages.
 
 It is important to note that nobody gets paid until everybody gets paid. Chits should not be issued after the \emph{ExpiryHeight}. If the deposit is not distributed $n$ blocks after the ExpiryHeight, the deposit is disbursed as much as possible and any remaining balance is destroyed. This provides an incentive for everyone involved to settle the balance.
 
