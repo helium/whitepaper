@@ -526,42 +526,87 @@ As the blockchain increases in height, every gateway's score should tend towards
 In order to satisfy the above defined constraints, we construct the following relationships:
 
 The boost factor depends on the previous score and number of trusted gateways, it can be defined as:
-\begin{equation} \label{alpha}
+\begin{equation*} \label{alpha}
 \begin{split}
     \alpha_h & = g(\phi_{h-1}, \eta_{h-1}) \\
     & = \left\lvert 1 - \sqrt{1 - {(\phi_{h-1} - 1)}^2} \right\rvert \eta_{h-1} \\
 \end{split}
-\end{equation}
+\end{equation*}
 
 Similarly, the boost allotted to each gateway depends on the score and boost factor,
-\begin{equation} \label{epsilon}
+\begin{equation*} \label{epsilon}
 \begin{split}
     \epsilon_h & = f(\phi_{h-1}, \alpha_h) \\
     & = \frac{\phi_{h-1}}{\sqrt{\phi_{h-1}} + \alpha_h^{-2}}\\
 \end{split}
-\end{equation}
+\end{equation*}
 
 Finally, the rate of decrease of score is linearly proportional to the previous score. Doing so allows an equal opportunity for supposedly illegitimate gateways to gain score to be considered legitimate while also making sure that legit gateways can never reach the maximum possible score as the height of the blockchain increases.
-\begin{equation} \label{delta}
+\begin{equation*} \label{delta}
 \delta_h \propto \phi_{h-1}
-\end{equation}
+\end{equation*}
 
 From the above defined relationships, we construct the following recurrence for the score of the gateways:
-\begin{equation} \label{score}
+\begin{equation*} \label{score}
 	\phi_h = \begin{cases}
 		\phi_{h-1} - \delta_h, &\text{if $\phi_{h-1}$ = $\phi_{max}$.}\\
 		\phi_{h-1} + \epsilon_{h-1} - \delta_h, &\text{otherwise}.
 	\end{cases}
-\end{equation}
+\end{equation*}
 
 Substituting the values for $\alpha_h$ and $\epsilon_h$, we get the following recurrence relationship as the score of gateways:
-\begin{equation} \label{recurrence}
+\begin{equation*} \label{recurrence}
 	\phi_h = \begin{cases}
 		\phi_{h-1} - \delta_h, &\text{if $\phi_{h-1}$ = $\phi_{max}$.}\\
 		\phi_{h-1} + \frac{\phi_{h-1}}{\sqrt{\phi_{h-1}} + \left(\left\lvert1 - \sqrt{1 - (\phi_{h-1} - 1)^2}\right\rvert \eta_{h-1}\right)^{-2}} -\delta_h, &\text{otherwise}.
 	\end{cases}
-\end{equation}
+\end{equation*}
 
+\newpage
+
+The following graphs show a snapshot of a random subset of the network at any blockchain height \textit{h}. The nodes represent random locations with a score while the edges are calculated using the algorithm defined in \todo{refer dijsktra}
+\begin{figure}[H]
+    \begin{center}
+          \includegraphics[width=0.5\textwidth]{graph.eps}
+          \caption{\emph{Snapshot of a random subset of the network initially}}
+          \label{fig:score-graph}
+     \end{center}
+\end{figure}
+
+Following the scoring algorithm defined above and dijkstra's path traversal to compute the walk, we get the following graphs after multiple iterations. Each iteration represents \todo{refer poc-construction}
+\begin{figure}[H]
+    \begin{center}
+          \includegraphics[width=0.5\textwidth]{graph10.eps}
+          \caption{\emph{Snapshot of a random subset of the network after 10 iterations}}
+          \label{fig:score-graph10}
+     \end{center}
+\end{figure}
+
+\begin{figure}[H]
+    \begin{center}
+          \includegraphics[width=0.5\textwidth]{graph100.eps}
+          \caption{\emph{Snapshot of a random subset of the network after 100 iterations}}
+          \label{fig:score-graph100}
+     \end{center}
+\end{figure}
+
+\begin{figure}[H]
+    \begin{center}
+          \includegraphics[width=0.5\textwidth]{graph1000.eps}
+          \caption{\emph{Snapshot of a random subset of the network after 1000 iterations}}
+          \label{fig:score-graph1000}
+     \end{center}
+\end{figure}
+
+\begin{figure}[H]
+    \begin{center}
+          \includegraphics[width=0.5\textwidth]{graph10000.eps}
+          \caption{\emph{Snapshot of a random subset of the network after 10000 iterations}}
+          \label{fig:score-graph10000}
+     \end{center}
+\end{figure}
+
+The goal of the above demonstrated algorithm is to ensure that the scoring of the gateways is done considering the fact that some gateways may act illegitimately, however, because the calculated edge-weights as defined in \todo{refer dijkstra 2.3.x} and the target selection mechanism ensure that we only boost the score of a miner when it is being verified by other high scoring gateways in a given subset; we believe that the system would work in order to favor legitimate gateways and act as a deterrent for illegitimate ones.
 
 \newpage
 
