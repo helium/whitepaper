@@ -311,9 +311,9 @@ We provide a brief overview of the mining cycle and the functions available to m
 
     Asserting a location indicates that the miner is claiming it is at particular physical coordinates. To assert a location, a dynamic stake is required. The value of the dynamic stake is related to a parabolic curve where the x axis represents the density of the existing network in that area and the y axis is the staking multiplier. Thus for singleton gateways, or very small networks, the staking requirements are high, once the network approaches an ideal density the stake approaches the lowest point and then as the density of the network exceeds the ideal the staking cost increases. This disincentivizes \emph{Alternate Reality Attacks} because asserting a location in a unpopulated region with no way to confirm network presence is very expensive. Similarly constructing a 'mining warehouse', where an extremely high density of miners is deployed also becomes very expensive. Only miners that have asserted a location are allowed to mine. Assertions of location can be retracted and the stake recovered, or they can be confiscated in cases of misbehaviour.
 
-  \item [Receive Transactions] A miner connects to the p2p network and listens for clients publishing transactions to the network.
+  \item [Receive Transactions] A miner connects to the peer-to-peer network and listens for clients publishing transactions to the network.
 
-    Most blockchains have a transaction fee associated with them that the miner can claim if it publishes the winning block. The miner can also capture transactions from blocks published to the p2p network that did not win as described in Protocol~[\ref{proto:miner.block.recv}].
+    Transactions contain fees that the miner can claim if it publishes the winning block [\ref{fees}]. The miner can also capture transactions from blocks published to the peer-to-peer network that did not win as described in Protocol~[\ref{proto:miner.block.recv}].
 
     \begin{algorithm}[!htb]
       \SetAlgorithmName{Protocol}{List of Protocols}
@@ -869,7 +869,7 @@ Many current generation blockchains rely on a computationally difficult \emph{Pr
 
 Related to the power problem is the mining pool problem. Many blockchains have mining pools where users band together to, in parallel, mine a single block; listing the pool's address as the party to get paid. The pool then shares the block reward with the members of the pool. This ends up defeating many of the advantages of decentralization as both Bitcoin and Ethereum have come to be dominated by less than 10 mining pools each. These large pools effectively prevent independent parties from mining blocks on their own. This means that the consensus protocol for these blockchains is effectively controlled by a very small number of mining pools and risks becoming further centralized.
 
-More recently there has been increased momentum around making blockchain consensus protocols less wasteful and more useful to the network. Filecoin \cite{filecoin }has a Proof-of-Spacetime and Ethereum \cite{ethereum} is moving towards a Proof-of-Stake approach. Helium has designed a unique consensus protocol around \emph{Proof-of-Coverage} to capture the useful but still difficult work of verifying the network of Helium miner as a replacement for \emph{Proof-of-Work}. In fact this proof is so valuable and fundamental to the network that we attempt to capture valid, but not winning, proofs in the main chain by the use of uncle blocks [\ref{blockchain}].
+More recently there has been increased momentum around making blockchain consensus protocols less wasteful and more useful to the network. Filecoin \cite{filecoin} has a Proof-of-Spacetime and Ethereum \cite{ethereum} is moving towards a Proof-of-Stake approach. Helium has designed a unique consensus protocol around \emph{Proof-of-Coverage} to capture the useful but still difficult work of verifying the network of Helium miner as a replacement for \emph{Proof-of-Work}. In fact this proof is so valuable and fundamental to the network that we attempt to capture valid, but not winning, proofs in the main chain by the use of uncle blocks [\ref{blockchain}].
 
 In addition, because each proof is unique to the miner producing it, pooling can not occur. This dramatically equalizes the chances that any particular miner can win a block and reduces the ability for any single entity to exert undue influence over the network or its consensus.
 
@@ -877,23 +877,23 @@ In addition, because each proof is unique to the miner producing it, pooling can
 
 We propose a consensus protocol where the probability that a miner submits a winning block to the network is roughly proportional to the number of \emph{other} miners that were verified in the \emph{Proof-of-Coverage}. Because the \emph{Proof-of-Coverage} is generated in an unpredictable way, mining power is fairly equally distributed among the network. Miners offer wireless network coverage and verify others as proof to participate in the consensus.
 
-\subsection{Determining Mining Power}
+Each miner has a score assigned to it by the blockchain, a value between 0 and 1. When miners join the network a default score $\beta$ is assigned. This score changes over time in response to \emph{Proof-of-Coverage} challenges. A miner that successfully answers a challenge is granted a boost to its score, as described in [\ref{scores}]. Miners with a higher score have a larger chance of submitting the winning block and miners with a lower score have a higher chance of being challenged. Thus the Helium consensus protocol rewards good behavior on the network and punishes bad behavior.
 
-Each miner has a score assigned to it by the blockchain. A score is a value between 0 and 1. When miners join the network a default score $\beta$ is assigned. This score changes over time in response to \emph{Proof-of-Coverage} challenges. A miner that successfully answers a challenge is granted a boost to its score. Miners with a higher score have a larger chance of submitting the winning block and miners with a lower score have a higher chance of being challenged. Thus the Helium consensus protocol rewards good behavior on the network and punishes bad behavior.
+At each blocktime, a subset of miners $M_S$ are allowed to submit a candidate block. The chances of being chosen to submit a block are proportional to the miner's current score. $M_S$ are selected from a \emph{consistent hash ring} $\omega$ of potential miners. For miners with a low score proportionally more "blank" entries are inserted in the target candidate set. If a miner is assigned a blank target it cannot mine the block at this height. 
 
-At each blocktime, a subset of miners are allowed to submit a candidate block. The chances of being chosen to submit a block are proportional to the miner's current score. For gateways with a low score proportionally more "blank" entries are inserted in the target candidate set. If the miner gets assigned a blank target it cannot mine the block at this height. Once all the blocks for that interval have been submitted the network of miners each choose the block they think is the best, according to a scoring algorithm. The scoring algorithm favors blocks that are valuable to the network. The primary dimension affecting score is the Proof-of-Coverage. A high scoring proof should either use successful, valid challenge responses to raise the score of as many miners as possible, or it should contain irrefutable proof of misbehavior. It should also come from a miner that has a good score itself. Secondarily, it should include references to high-quality uncle blocks that, while not winners at the time, contain highly valuable proofs themselves that would be wasteful to discard. Finally a good block should include as many valid transactions as possible, transactions are the life blood of a blockchain and it is vital miners are incentivized to include them.
+Once all the blocks for the interval $\lambda$ have been submitted the network of miners each choose the block they think is the best, according to the scoring algorithm. The scoring algorithm favors blocks that are valuable to the network. The primary dimension affecting score is the Proof-of-Coverage. A high scoring proof should either use successful, valid challenge responses to raise the score of as many miners as possible, or it should contain irrefutable proof of misbehavior. It should also come from a miner that has a good score itself. Secondarily, it should include references to high-quality uncle blocks that, while not winners at the time, contain highly valuable proofs themselves that would be wasteful to discard. Finally a good block should include as many valid transactions as possible, transactions are the life blood of a blockchain and it is vital miners are incentivized to include them.
 
 The scoring algorithm can be represented as:
 
-\[PoC_S + average(UnclePoC_S) + |Transactions|  - SelfMiningPenalty - LateBlockPenalty \]
+\[B_S = P_S + avg(U_S) + |T_n|  - S - L \]
 
-If a miner mines a block on top of a block that it also mined, there's a cumulative penalty applied relative to the number of blocks in a row mined by the same miner. Additionally, there's a penalty applied for the block being 'late' relative to the ideal blocktime spacing.
+Where $P_S$ represents the \emph{Proof-of-Coverage}, $U_S$ is the combined \emph{Proofs-of-Coverage} contained in all uncle blocks, $T_n$ are transactions, $S$ is a self-mining penalty, and $L$ is a late block penalty.
 
-\subsection{Using Power to Achieve Consensus}
+If a miner mines a block on top of a block that it also mined  a cumulative penalty, $S$, is applied relative to the number of blocks in a row mined by the same miner. Additionally, a penalty applied for the block being 'late', $L$, relative to the ideal blocktime spacing.
 
-\todo{THIS NEEDS WORK}
+The block with the highest score, $B_S$, seen by miners on the network during the interval $\lambda$ is added to the head of the chain.
 
-The criteria on which blocks are validated and scored must be agreed upon by all participants in the network. If there's a disagreement then the blockchain will split. Because Helium miners have a reputation attached, a simple 51\% attack is insufficient to derail the consensus algorithm. Additionally the inclusion of uncle blocks, according to the GHOST protocol, further increases the difficulty of a malicious consensus fork. Uncle blocks on the Helium blockchain are only eligible for inclusion if the uncle block and the block referencing it share a common ancestor within the last 7 generations. This means that after 7 generations the chain fork can no longer obtain a boost from including uncle blocks from the honest chain.
+The criteria on which blocks are validated and scored must be agreed upon by all participants in the network. If there is disagreement around the consensus rules, the blockchain will fork. Because Helium miners have a reputation attached by way of their score, a simple 51\% attack is insufficient to derail the consensus algorithm. Additionally the inclusion of uncle blocks, according to the GHOST protocol \cite{ghost}, further increases the difficulty of a malicious consensus fork. Uncle blocks on the Helium blockchain are only eligible for inclusion if the uncle block and the block referencing it share a common ancestor within the last 7 generations. This means that after 7 generations the chain fork can no longer obtain a boost from including uncle blocks from the honest chain.
 
 \section{Transactions}\label{transactions}
 
@@ -988,7 +988,7 @@ We solve this constraint by allowing mining nodes to operate as \emph{light clie
 
 This raises a question: who is responsible for operating full nodes, and what is their incentive to do so? Routers are software-only applications with access to scalable, cloud-based storage and will be required to operate full nodes in order to fulfill their purpose. Helium Systems Inc will operate a set of hosted routers that will make it easy for developers to launch products without needing to deploy their own router. However, many enterprise developers, who are required to maintain a higher standard of privacy, will want to host their own router. Together, these routers will form a network of full nodes capable of supporting resource constrained gateways and wallets operating light clients.
 
-\subsection{Fees}
+\subsection{Fees} \label{fees}
 
 Transaction fees are an essential part of most blockchain implementations. They incentivize miners to include a transaction in their draft block and ensure that spam transactions do not pollute the blockchain and network. We've discussed how the \emph{chit} transaction [\ref{chit}] is able to eliminate fees in the prior section on Microtransactions [\ref{microtransactions}]. However, all other transactions on the \verb|DWN| require transaction fees.
 
@@ -1101,11 +1101,11 @@ Smart Contracts, better proofs, more physical layers, etc
 
 \section{Acknowledgements}
 
-This document is the result of collaborative work by multiple members of the Helium team, and would not have been possible without the help, feedback, and review of the board, advisors, and collaborators of Helium. Particularly: Andrew Allen wrote the original draft of a whitepaper, laying the groundwork and thinking for this eventual project and whitepaper document; Andrew Thompson devised the critical \emph{Proof-of-Coverage} implementation, drove much of the early development and built the first simulator of this system; Marc Nijdam implemented and structured the development efforts on both the hardware and software, including implementing libp2p in Erlang; Mark Phillips added continuous review, feedback and sanity checking of this document; Jay Kickliter built the earliest hardware testing apparatus that proved much of the physical implementation was possible; Peter Main created the various illustrations and artwork, as well as providing valuable review; and Amir Haleem wrote this whitepaper based on these various concepts and works.
+This document is the result of collaborative work by members of the Helium team, and would not have been possible without the help, feedback, and review of the board of directors, advisors, investors and collaborators of Helium. We extend our most heartfelt thanks to all involved.
 
-We would like to extend our deepest thanks to Jeremy Rubin of the MIT Digital Currency Initiative. Your earliest feedback and direction was critical to some of the design decisions and evolution of this project. We also thank the Blockchain at Berkeley team for their help and detailed review of this work.
+We would also like to extend our thanks to Jeremy Rubin of the MIT Digital Currency Initiative. Your earliest feedback and direction was critical to some of the design decisions and evolution of this project. We also thank the Blockchain at Berkeley team for their help and detailed review of this work.
 
-We would also like to acknowledge many of the prior works and inventions that have allowed us to create this project, most notably Bitcoin~\cite{bitcoin} and Ethereum~\cite{ethereum}. We would also like to extend our appreciation to Protocol Labs~\cite{protocol} and Filecoin~\cite{filecoin} who demonstrated a path for regulatory-compliant sales of protocols under development and pioneered work around the SAFT, which we have borrowed from heavily.
+We would also like to acknowledge many of the prior works and inventions that have allowed us to create this project, most notably Bitcoin~\cite{bitcoin} and Ethereum~\cite{ethereum}. We would also like to extend our appreciation to Protocol Labs~\cite{protocol} who demonstrated a path for regulatory-compliant sales of protocols under development and pioneered work around the SAFT, which we have followed.
 \newpage
 
 \begin{thebibliography}{9}
@@ -1186,10 +1186,6 @@ We would also like to acknowledge many of the prior works and inventions that ha
 \bibitem{protocol}
     Protocol Labs, \\
         \url{https://protocol.ai}
-
-\bibitem{filecoin}
-    Filecoin, \\
-        \url{https://filecoin.io}
 
 \bibitem{dijkstra}
     Dijkstra, E. W.
