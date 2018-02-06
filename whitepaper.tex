@@ -2,6 +2,7 @@
 
 \usepackage[backref=section, linkbordercolor={1 1 1}, urlbordercolor={1 1 1}, citebordercolor={1 1 1}]{hyperref}
 \usepackage[ruled, vlined]{algorithm2e}
+\usepackage[section]{placeins}
 \usepackage{cite}
 \usepackage{color}
 \usepackage{float}
@@ -277,30 +278,126 @@ As the \emph{Proof-of-Coverage} [\ref{poc}] is valuable to the network, we store
 
 \subsection{Protocol}
 
+\SetKwFunction{Time}{Time}
+\SetKwFunction{Sign}{Sign}
+\SetKwFunction{FindRouters}{FindRouters}
+\SetKwFunction{CalculateDeliverFee}{CalculateDeliverFee}
+\SetKwFunction{DeliverOffer}{DeliverOffer}
+\SetKwFunction{Deliver}{Deliver}
+\SetKwFunction{Transmit}{Transmit}
+\SetKwFunction{Transaction}{Transaction}
+\SetKwFunction{Encrypt}{Encrypt}
+\SetKwFunction{Decrypt}{Decrypt}
+\SetKwFunction{SignalData}{SignalData}
+\SetKwFunction{Data}{Data}
+\SetKwFunction{Encode}{Encode}
+\SetKwFunction{Decode}{Decode}
+
+
 In this section we provide an overview of the Helium \verb|DWN| and the functions that Devices, Miners and Routers play in the system.
 
 
 \subsubsection{Device Cycle}
 
-We provide a brief overview of the device cycle and the functions available to devices on the network.
+We provide a brief overview of the device cycle and the functions available to devices on the network in Cycle~ref{cycle:device}
 
-\begin{enumerate}
-  \item \textbf{Provisioning}: A device is provisioned on the \verb|DWN|.
-   Devices join the network by being programmed with keying material by their owner. This key material includes a private key known only by the device, the public key of the root-of-trust for the organization and a 64-bit MAC address.The MAC address consists of 32 bits of an Organizationally Unique Identifier (OUI) and 32 bits of an organizationally managed device identifier. Via an out of band mechanism the device's public key is added to the organization's device registry, indexed by the MAC address. Details of the management of device identifiers and keys are implementation defined and out of scope of this document.
+\begin{algorithm}[!htb]
+  \SetAlgorithmName{Cycle}{List of Lifecycles}
+  \DontPrintSemicolon
+  \SetKwProg{Device}{\BlankLine Device}{}{}
+  \caption{Device Cycle Overview}\label{cycle:device}
 
-  \item \textbf{Send}: A device sends data to a router on the internet, via a miner.
-  Devices can send data to their specified router on the internet by paying miners Helium tokens.
-        A device initiates the sending process by broadcasting a packet via the wireless protocol. When a device broadcasts a packet any miners in a reasonable geographic area hear it. Each packet header contains the device's MAC address, and miners inspect the blockchain using this address to determine which routers are listed for the OUI component of the MAC address. See the Deliver section in the Mining Cycle \todo{cite?}.
+  \Device{at any time} {
+    Send data \;
+    Receive data \;
+  }
 
-    \item \textbf{Receive}: After a device has performed a Send, the device will listen for a response. The response can be a single acknowledgement or a queued up command or data packet. If the device gets a signalling packet describing a downlink message, it will stay awake until the entire packet has been received, otherwise it is free to turn its radio off or go into power-save mode. \todo{I propose we device LoRa class B style semantics later}
+  \Device{when provisioning} {
+    Generate keypair \;
+    Input configuration information \;
+    Store key material \;
+    Output public key material \;
+  }
+\end{algorithm}
+\FloatBarrier
 
-\end{enumerate}
+\begin{description}
+  \item [Provisioning] A device is provisioned on the \verb|DWN|. See Protocol~\ref{proto:device.provision}
+
+    Devices join the network by being programmed with keying material by their owner. This key material includes a private key known only by the device, the public key of the root-of-trust for the organization and a 64-bit MAC address.The MAC address consists of 32 bits of an Organizationally Unique Identifier (OUI) and 32 bits of an organizationally managed device identifier. Via an out of band mechanism the device's public key is added to the organization's device registry, indexed by the MAC address. Details of the management of device identifiers and keys are implementation defined, and out of scope of this document.
+
+  \item [Send] A device sends data to a router on the internet, via a miner. See Protocol~\ref{proto:device.data.send}
+
+    Devices can send data to their specified router on the internet by paying miners Helium tokens.
+    A device initiates the sending process by broadcasting a packet via the wireless protocol. When a device broadcasts a packet any miners in a reasonable geographic area hear it. Each packet header contains the device's MAC address, and miners inspect the blockchain using this address to determine which routers are listed for the OUI component of the MAC address. See the Deliver section in the Mining Cycle \todo{cite?}.
+
+  \item [Receive] After a device has performed a Send, the device will listen for a response. See Protocol~\ref{proto:device.data.recv}
+
+    The response can be a single acknowledgement or a queued up command or data packet. If the device gets a signalling packet describing a downlink message, it will stay awake until the entire packet has been received, otherwise it is free to turn its radio off or go into power-save mode. \todo{I propose we device LoRa class B style semantics later}
+
+\end{description}
+
+\begin{algorithm}[!htb]
+  \SetAlgorithmName{Protocol}{List of Protocols}
+  \DontPrintSemicolon
+  \SetKwProg{Prov}{\BlankLine Provision}{}{}
+  \SetKwFunction{Store}{Store}
+  \caption{Device Provisioning Protocol}\label{proto:device.provision}
+
+  \Prov{device D} {
+    $E_K, E_{PK}, \leftarrow $ generate public/private keypair \;
+    Input ${ID}_D \leftarrow $ $ \ll device ID:32 \gg $ \;
+    Input $R_K \leftarrow $ public key for organization \;
+    Input ${OUI}_D \leftarrow $ $ \ll organization ID:32 \gg $ \;
+    \BlankLine
+    Securely \Store{$E_K$, $E_{PK}$, $R_K$, ${OUI}_D$, ${ID}_D$} \;
+    \BlankLine
+    Output $E_{PK}$ \;
+  }
+\end{algorithm}
+
+\begin{algorithm}[!htb]
+  \SetAlgorithmName{Protocol}{List of Protocols}
+  \DontPrintSemicolon
+  \SetKwProg{Recv}{\BlankLine Receive}{}{}
+  \SetKwProg{Send}{\BlankLine Send}{}{}
+  \caption{Device Protocol}\label{proto:device}
+
+  \Recv{at device D, signaling message M} {
+    Size $S \leftarrow $ \Decode{M} \;
+    \Switch{Receive Data D} {
+      \Case{success} {hand to application}
+      \Case{timeout} {sleep}
+    }
+  }\label{proto:device.data.recv}
+
+  \Send{from device D, data A} {
+    $M \leftarrow $ \SignalData{A} \;
+    \Transmit{M} \;
+    \BlankLine
+
+    $A_E \leftarrow $ \Encrypt{A, private key $E_{PK}$} \;
+    $B \leftarrow $ \Data{${OUI}_D$, ${ID}_D$, $A_E$} \;
+    \Transmit{B} \;
+    \BlankLine
+
+    \Switch{Wait for response} {
+      \Case{signaling message M} {
+        Recieve Data. See Protocol~\ref{proto:device.data.recv}
+      }
+      \Case{timeout} {sleep}
+    }
+  }\label{proto:device.data.send}
+\end{algorithm}
+
+
+\FloatBarrier
 
 \subsubsection{Miner Cycle}\label{mining}
 
 We provide a brief overview of the mining cycle and the functions available to miners on the network in Cycle~\ref{cycle:miner}
 
-\begin{algorithm}[H]
+\begin{algorithm}[!htb]
   \SetAlgorithmName{Cycle}{List of Lifecycles}
   \DontPrintSemicolon
   \SetKwProg{Miner}{\BlankLine Miner}{}{}
@@ -336,6 +433,7 @@ We provide a brief overview of the mining cycle and the functions available to m
   }
 \end{algorithm}
 
+\FloatBarrier
 
 \begin{description}
   \item [Join] A miner joins the network.
@@ -346,7 +444,7 @@ We provide a brief overview of the mining cycle and the functions available to m
 
     Asserting a location indicates that the miner is claiming it is at particular physical coordinates. To assert a location, a dynamic stake is required. The value of the dynamic stake is related to a parabolic curve where the x axis represents the density of the existing network in that area and the y axis is the staking multiplier. Thus for singleton gateways, or very small networks, the staking requirements are high, once the network approaches an ideal density the stake approaches the lowest point and then as the density of the network exceeds the ideal the staking cost increases. This disincentivizes \emph{Alternate Reality Attacks} because asserting a location in a unpopulated region with no way to confirm network presence is very expensive. Similarly constructing a 'mining warehouse', where an extremely high density of miners is deployed also becomes very expensive. Only miners that have asserted a location are allowed to mine. Assertions of location can be retracted and the stake recovered, or they can be confiscated in cases of misbehaviour. \todo{Talk about ideal density, hexagons and stuff. cc Rahul}
 
-  \item [Add transactions to mempool] A miner connects to the p2p network and listens for clients publishing transactions to the network.
+  \item [Add transactions to mempool] A miner connects to the p2p network and listens for clients publishing transactions to the network. See Protocol~\ref{proto:miner.recv.trans}
 
     Most blockchains have a transaction fee associated with them that the miner can claim if it publishes the winning block. The miner can also capture transactions from blocks published to the p2p network that did not win.
 
@@ -358,11 +456,11 @@ We provide a brief overview of the mining cycle and the functions available to m
 
     The miner uses their public key to sign a digest of their partially completed block to obtain some verifiable randomness. This randomness is used to choose the Target. Once the Target is selected the proof of coverage is constructed as in section 2.3 \todo{link this?}
 
-\item [Deliver] A miner delivers data from a device to a router on the internet.\label{cycle:miner:deliver}
+\item [Deliver] A miner delivers data from a device to a router on the internet. See Protocol~\ref{proto:miner.recv.data.router}
 
     Once a miner has received a packet from an end device, along with the precise timestamp it was received, it looks up the routers for the organization owning that device and offers the packet to one of those routers, for a fee. The router can accept the fee and return an IOU or it can reject the offer if it already has a copy of the packet or it is unwilling to pay the offered price. A router may pay for several copies of the packet if it wishes to solve for the position of the end device.
 
-  \item [Receive] A miner receives data from a router on the internet for delivery to a device.
+  \item [Receive] A miner receives data from a router on the internet for delivery to a device. See Protocol~\ref{proto:miner.recv.data.router}
 
     In response to an uplink packet offer, the router can also respond with a downlink packet, with an attached IOU to have the gateway deliver a downlink packet to the end device. The end device will listen for a downlink packet after transmitting.
 
@@ -373,27 +471,15 @@ We provide a brief overview of the mining cycle and the functions available to m
 \end{description}
 
 
-
-\SetKwFunction{Time}{Time}
-\SetKwFunction{Sign}{Sign}
-\SetKwFunction{FindRouters}{FindRouters}
-\SetKwFunction{CalculateDeliverFee}{CalculateDeliverFee}
-\SetKwFunction{DeliverOffer}{DeliverOffer}
-\SetKwFunction{Deliver}{Deliver}
-\SetKwFunction{Transmit}{Transmit}
-\SetKwFunction{Transaction}{Transaction}
-\SetKwFunction{Encrypt}{Encrypt}
-\SetKwFunction{Decrypt}{Decrypt}
-
-\begin{algorithm}
+\begin{algorithm}[!htb]
   \SetAlgorithmName{Protocol}{List of Protocols}
   \DontPrintSemicolon
   \SetKwProg{Recv}{\BlankLine Receive}{}{}
-  \caption{Receive Protocol}\label{proto:recv}
+  \caption{Miner Receive Protocol}\label{proto:miner.recv}
 
   \Recv{transactions} {
     Add transactions to mempool\;
-  }\label{proto:recv.trans}
+  }\label{proto:miner.recv.trans}
 
   \Recv{block} {
     Add sender to peer list\;
@@ -407,61 +493,62 @@ We provide a brief overview of the mining cycle and the functions available to m
         ignore block\;
       }
     }
-  }\label{proto:recv.block}
+  }\label{proto:miner.recv.block}
 
   \Recv{radio challenge envelope (challenger C, data O), at time $\beta$, signal strength $\upsilon$} {
     \Switch{\Decrypt(O, private key $E_{PK}$)} {
       \Case{Secret $S$, NextTime $\psi$, Remainder $R$} {
         $K_s \leftarrow \ll S:64, \beta:32, \upsilon:32 \gg $\;
-        $B \leftarrow \Sign(K_s, E_{pk}) $\;
-        \Deliver(C, B)\;
-        At time $\psi$ \Transmit((C, R))\;
+        $B \leftarrow \Sign{$K_s$, $E_{pk}$} $\;
+        \Deliver{C, B}\;
+        At time $\psi$ \Transmit{(C, R)}\;
       }
       \lOther{drop challenge}
     }
-  }
+  }\label{proto:miner.recv.challenge.radio}
 
   \Recv{serialization challenge K}{
-    $T \leftarrow \Time(milliseconds) $\;
+    $T \leftarrow \Time{milliseconds} $\;
     $B \leftarrow \ll K:64, T:64 \gg $\;
-    $R \leftarrow \Sign(B, E_{pk}) $\;
+    $R \leftarrow \Sign{B, $E_{pk}$} $\;
     Respond $R$ to sender\;
-  }\label{proto:recv.challenge}
+  }\label{proto:miner.recv.challenge.serialization}
 
 \end{algorithm}
 
-\begin{algorithm}
+\begin{algorithm}[!htb]
   \SetAlgorithmName{Protocol}{List of Protocols}
   \DontPrintSemicolon
   \SetKwProg{RecvData}{\BlankLine Data}{}{}
-  \caption{Receive Data Protocol}\label{proto:recv.data}
+  \caption{Miner Receive Data Protocol}\label{proto:miner.recv.data}
 
-  \RecvData{at gateway G, from device D, data A, data signature $S_a$} {
-    Router $R \leftarrow R \in \FindRouters(D) $\;
-    Fee $F \leftarrow \CalculateDeliverFee(R, D, A) $\;
-    Offer $O \leftarrow \Sign(\ll S_a, F \gg, E_{pk}) $\;
-    \Switch{\Deliver(R, $O$)} {
+  \RecvData{at miner M, from device D, data A, data signature $S_a$} {
+    Router $R \leftarrow R \in $ \FindRouters{D} \;
+    Fee $F \leftarrow $ \CalculateDeliverFee{R, D, A} \;
+    Offer $O \leftarrow $ \Sign{$\ll S_a, F \gg $, $E_{pk}$} \;
+    \Switch{\Deliver{R, $O$}} {
       \Case{${IOU}_{FG}$}{
         Validate ${IOU}_{FG}$\;
-        \Deliver(R, A)\;
-        $T \leftarrow \Transaction(redemption, G, {IOU}_{FG}) $\;
+        \Deliver{R, A}\;
+        $T \leftarrow $ \Transaction{redemption, M, ${IOU}_{FG}$} \;
         Submit $T$ to peers\;
       }
       \lOther{drop A}
     }
-  }\label{proto:recv.data.device}
+  }\label{proto:miner.data.recv.device}
 
-  \RecvData{at gateway G, from router R, data A, for device D, with ${IOU}_{FG}$} {
+  \RecvData{at miner M, from router R, data A, for device D, with ${IOU}_{FG}$} {
     \emph{This can only happen in response to G delivering data to R}
 
     Validate ${IOU}_{FG}$\;
-    \Transmit(D, A)\;
-    $T \leftarrow \Transaction(redemption, G, {IOU}_{FG}) $\;
+    \Transmit{D, A} \;
+    $T \leftarrow $ \Transaction{redemption, M, ${IOU}_{FG}$} \;
     Submit $T$ to peers\;
-  }\label{proto:recv.data.router}
+  }\label{proto:miner.recv.data.router}
 
 \end{algorithm}
 
+\FloatBarrier
 \subsubsection{Routing Cycle}
 
 We provide a brief overview of the router cycle and the functions available to routers on the network.
