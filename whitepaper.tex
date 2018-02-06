@@ -122,13 +122,20 @@ $B$ consists of blocks $b_n$, which contain a header and a list of transactions.
 As in other implementations, $b_n$ consist of a hash of the previous block in the chain, a set of transactions, and a proof. At a given epoch $t$ a block $b_t$ consists of the following:
 
 \begin{center}
-    \begin{tabular}{l}
+    \begin{tabular}{|c|}
+    	 \hline
          Block Version \\
+         \hline
          Block Height \\
+         \hline
          Previous Block Hash \\
+         \hline
          Transactions \emph{1..n} Merkle Hash $T_t$ \\
+         \hline
          \emph{Proofs-of-Coverage} \\
+         \hline
          \emph{Proof-of-Serialization} \\
+         \hline
     \end{tabular}
 \end{center}
 
@@ -327,13 +334,13 @@ We provide a brief overview of the mining cycle and the functions available to m
     \end{algorithm}
     \FloatBarrier
 
-  \item [Construct a block] The miner takes the current head of the chain and begins to construct a new block.
+  \item [Construct Block] The miner takes the current head of the chain and begins to construct a new block.
 
     The new block contains the hash of the previous block (the current head), the block height (how many blocks are in the chain between this block and the genesis block) and a set of transactions from the mempool. The set of transactions are added to a merkle tree and the root hash is also stored.
 
   \item [Challenge] A miner begins the \emph{Proof-of-Coverage} process by becoming a Challenger.
 
-    The miner uses their public key to sign a digest of their partially completed block to obtain some verifiable randomness. This randomness is used to choose the Target. Once the Target is selected the proof of coverage is constructed as in section 2.3 \todo{link this?}
+    The miner uses their public key to sign a digest of their partially completed block to obtain some verifiable randomness. This randomness is used to choose the Target. Once the Target is selected the proof of coverage is constructed [\ref{poc}]
 
   \item [Receive Radio Challenge] A miner receives a \emph{Proof-of-Coverage} radio transmission.
 
@@ -932,7 +939,7 @@ Payment in arrear, after the services have been rendered, is an extremely risky 
 
 \subsubsection{A Proposed Solution Based on Staking \& Chits}
 
-In order to satisfy our requirement of on-blockchain micro transactions with no fees, we propose a system that takes inspiration from staking \cite{staking}, as well as state channels.
+In order to satisfy our requirement of on-blockchain micro transactions with no fees, we propose a system that takes inspiration from staking and state channels.
 
 In order for devices to issue zero fee payments to miners, they must first stake a \emph{deposit} of tokens using the \emph{create\_deposit} transaction [\ref{primitives}]. This transaction has a fee. Once the initial deposit has been created, the network user can proceed to issue \emph{chits} against their deposit until it is exhaused. These chits are returned in response to a gateway offering a packet for delivery. Chits are linked to each other; the blockchain needs to have seen the previous chits before subsequent ones will be accepted. Each chit references the deposit, the sequence number (nonce), the amount to pay and any additional information about the packet.
 
@@ -1182,6 +1189,10 @@ We would also like to acknowledge many of the prior works and inventions that ha
 \bibitem{alliance}
     Helium Alliance, \\
         \url{https://helium-alliance.org}
+
+\bibitem{filecoin}
+    Filecoin, \\
+        \url{https://filecoin.io}
 
 \bibitem{protocol}
     Protocol Labs, \\
