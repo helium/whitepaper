@@ -817,9 +817,108 @@ Once $T_L$ has delivered receipt to $C$, or $\lambda$ has elapsed, the \emph{Pro
      \end{center}
 \end{figure}
 
-\todo{\textbf{Scoring} \label{scores} When miners join the Helium network, they are assigned a score, $\phi$, with a value of \textbf{0.500}. This score depreciates linearly per block at a rate of $\phi = \phi - \frac{\phi}{10}$. As $\phi$ decreases the probability of the miner $M$ being the target for $C$ increases such that the network continually attempts to prove that the lowest scoring miners are acting honestly, and giving miners a reasonable chance to improve their score.
+\textbf{Scoring} \label{scores} When miners join the Helium network, they are assigned a score, $\phi$, with a value of \textbf{0.500}. This score depreciates linearly per block. As $\phi$ decreases the probability of the miner $M$ being the target for $C$ increases such that the network continually attempts to prove that the lowest scoring miners are acting honestly, and giving miners a reasonable chance to improve their score.
 
-For every target $T_n$ that hears $O$ in the \emph{Proof-of-Coverage} and submits a signed receipt to $C$, $T_n$ gains a score equal to .....}
+\todo{define these terms before as well}\newline
+Given,\newline
+\begin{tabular}{l l}
+	$M$,       	  & miners                                         \\
+	$h$,          & height of the blockchain                       \\
+	$P(M)$,       & probability of $M$ being selected as target    \\
+	$\phi_0$,     & score of $M$ initially                         \\
+	$\phi_h$,     & score of $M$ at height h                       \\
+	$\phi'_h$,    & depreciation value of $\phi_h$                 \\
+	$\delta_h$,   & rate of decay of $\phi_h$                      \\
+	$\epsilon_h$, & boost for $\phi_h$ on successful verification  \\
+	$\alpha_h$,   & boost factor                                   \\
+	$\eta_h$,     & trusted miners                                 \\
+	$\phi_{max}$, & local maximum score for $\eta_h$               \\
+\end{tabular}
+
+At every height h in the blockchain we have the following constraints:
+
+The probability of a miner being selected as a target is bounded by:
+\begin{equation*} \label{constraint1}
+0 \leq P(M) < 1.0 \\
+\end{equation*}
+
+The score of a miner at height h always follows:
+\begin{equation*} \label{constraint2}
+\phi_h < 1.0, \hspace{0.5cm} \forall h > 0
+\end{equation*}
+
+As the blockchain increases in height, a miners score should tend towards 1.0. This implies that honest miners contributing to the \emph{Proof-of-Coverage} always gain score.
+\begin{equation*} \label{goal}
+\lim_{h \to \infty} \phi_h = 1.0
+\end{equation*}
+
+In order to satisfy the above defined constraints, we construct the following relationships:
+
+The boost factor depends on the previous score and number of trusted miners, it can be defined as:
+\begin{equation*} \label{alpha}
+\begin{split}
+    \alpha_h & = g(\phi_{h-1}, \eta_{h-1}) \\
+    & = \left\lvert 1 - \sqrt{1 - {(\phi_{h-1} - 1)}^2} \right\rvert \eta_{h-1} \\
+\end{split}
+\end{equation*}
+
+Similarly, the boost allotted to each miner depends on the score and boost factor,
+\begin{equation*} \label{epsilon}
+\begin{split}
+    \epsilon_h & = f(\phi_{h-1}, \alpha_h) \\
+    & = \frac{\phi_{h-1}}{\sqrt{\phi_{h-1}} + \alpha_h^{-2}}\\
+\end{split}
+\end{equation*}
+
+Finally, the rate of decrease of score is linearly proportional to the previous score. Doing so allows an equal opportunity for low scoring miners to gain score, while also making sure that miners can never reach the maximum possible score as the height of the blockchain increases.
+\begin{equation*} \label{delta}
+\delta_h \propto \phi_{h-1}
+\end{equation*}
+
+From the above defined relationships, we construct the following recurrence for the score of the miners:
+\begin{equation*} \label{score}
+	\phi_h = \begin{cases}
+		\phi_{h-1} - \delta_h, &\text{if $\phi_{h-1}$ = $\phi_{max}$.}\\
+		\phi_{h-1} + \epsilon_{h-1} - \delta_h, &\text{otherwise}.
+	\end{cases}
+\end{equation*}
+
+Substituting the values for $\alpha_h$ and $\epsilon_h$, we get the following recurrence relationship as the score of miners:
+\begin{equation*} \label{recurrence}
+	\phi_h = \begin{cases}
+		\phi_{h-1} - \delta_h, &\text{if $\phi_{h-1}$ = $\phi_{max}$.}\\
+		\phi_{h-1} + \frac{\phi_{h-1}}{\sqrt{\phi_{h-1}} + \left(\left\lvert1 - \sqrt{1 - (\phi_{h-1} - 1)^2}\right\rvert \eta_{h-1}\right)^{-2}} -\delta_h, &\text{otherwise}.
+	\end{cases}
+\end{equation*}
+
+The following graphs show a snapshot of a random subset of the network at any blockchain height \textit{h}. The nodes represent random locations with a score while the edges are calculated using the algorithm defined in \todo{refer dijsktra}
+\begin{figure}[H]
+    \begin{center}
+          \includegraphics[width=0.5\textwidth]{graph.eps}
+          \caption{\emph{Snapshot of a random subset of the network initially}}
+          \label{fig:score-graph}
+     \end{center}
+\end{figure}
+
+Following the scoring algorithm defined above and dijkstra's path traversal to compute the walk, we get the following graphs after multiple iterations. Each iteration represents \todo{refer poc-construction}
+\begin{figure}[H]
+    \begin{center}
+          \includegraphics[width=0.5\textwidth]{graph10.eps}
+          \caption{\emph{Snapshot of a random subset of the network after 10 iterations}}
+          \label{fig:score-graph10}
+     \end{center}
+\end{figure}
+
+
+\begin{figure}[H]
+    \begin{center}
+          \includegraphics[width=0.5\textwidth]{graph10000.eps}
+          \caption{\emph{Snapshot of a random subset of the network after 10000 iterations}}
+          \label{fig:score-graph10000}
+     \end{center}
+\end{figure}
+
+The goal of the above demonstrated algorithm is to ensure that the scoring of the gateways is done considering the fact that some gateways may act illegitimately, however, because the calculated edge-weights as defined in \todo{refer dijkstra 2.3.x} and the target selection mechanism ensure that we only boost the score of a miner when it is being verified by other high scoring gateways in a given subset; we believe that the system would work in order to favor legitimate gateways and act as a deterrent for illegitimate ones.
 
 \textbf{Verifying the Proof}. Once $T_L$ has delivered $K_S$, or $\lambda$ has elapsed, the \emph{Proof-of-Coverage} is considered complete. When $C$ attempts to mine the next block, all receipts $K_S$ from $T_1$...$T_L$ are included in the candidate block, $B_C$, published to the blockchain network [\ref{mining}]. As all the steps originally completed by $C$ are deterministic in nature with verifiable and recreatable randomness, it is simple for a verifying miners, $V$, to recreate the original steps and verify that the proof is legitimate.
 
