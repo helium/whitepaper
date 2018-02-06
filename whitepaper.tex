@@ -1,5 +1,7 @@
 \documentclass[letterpaper,11pt]{article}
 
+\setcounter{tocdepth}{2}
+
 \usepackage[backref=section, linkbordercolor={1 1 1}, urlbordercolor={1 1 1}, citebordercolor={1 1 1}]{hyperref}
 \usepackage[ruled, vlined]{algorithm2e}
 \usepackage[section]{placeins}
@@ -803,7 +805,7 @@ In theory, it is possible for the chit issuer to spend all the staked tokens and
 
 \subsection{Light Clients \& Full Nodes} \label{full-nodes}
 
-Until now, we have discussed how to deal with microtransactions in a cost-effective way, however we have not yet addressed how to deal with the inevitable continuously increasing size of the blockchain. One requirement for Helium is that all transactions occur on-chain. This means that the size of the full blockchain will eventually grow quite large. This is compounded by the fact that all miners on the network are gateways devices, relatively limited in computation power and storage space.
+Until now, we have discussed how to deal with microtransactions in a cost-effective way, however we have not yet addressed how to deal with the inevitable continuously increasing size of the blockchain. One requirement for Helium is that all transactions occur on-chain. This means that the size of the full blockchain will eventually grow quite large. This is compounded by the fact that all miners on the network are gateway devices, relatively limited in computation power and storage space.
 
 We solve this constraint by allowing mining nodes to operate as \emph{light clients} on the blockchain, pruning old blocks and transactions as needed and keeping only the latest ledger values. They will communicate over the peer-to-peer network with \emph{full nodes} which maintain a complete history of the blockchain to verify transactions.
 
