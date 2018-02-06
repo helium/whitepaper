@@ -15,6 +15,7 @@
 \usepackage{float}
 \usepackage{tabularx}
 \usepackage{pgfplots}
+\usepackage{amsmath}
 
 \graphicspath{ {images/} }
 
@@ -817,9 +818,8 @@ Once $T_L$ has delivered receipt to $C$, or $\lambda$ has elapsed, the \emph{Pro
      \end{center}
 \end{figure}
 
-\textbf{Scoring} \label{scores} When miners join the Helium network, they are assigned a score, $\phi$, with a value of \textbf{0.500}. This score depreciates linearly per block. As $\phi$ decreases the probability of the miner $M$ being the target for $C$ increases such that the network continually attempts to prove that the lowest scoring miners are acting honestly, and giving miners a reasonable chance to improve their score.
+\textbf{Scoring} \label{scores} When miners join the Helium network, they are assigned a score, $\phi$, with a value of \textbf{0.500}. We consider any miner with a score greater than 0.500 to be an honest miner, $\eta$. This score depreciates linearly per block. As $\phi$ decreases the probability of the miner $M$ being the target for $C$ increases such that the network continually attempts to prove that the lowest scoring miners are acting honestly, and giving miners a reasonable chance to improve their score.
 
-\todo{define these terms before as well}\newline
 Given,\newline
 \begin{tabular}{l l}
 	$M$,       	  & miners                                         \\
@@ -831,7 +831,7 @@ Given,\newline
 	$\delta_h$,   & rate of decay of $\phi_h$                      \\
 	$\epsilon_h$, & boost for $\phi_h$ on successful verification  \\
 	$\alpha_h$,   & boost factor                                   \\
-	$\eta_h$,     & trusted miners                                 \\
+	$\eta_h$,     & honest miners                                  \\
 	$\phi_{max}$, & local maximum score for $\eta_h$               \\
 \end{tabular}
 
@@ -854,7 +854,7 @@ As the blockchain increases in height, a miners score should tend towards 1.0. T
 
 In order to satisfy the above defined constraints, we construct the following relationships:
 
-The boost factor depends on the previous score and number of trusted miners, it can be defined as:
+The boost factor depends on the previous score and number of honest miners, it can be defined as:
 \begin{equation*} \label{alpha}
 \begin{split}
     \alpha_h & = g(\phi_{h-1}, \eta_{h-1}) \\
@@ -891,24 +891,16 @@ Substituting the values for $\alpha_h$ and $\epsilon_h$, we get the following re
 	\end{cases}
 \end{equation*}
 
-The following graphs show a snapshot of a random subset of the network at any blockchain height \textit{h}. The nodes represent random locations with a score while the edges are calculated using the algorithm defined in \todo{refer dijsktra}
+\emph{Figure \ref{fig:score-graph}} shows a snapshot of a random subset of the network at any blockchain height \textit{h}. The miners represent random locations with an illustrated score, while the edges are calculated using Dijkstra's algorithm\cite{dijkstra}.
 \begin{figure}[H]
     \begin{center}
           \includegraphics[width=0.5\textwidth]{graph.eps}
-          \caption{\emph{Snapshot of a random subset of the network initially}}
+          \caption{\emph{Snapshot of a random subset of the initial network}}
           \label{fig:score-graph}
      \end{center}
 \end{figure}
 
-Following the scoring algorithm defined above and dijkstra's path traversal to compute the walk, we get the following graphs after multiple iterations. Each iteration represents \todo{refer poc-construction}
-\begin{figure}[H]
-    \begin{center}
-          \includegraphics[width=0.5\textwidth]{graph10.eps}
-          \caption{\emph{Snapshot of a random subset of the network after 10 iterations}}
-          \label{fig:score-graph10}
-     \end{center}
-\end{figure}
-
+After 10,000 iterations the network appears as represented in \emph{Figure \ref{fig:score-graph10000}}. 
 
 \begin{figure}[H]
     \begin{center}
@@ -918,7 +910,7 @@ Following the scoring algorithm defined above and dijkstra's path traversal to c
      \end{center}
 \end{figure}
 
-The goal of the above demonstrated algorithm is to ensure that the scoring of the gateways is done considering the fact that some gateways may act illegitimately, however, because the calculated edge-weights as defined in \todo{refer dijkstra 2.3.x} and the target selection mechanism ensure that we only boost the score of a miner when it is being verified by other high scoring gateways in a given subset; we believe that the system would work in order to favor legitimate gateways and act as a deterrent for illegitimate ones.
+The goal of this system is to ensure the scoring of miners considers that some miners may attempt to act dishonestly. However, because the calculated edge-weights (via Dijkstra's algorithm) and the target selection mechanism ensure that we only boost the score of a miner when it is being verified by other high scoring miners, we believe that the system will favor legitimate miners and deter dishonest ones.
 
 \textbf{Verifying the Proof}. Once $T_L$ has delivered $K_S$, or $\lambda$ has elapsed, the \emph{Proof-of-Coverage} is considered complete. When $C$ attempts to mine the next block, all receipts $K_S$ from $T_1$...$T_L$ are included in the candidate block, $B_C$, published to the blockchain network [\ref{mining}]. As all the steps originally completed by $C$ are deterministic in nature with verifiable and recreatable randomness, it is simple for a verifying miners, $V$, to recreate the original steps and verify that the proof is legitimate.
 
