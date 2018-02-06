@@ -202,7 +202,7 @@ We provide a brief overview of the device cycle and the functions available to d
   \item [Send] A device sends data to a router on the internet, via a miner.
 
     Devices can send data to their specified router on the internet by paying miners Helium tokens.
-    A device initiates the sending process by broadcasting a packet via the wireless protocol. When a device broadcasts a packet any miners in a reasonable geographic area hear it. Each packet header contains the device's MAC address, and miners inspect the blockchain using this address to determine which routers are listed for the OUI component of the MAC address. See the Deliver section in the Mining Cycle \todo{cite?}.
+    A device initiates the sending process by broadcasting a packet via the wireless protocol. When a device broadcasts a packet any miners in a reasonable geographic area hear it. Each packet header contains the device's MAC address, and miners inspect the blockchain using this address to determine which routers are listed for the OUI component of the MAC address. See the Miner Deliver Protocol~[\ref{proto:miner.data.deliver}].
 
     \begin{algorithm}[!htb]
       \SetAlgorithmName{Protocol}{List of Protocols}
@@ -226,7 +226,7 @@ We provide a brief overview of the device cycle and the functions available to d
 
         \Switch{Wait for response} {
           \Case{signaling message M} {
-            Recieve Data. See Protocol~\ref{proto:device.data.recv}
+            Recieve Data. See Protocol~[\ref{proto:device.data.recv}]
           }
           \Case{timeout} {sleep}
         }
@@ -234,7 +234,7 @@ We provide a brief overview of the device cycle and the functions available to d
     \end{algorithm}
     \FloatBarrier
 
-  \item [Receive] After a device has performed a Send, the device will listen for a response. See Protocol~\ref{proto:device.data.recv}
+  \item [Receive] After a device has performed a Send, the device will listen for a response.
 
     The response can be a single acknowledgement or a queued up command or data packet. If the device gets a signalling packet describing a downlink message, it will stay awake until the entire packet has been received, otherwise it is free to turn its radio off or go into power-saving mode.
 
@@ -260,7 +260,7 @@ We provide a brief overview of the device cycle and the functions available to d
 
 \subsubsection{Miner Cycle}\label{mining}
 
-We provide a brief overview of the mining cycle and the functions available to miners on the network in Cycle~\ref{cycle:miner}
+We provide a brief overview of the mining cycle and the functions available to miners on the network in Cycle~[\ref{cycle:miner}]
 
 \begin{algorithm}[!htb]
   \SetAlgorithmName{Cycle}{List of Lifecycles}
@@ -311,7 +311,7 @@ We provide a brief overview of the mining cycle and the functions available to m
 
   \item [Receive Transactions] A miner connects to the p2p network and listens for clients publishing transactions to the network.
 
-    Most blockchains have a transaction fee associated with them that the miner can claim if it publishes the winning block. The miner can also capture transactions from blocks published to the p2p network that did not win as described in Protocol~\ref{proto:miner.block.recv}.
+    Most blockchains have a transaction fee associated with them that the miner can claim if it publishes the winning block. The miner can also capture transactions from blocks published to the p2p network that did not win as described in Protocol~[\ref{proto:miner.block.recv}].
 
     \begin{algorithm}[!htb]
       \SetAlgorithmName{Protocol}{List of Protocols}
