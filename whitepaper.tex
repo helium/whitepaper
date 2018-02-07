@@ -771,6 +771,8 @@ We aim to construct a proof that takes advantage of the following characteristic
 
 Our goal is to verify whether miners in a physical region are acting honestly and creating wireless network coverage compatible with the Helium wireless protocol (WHIP). To do this, a challenger $C$ deterministically constructs a multi-layer data packet $O$ which begins at an initial target, $T$, and is broadcast wirelessly to a set of sequential targets, $T_n$, each of which are only able to decrypt the outer-most layer of $O$ if they were the intended recipient. Each target acknowledges receipt, $K_S$, back to $C$, removes their layer of $O$, $O$\textsubscript{l-n}, and broadcasts it for receipt by the next target. Essentially, an ``envelope of envelopes'' only openable by the intended recipient.
 
+\todo{WE SHOULD UPDATE THIS IMAGE TO BETTER REPRESENT THE FLOW OF T1->T->TL THAT IS DISCUSSED LATER}
+
 \begin{figure}[H]
     \begin{center}
           \includegraphics[width=\textwidth]{diagram2.eps}
@@ -781,7 +783,7 @@ Our goal is to verify whether miners in a physical region are acting honestly an
 
 \textbf{Selecting the Initial Target}. We aim to deterministically locate an initial target, $T$, for the challenger, $C$. $T$ does not need to be geographically proximate to $C$. To locate $T$, $C$ uses a \emph{consistent hash ring} $\omega$, of potential miners. $\omega$ only contains miners eligible as targets as described in [\ref{mining}], and miners are allocated portions of $\omega$ that are inversely proportional to their score, increasing the probability of potentially dishonest miners being targeted. \todo{RAHUL - IS THERE MATH COMING FOR THIS PART?} Given that a miners score is diminishing linearly over time [\ref{scores}], it is necessary to create this inverse relationship to give low-scoring miners an opportunity to participate in the process and increase their score. We seed verifiable randomness, $\eta$, into the selection process using a signed digest of the partial block from $C$ - thus, it is necessary for $C$ to have begun forming a new candidate block for the blockchain before the \emph{Proof-of-Coverage} process can begin [\ref{mining}].
 
-\textbf{Constructing the multi-layer challenge}. Once $T$ has been selected, $C$ must construct a multi-layer challenge, $O$. $O$ is a data packet broadcast by $T$ over the wireless network and received by geographcially proximate targets $T_n$. Each layer of $O$, $O_l$, consists of a three-tuple of $E\left(S, \psi, R\right)$, where $E$ is a secure public key encryption function, $S$ is a secret value, $\psi$ is the time to broadcast the next layer of the challenge and $R$ is the remainder of $O$ consisting of recursive three-tuples.
+\textbf{Constructing the multi-layer challenge}. Once $T$ has been selected, $C$ must construct a multi-layer challenge, $O$. $O$ is a data packet broadcast by $T$ over the wireless network and received by geographcially proximate targets $T_n$. Geographically proximate is defined as within a radius of $T$, a network value $T$\textsubscript{radius}. Each layer of $O$, $O_l$, consists of a three-tuple of $E\left(S, \psi, R\right)$, where $E$ is a secure public key encryption function, $S$ is a secret value, $\psi$ is the time to broadcast the next layer of the challenge and $R$ is the remainder of $O$ consisting of recursive three-tuples. The maximimum number of $O_l$ is bounded by a network value, $O$\textsubscript{max}.
 
 The construction logic of $O$ is as follows:
 
@@ -790,11 +792,21 @@ The construction logic of $O$ is as follows:
   \item Two targets, $T_1$ and $T_L$, are selected by finding the highest scoring targets in $T_n$ furthest from $T$
   \item A weighted graph is constructed from $T_n$ such that members of $T_n$ in radio range of each other are connected by an edge weighted by the value of \(1 - \Big({score(T_a) - score(T_b)}\Big)\)
   \item The shortest path between $T_1$ to $T$ to $T_L$ is computed using Dijkstra's algorithm\cite{dijkstra}
+  \item A layer $O_l$ is created and added to $O$, and $S$ is encrypted with the public key of $T_1$ retrieved from the blockchain  
+  \item This process repeats with additional layers added to $O$ until all $T_n$ have a layer $O_l$ included in $O$
 \end{enumerate}
 
 The resulting $O$ can be visually represented as the following:
 
-\todo{new diagram}
+\todo{NEW DIAGRAM NEEDED, should show T1, T, and TL with T in the center. Also, each layer of O is now a three-tuple of $S, \psi, R$}
+
+\begin{figure}[H]
+    \begin{center}
+          \includegraphics[width=\textwidth]{diagram3.eps}
+          \caption{Construction of $O$}
+          \label{fig:poc-o}
+     \end{center}
+\end{figure}
 
 \textbf{Creating the Proof}. Once $O$ has been constructed and delivered to $T$, $T$ immediately broadcasts it. The Helium wireless protocol is not a point-to-point system, so several miners within proximity of $T$ will hear $O$. As described prior, each layer $O_l$ of $O$ contains the three-tuple ${E\left(S, \psi, R\right)}$ where $E$ is a secure public key encryption function, $S$ is a secret value, $\psi$ is a time at which to transmit the next layer of the packet and $R$ is the remainder of $O$ consisting of recursive three-tuples. In this specific example, only the specific target $T_1$ will be able to decrypt $E$ and send a valid receipt back to the challenger, $C$.
 
@@ -804,7 +816,7 @@ We describe the approximate flow of \emph{Proof-of-Coverage} creation as follows
   \item $T$ receives $O$ from $C$ via the peer-to-peer internet network and immediately broadcasts it via the wireless network
   \item $T_1$ hears $O$ and attempts to decrypt the value of $E$ by using its public key $pk:\ E_{pk}\left(S, \psi, R\right)$
   \item $T_1$ records both the time of arrival $\beta$ and the signal strength $\upsilon$ of $O$
-  \item If successful, $T_1$ then creates signed receipt $K_S$, $\mathit{K_S = \left(S || \beta || \upsilon\right)}$ signed by the private key of $T_1$
+  \item If successful, $T_1$ then creates signed receipt $K_S$, ${K_S = \left(S || \beta || \upsilon\right)}$ signed by the private key of $T_1$
   \item $T_1$ submits $K_S$ to $C$ via the peer-to-peer internet network, removes the outer most layer, and wirelessly broadcasts the remainder $O$
   \item These steps repeat for $T_2$..$T_L$, with $T_L$ being the last target constructed by $C$
 \end{enumerate}
@@ -812,6 +824,8 @@ We describe the approximate flow of \emph{Proof-of-Coverage} creation as follows
 $C$ expects to hear responses from $T_n$ within a time threshold $\lambda$, otherwise it considers the \emph{Proof-of-Coverage} to have concluded. Because $C$ is the only party with complete knowledge of $O$, upper bounds of the values for $\beta$ and $\upsilon$ are assigned by $C$ which are used to verify that each layer of $O$ was transmitted approximately where and when it was expected. The upper bound for $\beta$ ls limited by the speed of light $\tau$ between $T_n$ and $T_n-1$. Thus we know that, subject to some slight delays from reflection or multipath, the packet should not arrive at $T_n$ later than $\tau$ multiplied by the geographical distance $D$ plus some small episilon value, $\upsilon = \tau \times \Big(D + \epsilon\Big)$. For $\upsilon$, because of the inverse-square law, we can calculate the maximum RSSI possible for a packet transmitted, $\mu$, from $T_n-1$ to $T_n$ as $\mu = \frac{1}{D^2}$. Gateways that are closer than expected, or which are transmitting at a higher power to mask their location disparity, are unlikely to get $\mu$ correct, given that they do not know who the next layer of $O$ is addressed to.
 
 Once $T_L$ has delivered receipt to $C$, or $\lambda$ has elapsed, the \emph{Proof-of-Coverage} is completed. The collection of signed receipts, $K_S$, constitute the \emph{Proof-of-Coverage} that $C$ will include when attempting to mine the next block in the blockchain [\ref{mining}].
+
+\todo{THIS DIAGRAM SHOULD ALSO BE UPDATED TO BETTER REPRESENT THE T1 -> T -> TL TYPE OF FLOW. ALSO THE SIGNED RECEIPTS ARE NOW IN THE FORM OF ${K_S = \left(S || \beta || \upsilon\right)}$}
 
 \begin{figure}[H]
     \begin{center}
@@ -895,6 +909,8 @@ Substituting the values for $\alpha_h$ and $\epsilon_h$, we get the following re
 \end{equation*}
 
 \emph{Figure \ref{fig:score-graph}} shows a snapshot of a random subset of the network at any blockchain height \textit{h}. The miners represent random locations with an illustrated score, while the edges are calculated using Dijkstra's algorithm\cite{dijkstra}.
+
+\todo{PETE CAN WE MAKE THESE ANY EASIER TO READ? NOT A HUGE DEAL}
 \begin{figure}[H]
     \begin{center}
           \includegraphics[width=0.5\textwidth]{graph.eps}
@@ -903,8 +919,9 @@ Substituting the values for $\alpha_h$ and $\epsilon_h$, we get the following re
      \end{center}
 \end{figure}
 
-After 10,000 iterations the network appears as represented in \emph{Figure \ref{fig:score-graph10000}}. 
+After 10,000 iterations the network appears as represented in \emph{Figure \ref{fig:score-graph10000}}.
 
+\todo{PETE CAN WE MAKE THESE ANY EASIER TO READ? NOT A HUGE DEAL}
 \begin{figure}[H]
     \begin{center}
           \includegraphics[width=0.5\textwidth]{graph10000.eps}
@@ -936,29 +953,47 @@ To achieve cryptographic time consensus among decentralized clients, we implemen
 
 This section describes the construction of the \emph{Proof-of-Serialization} protocol.
 
-\textbf{Creating the Proof}. We outline the approximate process to achieve cryptographically secure time via Roughtime as follows:
+\textbf{Creating the Proof}. We outline the approximate process to achieve cryptographically secure time as follows:
 
 \begin{enumerate}
         \item To begin, a miner $M$ pseudo-randomly picks two miners $M_1$ and $M_2$, to prove contact serialization with
         \item It is assumed $M$ has a public key for $M_1$ and $M_2$, otherwise $M$ should obtain it from the blockchain
+        \item $M$ generates a nonce, $R$, which is a SHA512 hash of the block which $M$ has partially constructed
         \item $M$ then generates a salted hash commitment $K$ called the \emph{proof-kernel} ${K = H\left(R || M_1 || M_2\right)}$
-        \item $M$ sends $K$ to $M_1$. $M_1$ replies with $T$, a signed message including the current time and $K$
-        \item $M$ knows that the reply from $M_1$ was not pre-generated because it includes the nonce $R$ that the $M$ generated
+        \item $M$ sends $K$ to $M_1$. $M_1$ replies with $T$, a signed message including the current time $T_1$ and $K$
+        \item $M$ knows that the reply from $M_1$ was not pre-generated because it includes the nonce $R$ that $M$ generated
 \end{enumerate}
 
 Because $M$ can not trust $M_1$ it will ask for another time from $M_2$:
 
 \begin{enumerate}
-        \item For the second request, $M$ generates a sub-proof-kernel, $L = H\left(R || T || K\right)$, and sends it to $M_2$
-        \item $M_2$ replies with $U$, a signed message including the current time and $L$
+        \item For the second request, a new nonce $R$ is generated using $T$ truncated to 512-bits, blinded by XOR'ing a randomly generated 512-bit number
+        \item $M$ then generates a sub-proof-kernel, $L = H\left(R || T || K\right)$, and sends it to $M_2$
+        \item $M_2$ replies with $U$, a signed message including the current time $T_2$ and $L$
         \item $U$ is now a proof artifact that shows that $M$ desired and then proved a serialization between $M_1$ and $M_2$
 \end{enumerate}
 
-Let's assume that the times from $M_1$ and $M_2$ are significantly different. If the time from $M_2$ is before $M_1$, then $M$ has proof of misbehaviour; the reply from $M_2$ implicitly shows that it was created later because of the way that $M$ constructed the nonce. If the time from $M_2$ is after, then $M$ can reverse the roles of $M_1$ and $M_2$ and repeat the process to obtain, assuming steady clocks, a misordered proof as in the other case.
-
 With only two servers, $M$ can end up with proof that something is wrong, but no idea what the correct time is. But with half a dozen or more independent servers, $M$ will end up with chain of proof of any server's misbehaviour, signed by several others, and enough accurate replies to establish what the correct time is, $T_t$.
 
-\textbf{Utilizing the Proven Time}. The proven time allows us to prove, with relative certainty, that some piece of data $D$ was created between the time of the previous block $b_t$ and $T_t$. $D$ in this case is the \emph{Proof-of-Coverage}. The randomness used to compute $O$ and thus obtain the \emph{Proof-of-Coverage} is tied to the previous block, which contains $b_t$. Thus we know that $D$ must have been constructed between $b_t$ and $T_t$. This ensures that the \emph{Proof-of-Coverage} cannot be pre-computed and that that blocks in the blockchain must have a minimum spacing in time; the \emph{blocktime}. Blocks which do not have at least \emph{blocktime} distance in time from their parent block are considered invalid.
+\todo{PETE - WORTH HAVING A DIAGRAM HERE?}
+
+\textbf{Verifying the Proof}. If we assume that the times from $M_1$ and $M_2$ are significantly different, and the time from $M_2$ is before $M_1$, then $M$ has proof of misbehaviour. The reply from $M_2$ implicitly shows that it was created later because of the way that $M$ constructed the nonce. If the time from $M_2$ is after, then $M$ can reverse the roles of $M_1$ and $M_2$ and repeat the process to obtain, assuming steady clocks, a misordered proof as in the other case.
+
+To verify the correct time, it is necessary for $M$ to repeat the time synchronization process with enough miners to gain consensus on the correct time:
+
+\begin{enumerate}
+    \item A miner $M$ again pseudo-randomly selects $n$ miners $M_1$...$M_n$
+    \item $M$ generates a salted hash commitment $K$ and delivers it to $M_1$, where ${K = H\left(R || M_1 || M_2\right)}$
+    \item $M_1$ again responds with $T$, a signed message containing the current time $T_1$ and $K$
+    \item $M$ generates a sub-proof-kernel, $L = H\left(R || T || K\right)$, and sends it to the next miner $M_n$
+    \item The next miner replies with $U$, a signed message including the current time and $L$
+    \item These steps repeat through $M_n$ until at least three time responses, $T_n$, are monotonic
+    \item $T_n$ can then be confirmed to be $T_t$, the correct time
+\end{enumerate}
+
+\todo{PETE - WORTH HAVING A DIAGRAM HERE?}
+
+\textbf{Utilizing the Proven Time}. Once the correct time $T_t$ has been determined via \emph{Proof-of-Serialization}, it is used by $M$ and included during block construction as described in [Section \ref{blockchain}]. The randomness $\eta$ used to compute $O$ and thus obtain the \emph{Proof-of-Coverage} is tied to the previous block, which contains $T_t$. This allows us to prove, with relative certainty, that some piece of data $D$ was created between the time of the previous block $b_t$ and $T_t$. $D$ in this case is the \emph{Proof-of-Coverage}. Thus we know that $D$ must have been constructed between $b_t$ and $T_t$. This ensures that the \emph{Proof-of-Coverage} cannot be pre-computed and that that blocks in the blockchain must have a minimum spacing in time; the \emph{blocktime}. Blocks which do not have at least \emph{blocktime} distance in time from their parent block are considered invalid.
 
 \section{Consensus Protocol}\label{consensus}
 
@@ -1099,18 +1134,20 @@ To enable miners and other light clients to determine an appropriate fee, full n
 
 \subsection{Staking} \label{staking}
 
-The \emph{assert\_location} transaction, mentioned below [\ref{primitives}], has a special type of fee calculation; a \emph{dynamic} fee. Because the Helium network reaches maximum \emph{usefulness} at a specific density of gateways, we want the fees to incentivize the network density to be as close to that ideal as possible. To that end, the transaction fee for asserting a location can be thought of as the y coordinate on a curve with the formula \[\mathit{y = \left(x - D\right)^4 + F}\] where \emph{D} is the ideal gateway density and \emph{F} is the unit fee for a location transaction. A sample graph of this function where D = 3 and F = 1 follows:
+The \emph{assert\_location} transaction, mentioned below [\ref{primitives}], has a special type of fee calculation; a \emph{dynamic} fee. Because the Helium network reaches maximum \emph{usefulness} at a specific density of gateways, we want the fees to incentivize the network density to be as close to that ideal as possible. To that end, the transaction fee for asserting a location can be thought of as the y coordinate on a curve with the formula \[\mathit{y = \left(x - D\right)^4 + F}\] where $D$ is the ideal gateway density and $F$ is the unit fee for a location transaction. A sample graph of this function where $D$ = 3 and $F$ = 1 follows:
 
 \pgfplotsset{width=12cm,compat=1.9}
 \begin{tikzpicture}
     \begin{axis}[xlabel = Density, ylabel = Fee]
-    \addplot[color=gray, domain=0:6]{(x - 3)^4 + 1};
-\end{axis}
+        \addplot[color=gray, domain=0:6]{(x - 3)^4 + 1};
+    \end{axis}
 \end{tikzpicture}
 
 As can be seen, gateways near the ideal network density are cheap to add, but establishing a new network or overpopulating a network gets expensive very quickly. This serves to dis-incentivize gateway deployments that are not beneficial to the network. In particular, \emph{Alternate Reality Attacks} and warehouses full of miners become prohibitively expensive.
 
-\todo{HOW DO YOU RECLAIM YOUR STAKE? WHAT HAPPENS WHEN YOU RE-ASSERT LOCATION?}
+Blocks submitted to the network by miners who have not asserted their location, and therefore not paid the staking fee, will be considered invalid and not considered by miners for inclusion in the chain.
+
+Miners who move physical location will need to assert a new location, and pay the new staking fee.
 
 \subsection{Primitives in Helium} \label{primitives}
 Having discussed the philosophy of our transaction system and presented our approach to facilitating zero-fee mictrotransactions on the Helium network, we now delineate the transaction primitives and their properties.
@@ -1130,7 +1167,7 @@ Having discussed the philosophy of our transaction system and presented our appr
   \end{tabularx}
 \end{table}
 
-\item [assert\_location] Asserts a gateway's location in the form of geographic coordinates
+\item [assert\_location] Asserts a gateway's location in the form of geographic coordinates, requiring a dynamic stake
 
 \begin{table}[H]
   \centering
