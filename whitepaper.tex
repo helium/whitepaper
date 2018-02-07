@@ -27,7 +27,7 @@
 
 \begin{document}
 
-\title{Helium --- A Decentralized Wireless Network}
+\title{Helium --- A Decentralized Machine Network}
 \author{Helium Systems, Inc}
 \date{\today}
 \maketitle
@@ -36,7 +36,7 @@
 \begin{abstract}
 Machine to Machine networking is a \textdollar1.6 trillion industry, with over 8.4 billion connected devices online, and predicted to more than double over the next 2 years. All of these devices need to connect to the internet to function. However, current solutions such as cellular, WiFi, and Bluetooth are suboptimal: they are too expensive, too power hungry, or too limited in range.
 
-Helium is a \emph{decentralized wireless network} for machines that enables devices anywhere in the world to connect to the internet and geolocate themselves without the need for power-hungry satellite location hardware or expensive cellular plans. Powering the network is a blockchain with a native protocol token incentivizing a two-sided marketplace between coverage providers and coverage consumers. With the introduction of a blockchain, Helium injects decentralization into an industry currently controlled by monopolistic companies. The result is that wireless network coverage becomes a utility, fueled by competition, available anywhere in the world, at a fraction of current costs.
+Helium is a \emph{decentralized machine network} that enables devices anywhere in the world to wirelessly connect to the internet and geolocate themselves without the need for power-hungry satellite location hardware or expensive cellular plans. Powering the network is a blockchain with a native protocol token incentivizing a two-sided marketplace between coverage providers and coverage consumers. With the introduction of a blockchain, Helium injects decentralization into an industry currently controlled by monopolistic companies. The result is that wireless network coverage becomes a utility, fueled by competition, available anywhere in the world, at a fraction of current costs.
 
 Helium's secure and open-source primitives enable developers to build low-power, internet-connected devices quickly and cost-effectively. Helium has a wide variety of applications across industries and is the first decentralized wide area network of its kind.
 \end{abstract}
@@ -54,7 +54,7 @@ Helium is a wide-area wireless networking system, a blockchain and a protocol to
 
 \subsection{Philosophy}
 
-Helium exists due to a set of core beliefs that have driven every component and the underlying purpose of the network and protocol. In this section we outline the requirements that are necessary for building a truly decentralized wireless network.
+Helium exists due to a set of core beliefs that have driven every component and the underlying purpose of the network and protocol. In this section we outline the requirements that are necessary for building a truly decentralized machine network.
 
 \textbf{Decentralization}. Machine to Machine networking is poised to change the way we interact with the physical world and at a scale that is unprecedented, with projections of over \$11.1 trillion in economic value added in under 10 years\cite{mckinsey}. It is critical that this industry be driven forward in a truly decentralized way that allows participation from anyone, anywhere, with no arbitrary gatekeepers. There are many existing products, services and companies participating in the wireless ecosystem today, but nearly all are centralized or proprietary in some form. Some require specialized hardware available from a single vendor, some use proprietary technology, and others tightly control access to infrastructure. Helium exists to make it possible for individuals, businesses, and communities to participate and enable solutions without the need to rely on or trust any external entities.
 
@@ -85,7 +85,7 @@ Helium is built around the following key components:
 \subsection{System Overview}
 
 \begin{itemize}
-    \item The Helium protocol is a \emph{Decentralized Wireless Network} system built around a new wireless protocol (WHIP) on a purpose-built blockchain with a native token.
+    \item The Helium protocol is a \emph{Decentralized Machine Network} system built around a new wireless protocol (WHIP) on a purpose-built blockchain with a native token.
     \item Devices take the form of hardware containing a radio chip and firmware compatible with WHIP, and spend tokens by paying miners to send data to and from the internet.
     \item Miners earn tokens by providing wireless network coverage via purpose-built hardware which provides a bridge between WHIP and routers, which are internet applications.
     \item Devices store their private keys in commodity key-storage hardware and their public keys in the blockchain.
@@ -103,23 +103,23 @@ Helium is built around the following key components:
      \end{center}
 \end{figure}
 
-\section{The Helium DWN}
+\section{The Helium DMN}
 
-We introduce the Helium Decentralized Wireless Network (\verb|DWN|). The \verb|DWN| provides wireless access to the internet for devices by way of multiple independent miners, and outlines a network and wireless protocol specification by which participants in the network should conform. Devices pay this network of miners for sending data to and from the internet, and miners are paid for continuously providing network coverage and delivering device data to the internet.
+We introduce the Helium Decentralized Machine Network (\verb|DMN|). The \verb|DMN| provides wireless access to the internet for devices by way of multiple independent miners, and outlines a network and wireless protocol specification by which participants in the network should conform. Devices pay this network of miners for sending data to and from the internet, and miners are paid for continuously providing network coverage and delivering device data to the internet.
 
 \subsection{Participants}
 
 Any user can participate as a Device, a Miner, or a Router.
 
 \begin{itemize}
-    \item \emph{Devices} pay to send encrypted data to and from the internet via the \verb|DWN| using hardware compatible with the Helium wireless protocol, called \emph{WHIP} [\ref{whip}]. In geographies with a sufficient number of miners, devices can pay several miners to geolocate themselves without needing satellite location hardware. Data sent from devices is \emph{fingerprinted}, and that fingerprint stored in the blockchain.
+    \item \emph{Devices} pay to send encrypted data to and from the internet via the \verb|DMN| using hardware compatible with the Helium wireless protocol, called \emph{WHIP} [\ref{whip}]. In geographies with a sufficient number of miners, devices can pay several miners to geolocate themselves without needing satellite location hardware. Data sent from devices is \emph{fingerprinted}, and that fingerprint stored in the blockchain.
     \item \emph{Miners} provide wireless network coverage to the network via purpose-built hardware, called gateways [\ref{gateways}], which provide a long-range bridge between WHIP and the internet. Users join the network as miners by purchasing or building a gateway that conforms to the wireless protocol, and \emph{staking} a token deposit proportional to the density of other miners operating in their area [\ref{staking}]. Miners participate in the \emph{Proof-of-Coverage} [\ref{poc}] process to prove that they are continuously providing wireless network coverage that devices can use. Miners join the network with a score [\ref{scores}] that diminishes as blocks pass without valid proofs being submitted. Miners are eligible to mine new blocks in the blockchain, and receive the block reward and transaction fees for any transactions included in the block once mined. As a miners score drops their probability of mining a block and earning the reward diminishes.
     \item \emph{Routers} are internet applications that receive encrypted device data from miners. Routers are the termination point for device data encryption. Devices record to the blockchain which routers miners should send their data, such that any gateway on the network can send any devices data to the appropriate router. Routers are responsible for confirming to the network that device data was delivered to the correct destination and that the miner should be paid for their service.
 \end{itemize}
 
 \subsection{Blockchain} \label{blockchain}
 
-The Helium blockchain is a new type of ledger designed to provide a cost-effective way to run application logic core to the operation of a \verb|DWN|, store immutable device data fingerprints, and furnish a transaction system. We will refer to this as the Blockchain, $B$. $B$ is an immutable append-only list of transactions that achieves consensus by verifying \emph{Proofs-of-Coverage} [\ref{poc}]. Users internal and external to the \verb|DWN| have access to $B$, which is a new blockchain network built from scratch specifically for the \verb|DWN|.
+The Helium blockchain is a new type of ledger designed to provide a cost-effective way to run application logic core to the operation of a \verb|DMN|, store immutable device data fingerprints, and furnish a transaction system. We will refer to this as the Blockchain, $B$. $B$ is an immutable append-only list of transactions that achieves consensus by verifying \emph{Proofs-of-Coverage} [\ref{poc}]. Users internal and external to the \verb|DMN| have access to $B$, which is a new blockchain network built from scratch specifically for the \verb|DMN|.
 
 $B$ consists of blocks $b_n$, which contain a header and a list of transactions. There are several kinds of transactions, outlined in [\ref{transactions}]. Although the blocks in chain can be linearly ordered, its data structure is actually a directed acyclic graph.
 
@@ -159,7 +159,7 @@ Blocks are given a \emph{score} that is used as part of the consensus protocol t
 
 \subsection{Protocol}
 
-In this section we provide an overview of the Helium \verb|DWN| and the functions that Devices, Miners and Routers play in the system.
+In this section we provide an overview of the Helium \verb|DMN| and the functions that Devices, Miners and Routers play in the system.
 
 
 \subsubsection{Device Cycle}
@@ -187,7 +187,7 @@ We provide a brief overview of the device cycle and the functions available to d
 \FloatBarrier
 
 \begin{description}
-  \item [Provisioning] A device is provisioned on the \verb|DWN|.
+  \item [Provisioning] A device is provisioned on the \verb|DMN|.
 
     Devices join the network by being programmed with keying material by their owner. This key material includes a private key known only by the device, the public key of the root-of-trust for the organization and a 64-bit MAC address.The MAC address consists of 32 bits of an Organizationally Unique Identifier (OUI) and 32 bits of an organizationally managed device identifier. Via an out of band mechanism the device's public key is added to the organization's device registry, indexed by the MAC address. Details of the management of device identifiers and keys are implementation defined, and out of scope of this document.
 
@@ -998,7 +998,7 @@ The criteria on which blocks are validated and scored must be agreed upon by all
 
 \section{Transactions}\label{transactions}
 
-Transactions in the Helium blockchain provide functionality that enables address-to-address transfers of Helium tokens, similar to many existing blockchain networks, but also provide a set of primitives that enable core functionality that is critical to the operation of a \verb|DWN|. In this section we address the philosophy behind our transaction system, the primitives, and the way fees on the network work. We will first address Helium's need for microtransactions and propose a new solution.
+Transactions in the Helium blockchain provide functionality that enables address-to-address transfers of Helium tokens, similar to many existing blockchain networks, but also provide a set of primitives that enable core functionality that is critical to the operation of a \verb|DMN|. In this section we address the philosophy behind our transaction system, the primitives, and the way fees on the network work. We will first address Helium's need for microtransactions and propose a new solution.
 
 \subsection{Microtransactions} \label{microtransactions}
 
@@ -1013,7 +1013,7 @@ The goal of Helium is to provide internet data transport fees (the fees paid by 
 Helium is built on the philosophy that all transactions should occur \emph{on-chain}; that is, blocks should be sized and mined with a frequency such that every transaction which occurs on the network should be stored in the blockchain.  To accomplish this goal the cost of mining must be low, blocks must be large enough to encapsulate a large number of transactions, and frequent enough that transactions are processed quickly.
 
 \paragraph{Allow Devices to Persist Data to the Blockchain}
-Because the Helium blockchain services a specific use, the \verb|DWN|, blocks must additionally be able store fingerprints of data sent from devices along with the transaction which pays a miner for their transport service.  We believe that this holistic \emph{tamper-proof} data trail will enable entirely new use cases where the authenticity and veracity of sensor data is critical.
+Because the Helium blockchain services a specific use, the \verb|DMN|, blocks must additionally be able store fingerprints of data sent from devices along with the transaction which pays a miner for their transport service.  We believe that this holistic \emph{tamper-proof} data trail will enable entirely new use cases where the authenticity and veracity of sensor data is critical.
 
 \subsubsection{Limitations of Existing Solutions}
 
@@ -1091,7 +1091,7 @@ This raises a question: who is responsible for operating full nodes, and what is
 
 \subsection{Fees} \label{fees}
 
-Transaction fees are an essential part of most blockchain implementations. They incentivize miners to include a transaction in their draft block and ensure that spam transactions do not pollute the blockchain and network. We've discussed how the \emph{chit} transaction [\ref{chit}] is able to eliminate fees in the prior section on Microtransactions [\ref{microtransactions}]. However, all other transactions on the \verb|DWN| require transaction fees.
+Transaction fees are an essential part of most blockchain implementations. They incentivize miners to include a transaction in their draft block and ensure that spam transactions do not pollute the blockchain and network. We've discussed how the \emph{chit} transaction [\ref{chit}] is able to eliminate fees in the prior section on Microtransactions [\ref{microtransactions}]. However, all other transactions on the \verb|DMN| require transaction fees.
 
 To determine the appropriate fee for a new transaction, the transactor will take the median of the past $\delta$ packet transport fees, within some margin of error. Until $\delta$ packet transports have been completed, the fee will be fixed at a constant value $\alpha$. By anchoring the transaction fee to the current fees being charged for transport on the network, we root them in reality. Helium's primary purpose is to facilitate a network of wireless ineternet coverage. In order to accomplish this in the long term, all of the economics of the system must align to make it practical for the primary users to transact on the network. If one set of fees were to outstrip the other, the network would quickly lose its utility for the key user segment.
 
