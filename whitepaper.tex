@@ -320,7 +320,7 @@ We provide a brief overview of the mining cycle and the functions available to m
 
   \item [Assert Location] A miner asserts their GPS location to the network.
 
-    Asserting a location indicates that the miner is claiming it is at particular physical coordinates. To assert a location, a dynamic stake is required. The value of the dynamic stake is related to a parabolic curve where the x axis represents the density of the existing network in that area and the y axis is the staking multiplier. Thus for singleton gateways, or very small networks, the staking requirements are high, once the network approaches an ideal density the stake approaches the lowest point and then as the density of the network exceeds the ideal the staking cost increases. This disincentivizes \emph{Alternate Reality Attacks} because asserting a location in a unpopulated region with no way to confirm network presence is very expensive. Similarly constructing a 'mining warehouse', where an extremely high density of miners is deployed also becomes very expensive. Only miners that have asserted a location are allowed to mine. Assertions of location can be retracted and the stake recovered, or they can be confiscated in cases of misbehaviour.
+    Asserting a location indicates that the miner is claiming it is at particular physical coordinates. To assert a location, a dynamic stake is required. The value of the dynamic stake is related to a parabolic curve where the x axis represents the density of the existing network in that area and the y axis is the staking multiplier. Thus for singleton gateways, or very small networks, the staking requirements are high, once the network approaches an ideal density the stake approaches the lowest point and then as the density of the network exceeds the ideal the staking cost increases. This disincentivizes \emph{Alternate Reality Attacks} because asserting a location in a unpopulated region with no way to confirm network presence is very expensive. Similarly constructing a 'mining warehouse', where an extremely high density of miners is deployed also becomes very expensive. Only miners that have asserted a location are allowed to mine. Assertions of location can be retracted and the stake recovered, or they can be confiscated in cases of misbehavior.
 
   \item [Receive Transactions] A miner connects to the peer-to-peer network and listens for clients publishing transactions to the network.
 
@@ -932,7 +932,7 @@ Assuming these steps are completed successfully, the \emph{Proof-of-Coverage} is
 
 \subsection{Constructing \emph{Proof-of-Serialization}}
 
-To achieve cryptographic time consensus among decentralized clients, we implement a simplified form of Google’s Roughtime \cite{roughtime}. Roughtime is a protocol that aims to achieve roughtime synchronisation in a secure way that does not depend on any particular time server, and in such a way that, if a time server does misbehave, clients end up with cryptographic proof of that behavior.
+To achieve cryptographic time consensus among decentralized clients, we implement a simplified form of Google’s Roughtime \cite{roughtime}. Roughtime is a protocol that aims to achieve roughtime synchronization in a secure way that does not depend on any particular time server, and in such a way that, if a time server does misbehave, clients end up with cryptographic proof of that behavior.
 
 This section describes the construction of the \emph{Proof-of-Serialization} protocol.
 
