@@ -1,4 +1,5 @@
-\documentclass[letterpaper,11pt]{article}
+%\documentclass[twocolumn,letterpaper,10pt]{article}
+\documentclass[10pt]{sigplanconf}
 
 \setcounter{tocdepth}{2}
 
@@ -23,12 +24,21 @@
 \newcommand{\todo}[1]{}
 \renewcommand{\todo}[1]{{\color{red} TODO:\ {#1}}}
 
-\newcommand{\sectionbreak}{\clearpage}
+%\newcommand{\sectionbreak}{\clearpage}
 
 \begin{document}
 
-\title{Helium --- A Decentralized Machine Network}
-\author{Helium Systems, Inc}
+\special{papersize=8.5in,11in}
+\setlength{\pdfpageheight}{\paperheight}
+\setlength{\pdfpagewidth}{\paperwidth}
+
+\toappear{\textcopyright 2018 Helium Systems, Inc}
+
+%\title{Helium --- A Decentralized Machine Network}
+\title{Helium}
+\subtitle{A Decentralized Machine Network}
+%\author{Helium Systems, Inc}
+\authorinfo{Helium Systems, Inc.}
 \date{\today}
 \maketitle
 \thispagestyle{empty}
@@ -41,10 +51,10 @@ Helium is a \emph{decentralized machine network} that enables devices anywhere i
 Helium's secure and open-source primitives enable developers to build low-power, internet-connected devices quickly and cost-effectively. Helium has a wide variety of applications across industries and is the first decentralized wide area network of its kind.
 \end{abstract}
 
-\newpage
+%\newpage
 
-\tableofcontents
-\newpage
+%\tableofcontents
+%\newpage
 
 \section{Introduction}
 
@@ -95,13 +105,13 @@ Helium is built around the following key components:
     \item The blockchain employs \emph{Proof-of-Coverage} to guarantee that miners are correctly representing the amount of wireless network coverage they are creating.
 \end{itemize}
 
-\begin{figure}[H]
+\begin{figure*}[h]
     \begin{center}
           \includegraphics[width=\textwidth]{diagram1.eps}
           \caption{\emph{System Overview}}
           \label{fig:system}
      \end{center}
-\end{figure}
+\end{figure*}
 
 \section{The Helium DMN}
 
@@ -149,13 +159,13 @@ As the \emph{Proof-of-Coverage} [\ref{poc}] is valuable to the network, we store
 
 Blocks are given a \emph{score} that is used as part of the consensus protocol to determine which block should be considered the tip of the chain. The score is based on the \emph{Proof-of-Coverage} and the score of $U_n$ contained within the submitted block. The consensus protocol is outlined in detail in \emph{Section \ref{consensus}}.
 
-\begin{figure}[H]
-    \begin{center}
-          \includegraphics[width=\textwidth]{chain.eps}
-          \caption{\emph{A visualization of the Helium blockchain}}
-          \label{fig:chain}
-     \end{center}
-\end{figure}
+%\begin{figure*}[h]
+%    \begin{center}
+%          \includegraphics[width=\textwidth]{chain.eps}
+%          \caption{\emph{A visualization of the Helium blockchain}}
+%          \label{fig:chain}
+%     \end{center}
+%\end{figure*}
 
 \subsection{Protocol}
 
@@ -711,7 +721,7 @@ The approximate flow for accomplishing geolocation is as follows:
 
 \begin{figure}[H]
     \begin{center}
-          \includegraphics[scale=0.3]{tdoa.eps}
+          \includegraphics[width=\columnwidth]{tdoa.eps}
           \caption{\emph{Geolocation via TDoA}}
           \label{fig:tdoa}
      \end{center}
@@ -775,7 +785,7 @@ Our goal is to verify whether miners in a physical region are acting honestly an
 
 \begin{figure}[H]
     \begin{center}
-          \includegraphics[width=\textwidth]{diagram2.eps}
+          \includegraphics[width=\columnwidth]{diagram2.eps}
           \caption{\emph{Multi-Layer Data Packet Deconstruction}}
           \label{fig:poc-construction}
      \end{center}
@@ -802,7 +812,7 @@ The resulting $O$ can be visually represented as the following:
 
 \begin{figure}[H]
     \begin{center}
-          \includegraphics[width=\textwidth]{diagram3.eps}
+          \includegraphics[width=\columnwidth]{diagram3.eps}
           \caption{Construction of $O$}
           \label{fig:poc-o}
      \end{center}
@@ -829,7 +839,7 @@ Once $T_L$ has delivered receipt to $C$, or $\lambda$ has elapsed, the \emph{Pro
 
 \begin{figure}[H]
     \begin{center}
-          \includegraphics[width=\textwidth]{diagram4.eps}
+          \includegraphics[width=\columnwidth]{diagram4.eps}
           \caption{\emph{Proof-of-Coverage} flow}
           \label{fig:poc-flow}
      \end{center}
@@ -913,7 +923,7 @@ Substituting the values for $\alpha_h$ and $\epsilon_h$, we get the following re
 \todo{PETE CAN WE MAKE THESE ANY EASIER TO READ? NOT A HUGE DEAL}
 \begin{figure}[H]
     \begin{center}
-          \includegraphics[width=0.5\textwidth]{graph.eps}
+          \includegraphics[width=0.8\columnwidth]{graph.eps}
           \caption{\emph{Snapshot of a random subset of the initial network}}
           \label{fig:score-graph}
      \end{center}
@@ -924,7 +934,7 @@ After 10,000 iterations the network appears as represented in \emph{Figure \ref{
 \todo{PETE CAN WE MAKE THESE ANY EASIER TO READ? NOT A HUGE DEAL}
 \begin{figure}[H]
     \begin{center}
-          \includegraphics[width=0.5\textwidth]{graph10000.eps}
+          \includegraphics[width=0.8\columnwidth]{graph10000.eps}
           \caption{\emph{Snapshot of a random subset of the network after 10000 iterations}}
           \label{fig:score-graph10000}
      \end{center}
@@ -1137,7 +1147,7 @@ To enable miners and other light clients to determine an appropriate fee, full n
 The \emph{assert\_location} transaction, mentioned below [\ref{primitives}], has a special type of fee calculation; a \emph{dynamic} fee. Because the Helium network reaches maximum \emph{usefulness} at a specific density of gateways, we want the fees to incentivize the network density to be as close to that ideal as possible. To that end, the transaction fee for asserting a location can be thought of as the y coordinate on a curve with the formula \[\mathit{y = \left(x - D\right)^4 + F}\] where $D$ is the ideal gateway density and $F$ is the unit fee for a location transaction. A sample graph of this function where $D$ = 3 and $F$ = 1 follows:
 
 \pgfplotsset{width=12cm,compat=1.9}
-\begin{tikzpicture}
+\begin{tikzpicture}[scale=\columnwidth/12cm]
     \begin{axis}[xlabel = Density, ylabel = Fee]
         \addplot[color=gray, domain=0:6]{(x - 3)^4 + 1};
     \end{axis}
@@ -1157,7 +1167,7 @@ Having discussed the philosophy of our transaction system and presented our appr
 
 \begin{table}[H]
   \centering
-  \begin{tabularx}{\textwidth}{l X}
+  \begin{tabularx}{\columnwidth}{l X}
     \toprule
     Property & Description \\ \midrule
     gateway\_address & the address of the gateway being added to the network \\
@@ -1171,7 +1181,7 @@ Having discussed the philosophy of our transaction system and presented our appr
 
 \begin{table}[H]
   \centering
-  \begin{tabularx}{\textwidth}{l X}
+  \begin{tabularx}{\columnwidth}{l X}
       \toprule
       Property & Description \\ \midrule
       gateway\_address & the address asserting its location \\
@@ -1187,7 +1197,7 @@ Having discussed the philosophy of our transaction system and presented our appr
 
 \begin{table}[H]
   \centering
-  \begin{tabularx}{\textwidth}{l X}
+  \begin{tabularx}{\columnwidth}{l X}
       \toprule
       Property & Description \\ \midrule
       payer\_address & the address of the sender \\
@@ -1202,7 +1212,7 @@ Having discussed the philosophy of our transaction system and presented our appr
 
 \begin{table}[H]
   \centering
-  \begin{tabularx}{\textwidth}{l X}
+  \begin{tabularx}{\columnwidth}{l X}
       \toprule
       Property & Description \\ \midrule
       address & the address of the account creating the deposit \\
@@ -1217,7 +1227,7 @@ Having discussed the philosophy of our transaction system and presented our appr
 
 \begin{table}[H]
   \centering
-  \begin{tabularx}{\textwidth}{l X}
+  \begin{tabularx}{\columnwidth}{l X}
       \toprule
       Property & Description \\ \midrule
       public\_key & the public key used to create the deposit \\
@@ -1231,7 +1241,7 @@ Having discussed the philosophy of our transaction system and presented our appr
 
 \end{description}
 
-\section{Acknowledgements}
+\acks
 
 This document is the result of collaborative work by members of the Helium team, and would not have been possible without the help, feedback, and review of the board of directors, advisors, investors and collaborators of Helium. We extend our most heartfelt thanks to all involved.
 
@@ -1240,7 +1250,9 @@ We would also like to extend our thanks to Jeremy Rubin of the MIT Digital Curre
 We would also like to acknowledge many of the prior works and inventions that have allowed us to create this project, most notably Bitcoin~\cite{bitcoin} and Ethereum~\cite{ethereum}. We would also like to extend our appreciation to Protocol Labs~\cite{protocol} who demonstrated a path for regulatory-compliant sales of protocols under development and pioneered work around the SAFT, which we have followed.
 \newpage
 
-\begin{thebibliography}{9}
+\bibliographystyle{abbrvnat}
+\begin{thebibliography}{}
+\softraggedright
 
 \bibitem{napster}
     Napster, \\
