@@ -1,4 +1,4 @@
-\documentclass[10pt, nonatbib, nocopyrightspace]{sigplanconf}
+\documentclass[10pt, nonatbib, nocopyrightspace, reprint]{sigplanconf}
 
 \usepackage[backref=section, linkbordercolor={1 1 1}, urlbordercolor={1 1 1}, citebordercolor={1 1 1}]{hyperref}
 \usepackage[ruled, vlined]{algorithm2e}
@@ -34,7 +34,6 @@
 \subtitle{A Decentralized Machine Network}
 %\authorinfo{Helium Systems, Inc.}{February 7, 2018}{}
 \authorinfo{Amir Haleem\and Andrew Allen \and Andrew Thompson \and Marc Nijdam \and Rahul Garg}{Helium Systems, Inc.}{February 7, 2018}
-%\date{\today}
 
 \maketitle
 
@@ -43,7 +42,7 @@ The Internet of Things is a \textdollar1.6 trillion industry, with over 8.4 bill
 
 Helium is a \emph{decentralized machine network} that enables devices anywhere in the world to wirelessly connect to the internet and geolocate themselves without the need for power-hungry satellite location hardware or expensive cellular plans. Powering the network is a blockchain with a native protocol token incentivizing a two-sided marketplace between coverage providers and coverage consumers. With the introduction of a blockchain, Helium injects decentralization into an industry currently controlled by monopolistic companies. The result is that wireless network coverage becomes a utility, fueled by competition, available anywhere in the world, at a fraction of current costs.
 
-Helium's secure and open-source primitives enable developers to build low-power, internet-connected devices quickly and cost-effectively. Helium has a wide variety of applications across industries and is the first decentralized wide area network of its kind.
+Helium's secure and open-source primitives enable developers to build low-power, internet-connected devices quickly and cost-effectively. Helium has a wide variety of applications across industries and is the first decentralized machine network of its kind.
 \end{abstract}
 
 %\newpage
@@ -776,7 +775,7 @@ We aim to construct a proof that takes advantage of the following characteristic
 
 Our goal is to verify whether miners in a physical region are acting honestly and creating wireless network coverage compatible with the Helium wireless protocol (WHIP). To do this, a challenger $C$ deterministically constructs a multi-layer data packet $O$ which begins at an initial target, $T$, and is broadcast wirelessly to a set of sequential targets, $T_n$, each of which are only able to decrypt the outer-most layer of $O$ if they were the intended recipient. Each target acknowledges receipt, $K_S$, back to $C$, removes their layer of $O$, $O$\textsubscript{l-n}, and broadcasts it for receipt by the next target. Essentially, an ``envelope of envelopes'' only openable by the intended recipient.
 
-\todo{WE SHOULD UPDATE THIS IMAGE TO BETTER REPRESENT THE FLOW OF T1->T->TL THAT IS DISCUSSED LATER}
+\todo{WE SHOULD UPDATE THIS IMAGE TO BETTER REPRESENT THE FLOW OF T1-\textgreater T-\textgreater TL THAT IS DISCUSSED LATER}
 
 \begin{figure}[H]
     \begin{center}
@@ -1020,7 +1019,7 @@ We propose a consensus protocol where the probability that a miner submits a win
 
 Each miner has a score assigned to it by the blockchain, a value between 0 and 1. When miners join the network a default score $\phi$ is assigned. This score changes over time in response to \emph{Proof-of-Coverage} challenges. A miner that successfully answers a challenge is granted a boost to its score, as described in [\ref{scores}]. Miners with a higher score have a larger chance of submitting the winning block and miners with a lower score have a higher chance of being challenged. Thus the Helium consensus protocol rewards good behavior on the network and punishes bad behavior.
 
-\todo{At each blocktime, a subset of miners $M_S$ are allowed to submit a candidate block. The chances of being chosen to submit a block are proportional to the miner's current score. - HOW?} $M_S$ are selected from a \emph{consistent hash ring} $\omega$ of potential miners. For miners with a low score proportionally more "blank" entries are inserted in the target candidate set. If a miner is assigned a blank target it cannot mine the block at this height. 
+At each blocktime, a subset of miners $M_S$ are allowed to submit a candidate block. The chances of being chosen to submit a block are proportional to the miner's current score. $M_S$ are selected from a \emph{consistent hash ring} $\omega$ of potential miners. For miners with a low score proportionally more "blank" entries are inserted in the target candidate set. If a miner is assigned a blank target it cannot mine the block at this height. 
 
 Once all the blocks for the interval $\lambda$ have been submitted, the network of miners each choose the block they think is the best, according to the scoring algorithm. The scoring algorithm favors blocks that are valuable to the network. The primary dimension affecting score is the \emph{Proof-of-Coverage} contained within the submitted block. A high scoring proof should either use successful, valid challenge responses to raise the score of as many miners as possible, or it should contain irrefutable proof of misbehavior. It should also come from a miner that has a good score itself. Secondarily, it should include references to high-quality uncle blocks that, while not winners at the time, contain highly valuable proofs themselves that would be wasteful to discard. Finally a good block should include as many valid transactions as possible, transactions are the life blood of a blockchain and it is vital miners are incentivized to include them.
 
@@ -1236,6 +1235,9 @@ Having discussed the philosophy of our transaction system and presented our appr
 
 \end{description}
 
+\section{Future Work}
+
+We believe that this tight integration of real-world hardware with a blockchain and a native token is a novel and valuable innovation that can be applied to other kinds of networks and wireless physical layers. We believe that the future of blockchains is not about who has the most hashing power or access to the cheapest electricity, but about blockchains where the mining proof is tied to providing a valuable, verifiable service. We plan to investigate or partner with interested parties to extend our ideas into other physical layers such as WiFi, Bluetooth and Cellular, as well as explore the potential for the delivery of 5G 60GHz+ mmWave connectivity through a similar mechanism. Additionally we plan to continue to research and implement more \emph{Proofs-of-Coverage} to keep the network secure as it grows.
 \acks
 
 This document is the result of collaborative work by members of the Helium team, and would not have been possible without the help, feedback, and review of the board of directors, advisors, investors and collaborators of Helium. We extend our most heartfelt thanks to all involved.
