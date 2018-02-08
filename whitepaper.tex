@@ -1,4 +1,4 @@
-\documentclass[10pt, nonatbib]{sigplanconf}
+\documentclass[10pt, nonatbib, nocopyrightspace]{sigplanconf}
 
 \usepackage[backref=section, linkbordercolor={1 1 1}, urlbordercolor={1 1 1}, citebordercolor={1 1 1}]{hyperref}
 \usepackage[ruled, vlined]{algorithm2e}
@@ -20,6 +20,7 @@
 
 \newcommand{\todo}[1]{}
 \renewcommand{\todo}[1]{{\color{red} TODO:\ {#1}}}
+\pgfplotsset{compat=1.14}
 
 %\newcommand{\sectionbreak}{\clearpage}
 
@@ -29,17 +30,16 @@
 \setlength{\pdfpageheight}{\paperheight}
 \setlength{\pdfpagewidth}{\paperwidth}
 
-\toappear{\textcopyright 2018 Helium Systems, Inc}
-
 \title{Helium}
 \subtitle{A Decentralized Machine Network}
-\authorinfo{Helium Systems, Inc.}{February 7, 2018}{}
+%\authorinfo{Helium Systems, Inc.}{February 7, 2018}{}
+\authorinfo{Amir Haleem\and Andrew Allen \and Andrew Thompson \and Marc Nijdam \and Rahul Garg}{Helium Systems, Inc.}{February 7, 2018}
 %\date{\today}
 
 \maketitle
 
 \begin{abstract}
-\todo{Machine to Machine networking} is a \textdollar1.6 trillion industry, with over 8.4 billion connected devices online, and predicted to more than double over the next 2 years. All of these devices need to connect to the internet to function. However, current solutions such as cellular, WiFi, and Bluetooth are suboptimal: they are too expensive, too power hungry, or too limited in range.
+The Internet of Things is a \textdollar1.6 trillion industry, with over 8.4 billion connected devices online, and predicted to more than double over the next 2 years. All of these devices need to connect to the internet to function. However, current solutions such as cellular, WiFi, and Bluetooth are suboptimal: they are too expensive, too power hungry, or too limited in range.
 
 Helium is a \emph{decentralized machine network} that enables devices anywhere in the world to wirelessly connect to the internet and geolocate themselves without the need for power-hungry satellite location hardware or expensive cellular plans. Powering the network is a blockchain with a native protocol token incentivizing a two-sided marketplace between coverage providers and coverage consumers. With the introduction of a blockchain, Helium injects decentralization into an industry currently controlled by monopolistic companies. The result is that wireless network coverage becomes a utility, fueled by competition, available anywhere in the world, at a fraction of current costs.
 
@@ -61,7 +61,7 @@ Helium is a wide-area wireless networking system, a blockchain and a protocol to
 
 Helium exists due to a set of core beliefs that have driven every component and the underlying purpose of the network and protocol. In this section we outline the requirements that are necessary for building a truly decentralized machine network.
 
-\textbf{Decentralization}. Machine to Machine networking is poised to change the way we interact with the physical world and at a scale that is unprecedented, with projections of over \$11.1 trillion in economic value added in under 10 years\cite{mckinsey}. It is critical that this industry be driven forward in a truly decentralized way that allows participation from anyone, anywhere, with no arbitrary gatekeepers. There are many existing products, services and companies participating in the wireless ecosystem today, but nearly all are centralized or proprietary in some form. Some require specialized hardware available from a single vendor, some use proprietary technology, and others tightly control access to infrastructure. Helium exists to make it possible for individuals, businesses, and communities to participate and enable solutions without the need to rely on or trust any external entities.
+\textbf{Decentralization}. Wireless machine networking is poised to change the way we interact with the physical world and at a scale that is unprecedented, with projections of over \$11.1 trillion in economic value added in under 10 years\cite{mckinsey}. It is critical that this industry be driven forward in a truly decentralized way that allows participation from anyone, anywhere, with no arbitrary gatekeepers. There are many existing products, services and companies participating in the wireless ecosystem today, but nearly all are centralized or proprietary in some form. Some require specialized hardware available from a single vendor, some use proprietary technology, and others tightly control access to infrastructure. Helium exists to make it possible for individuals, businesses, and communities to participate and enable solutions without the need to rely on or trust any external entities.
 
 \textbf{Low Power}. Helium is focused on a specific subset of machine to machine networking---low power devices. While this can cover a very broad range of devices and use cases, we believe that high-power data-intensive applications are well serviced by existing network technologies such as WiFi and LTE\@. Low power wireless networking solutions are in their relative infancy, particularly those which require long range from an access point. A new class of low power wireless solutions---known as \emph{Low Power Wide Area Networks (LPWANs)}---have begun to emerge in the last several years, but are all proprietary in nature or extremely centralized in some capacity. Helium is built upon an entirely new open-source wireless networking protocol designed for machines.
 
@@ -100,7 +100,7 @@ Helium is built around the following key components:
     \item The blockchain employs \emph{Proof-of-Coverage} to guarantee that miners are correctly representing the amount of wireless network coverage they are creating.
 \end{itemize}
 
-\begin{figure*}[h]
+\begin{figure*}[ht]
     \begin{center}
           \includegraphics[width=\textwidth]{diagram1.eps}
           \caption{\emph{System Overview}}
@@ -641,7 +641,7 @@ In this section, we expand on the components of the wireless network.
 \begin{description}
         \item [Motivation] Several Low Power Wide Area Network (LPWAN) technologies are available today. These wireless technologies focus on creating extremely long-range, low-power internet communication for sensors and other smart devices. Typically these technologies trade throughput for range, with data rates as low as 18~bits~per~second (bps) and range measured in miles. In comparison, a typical WiFi network has significantly higher data rates but ranges limited to only a few hundred feet. Several of these new technologies, such as LoRa~\cite{lora} and RPMA~\cite{rpma}, have gained good traction and there are many commercial products available compatible with these systems. However, we believe that the wireless network of the future should use non-proprietary protocols and modulation schemes and that participants in this ecosystem should have the freedom to choose between competing hardware vendors. We do not consider an open alliance built on top of proprietary hardware to be an acceptable compromise. While there are many open-standard wireless networking stacks, such as IEEE~802.15.4~\cite{ieee802_15_4} used in the first generation of Helium wireless products, none meet our extremely long range and low power criteria. It is this lack of open solutions that drove the creation of a new protocol.
 
-        \item [Outline] We introduce a new open-source Low Power Wide Area Network (LPWAN) protocol called \emph{WHIP}. WHIP is a highly secure, long range, low power wireless network protocol that is compatible with any Frequency Shift Keying (FSK) radio transceiver operating in the sub-GHz unlicensed frequency spectrum. Authentication with the wireless network uses modern public-key encryption and NIST~P-256 ECC~\cite{ecc} key pairs, with the public keys for all participants stored in the blockchain.
+        \item [Outline] We introduce a new open-source Low Power Wide Area Network (LPWAN) protocol called \emph{WHIP}. WHIP is a highly secure, long range, low power wireless network protocol that is compatible with any Frequency Shift Keying (FSK) radio transceiver operating in the sub-GHz unlicensed frequency spectrum. Authentication with the wireless network uses modern public-key encryption and NIST~P-256 ECC key pairs, with the public keys for all participants stored in the blockchain.
 
         FSK is a simple and widely supported modulation format which easy to implement and has excellent resistance to RF noise. There are dozens of vendors implementing FSK radio transceivers compatible with WHIP, such as Texas Instruments, Microchip, and Silicon Labs.
 
@@ -656,7 +656,7 @@ In this section, we expand on the components of the wireless network.
         \item [Implementation] WHIP supports several data rates, channel bandwidths, and error-correction techniques. Gateways and devices dynamically negotiate the combination of these options using a \emph{signalling packet} delivered at the lowest bandwidth and symbol rate to ensure maximum range for the initial communication.
 \end{description}
 
-The full WHIP specification will be made available by the Helium Alliance~\cite{alliance}.
+The full WHIP specification will be made available by the Helium Alliance.
 
 \subsection{Gateways}\label{gateways}
 
@@ -674,7 +674,7 @@ A \emph{device} is any wireless hardware capable of communicating with gateways 
 
 WHIP is designed such that devices can be manufactured using commodity hardware available from a wide variety of vendors, and for an extremely low-cost bill of materials (BOM). The technology in modern radio transceivers, such as the Texas Instruments CC1125 or STMicroelectronics S2-LP, enables extremely long-range network systems that can be built without the need for proprietary modulation schemes or physical layers. Some of these radios are available for around \$1 at reasonable volumes.
 
-Each device will use the Microchip ECC508A\cite{ecc} or equivalent hardware-based key storage device, which is able to securely generate, store, and authenticate public/private \emph{NIST P-256 ECC} \cite{nist} key pairs without leaking the private key. In addition, a wide array of defense mechanisms prevent logical attacks on the encrypted data between the key storage device and its host device, along with physical protections on the security device itself. Users program their key storage device as part of the onboarding process defined in the WHIP wireless specification using a simple SDK\@.
+Each device will use the Microchip ECC508A or equivalent hardware-based key storage device, which is able to securely generate, store, and authenticate public/private \emph{NIST P-256 ECC} \cite{nist} key pairs without leaking the private key. In addition, a wide array of defense mechanisms prevent logical attacks on the encrypted data between the key storage device and its host device, along with physical protections on the security device itself. Users program their key storage device as part of the onboarding process defined in the WHIP wireless specification using a simple SDK\@.
 
 \subsection{Routers}
 
@@ -693,11 +693,11 @@ There are several functions that routers serve on the network, which include:
 
 When a gateway receives a data packet from n device on the network, it will query the blockchain to determine which router to use given the devices network address. Anyone anywhere is free to host their own router and define their devices traffic to be delivered there by any gateway on the network. This allows users of the network to essentially create VPN-like functionality whereby encrypted data is delivered only to a router (or set of routers) that they specify and can optionally host themselves.
 
-Routers can implement a system called a \emph{Channel} which handles the authentication and routing of data to a specific third party Internet application, such as Microsoft's Azure IoT Hub\cite{azure}. These channel implementations can take advantage of a devices onboard hardware security to create a secure, hardware-authenticated connection to a third party which would otherwise be difficult to implement directly on an embedded microcontroller. Helium will make available an open source reference implementation of a Channel that can be used to build additional interfaces to Internet services.
+Routers can implement a system called a \emph{Channel} which handles the authentication and routing of data to a specific third party Internet application, such as Microsoft's Azure IoT Hub. These channel implementations can take advantage of a devices onboard hardware security to create a secure, hardware-authenticated connection to a third party which would otherwise be difficult to implement directly on an embedded microcontroller. Helium will make available an open source reference implementation of a Channel that can be used to build additional interfaces to Internet services.
 
 Helium Systems Inc hosts a high-availability cloud router for anyone to use, and also provides and maintains an open-source router that is available either as source code or a binary package for a variety of operating systems and distributions.
 
-The protocol specification required for implementing a router is defined in the WHIP Wireless Specification document that will be made available by the Helium Alliance\cite{alliance}.
+The protocol specification required for implementing a router is defined in the WHIP Wireless Specification document that will be made available by the Helium Alliance.
 
 \subsection{Geolocation}\label{geolocation}
 
@@ -786,7 +786,7 @@ Our goal is to verify whether miners in a physical region are acting honestly an
      \end{center}
 \end{figure}
 
-\textbf{Selecting the Initial Target}. We aim to deterministically locate an initial target, $T$, for the challenger, $C$. $T$ does not need to be geographically proximate to $C$. To locate $T$, $C$ uses a \emph{consistent hash ring} $\omega$, of potential miners. $\omega$ only contains miners eligible as targets as described in [\ref{mining}], and miners are allocated portions of $\omega$ that are inversely proportional to their score, increasing the probability of potentially dishonest miners being targeted. \todo{RAHUL - IS THERE MATH COMING FOR THIS PART?} Given that a miners score is diminishing linearly over time [\ref{scores}], it is necessary to create this inverse relationship to give low-scoring miners an opportunity to participate in the process and increase their score. We seed verifiable randomness, $\eta$, into the selection process using a signed digest of the partial block from $C$ - thus, it is necessary for $C$ to have begun forming a new candidate block for the blockchain before the \emph{Proof-of-Coverage} process can begin [\ref{mining}].
+\textbf{Selecting the Initial Target}. We aim to deterministically locate an initial target, $T$, for the challenger, $C$. $T$ does not need to be geographically proximate to $C$. To locate $T$, $C$ uses a \emph{consistent hash ring} $\omega$, of potential miners. $\omega$ only contains miners eligible as targets as described in [\ref{mining}], and miners are allocated portions of $\omega$ that are inversely proportional to their score, increasing the probability of potentially dishonest miners being targeted. We refer the interested reader to \cite{hashing} for further reading on consistent hashing techniques. Given that a miners score is diminishing linearly over time [\ref{scores}], it is necessary to create this inverse relationship to give low-scoring miners an opportunity to participate in the process and increase their score. We seed verifiable randomness, $\eta$, into the selection process using a signed digest of the partial block from $C$ - thus, it is necessary for $C$ to have begun forming a new candidate block for the blockchain before the \emph{Proof-of-Coverage} process can begin [\ref{mining}].
 
 \textbf{Constructing the multi-layer challenge}. Once $T$ has been selected, $C$ must construct a multi-layer challenge, $O$. $O$ is a data packet broadcast by $T$ over the wireless network and received by geographcially proximate targets $T_n$. Geographically proximate is defined as within a radius of $T$, a network value $T$\textsubscript{radius}. Each layer of $O$, $O_l$, consists of a three-tuple of $E\left(S, \psi, R\right)$, where $E$ is a secure public key encryption function, $S$ is a secret value, $\psi$ is the time to broadcast the next layer of the challenge and $R$ is the remainder of $O$ consisting of recursive three-tuples. The maximimum number of $O_l$ is bounded by a network value, $O$\textsubscript{max}.
 
@@ -1248,97 +1248,85 @@ We would also like to acknowledge many of the prior works and inventions that ha
 \begin{thebibliography}{10}
 \softraggedright
 
-\bibitem{napster}
-    Napster,
-        \url{https://en.wikipedia.org/wiki/Napster}
+\bibitem{napster} 
+    Shawn Fanning. 
+    \emph{Napster - independent peer-to-peer file sharing}, 1999
 
 \bibitem{mckinsey}
-    James Manyika, Michael Chui, Peter Bisson, Jonathan Woetzel, Richard Dobbs, Jacques Bughin, Dan Aharon
-        \emph{Unlocking the potential of the Internet of Things}, \\
-        \url{https://www.mckinsey.com/business-functions/digital-mckinsey/our-insights/the-internet-of-things-the-value-of-digitizing-the-physical-world}
+    James Manyika, Michael Chui, Peter Bisson, Jonathan Woetzel, Richard Dobbs, Jacques Bughin, Dan Aharon. 
+    \emph{Unlocking the potential of the Internet of Things}, 2015
 
 \bibitem{ghost}
-    Yonatan Sompolinsky,
-        \emph{Secure High-Rate Transaction Processing in Bitcoin}, \\
-        \url{http://www.cs.huji.ac.il/\%7Eyoni\_sompo/pubs/15/btc\_scalability\_full.pdf}
+    Yonatan Sompolinsky. 
+    \emph{Secure High-Rate Transaction Processing in Bitcoin}
 
 \bibitem{ethereum}
-    Vitalik Buterin,
-        \emph{Ethereum},\\
-        \url{http://www.ethereum.org/}
+    Vitalik Buterin. 
+    \emph{Ethereum}, 2014
 
 \bibitem{bitcoin}
-    Satoshi Nakamoto,
-        \emph{Bitcoin}, \\
-        \url{https://bitcoin.org/bitcoin.pdf}
+    Satoshi Nakamoto. 
+    \emph{Bitcoinn: A peer-to-peer electronic cash system}, 2008
+
+\bibitem{hashing}
+    David Karger, Eric Lehman, Tom Leighton, Matthew Levine, Daniel Lewin, Rina Panigrahy. 
+    \emph{Consistent Hashing and Random Trees: Distributed Caching Protocols for Relieving Hot Spots on the World Wide Web}, 1997
 
 \bibitem{roughtime}
-    Adam Langley, Google,
-        \emph{Roughtime}, \\
-        \url{https://roughtime.googlesource.com/roughtime}
+    Adam Langley, Google. 
+    \emph{Roughtime - a project that aims to provide secure time synchronisation}
 
 \bibitem{lora}
-    LoRa Alliance,
-        \emph{LoRa Alliance - Wide Area Networks for IoT}, \\
-        \url{https://www.lora-alliance.org}
+    LoRa Alliance. 
+    \emph{LoRa Alliance - Wide Area Networks for IoT}, 2013
 
 \bibitem{rpma}
-    Ingenu,
-        \emph{RPMA}, \\
-        \url{https://www.ingenu.com/technology/rpma/}
+    Ingenu. 
+    \emph{RPMA Technology}
 
 \bibitem{ieee802_15_4}
-    IEEE Std 802.15.4-2015,
-        \emph{IEEE Standard for Low-Rate Wireless Networks}, \\
-        \url{https://standards.ieee.org/findstds/standard/802.15.4-2015.html}
+    IEEE. 
+    \emph{IEEE Standard for Low-Rate Wireless Networks}, 2015
 
 \bibitem{gtp}
-    Mehmud Abliz, Taieb Znati,
-        \emph{A Guided Tour Puzzle for Denial of Service Prevention}, \\
-        \url{http://citeseerx.ist.psu.edu/viewdoc/download?doi=10.1.1.596.9426&rep=rep1&type=pdf}
+    Mehmud Abliz, Taieb Znati. 
+    \emph{A Guided Tour Puzzle for Denial of Service Prevention}, 2009
 
 \bibitem{tdoa}
-    Regina Kaune, Julian Horst, Wolfgang Koch
-        \emph{Accuracy Analysis for TDOA Localization in Sensor Networks}, \\
-        \url{http://fusion.isif.org/proceedings/Fusion_2011/data/papers/217.pdf}
+    Regina Kaune, Julian Horst, Wolfgang Koch. 
+    \emph{Accuracy Analysis for TDOA Localization in Sensor Networks}, 2011
 
-\bibitem{ecc}
-    Microchip
-        \emph{ATECC508A}, \\
-        \url{http://www.microchip.com/wwwproducts/en/ATECC508A}
+\bibitem{iota}
+    David Sønstebø, Sergey Ivancheglo, Dominik Schiener, and Serguei Popov. 
+    \emph{IOTA - Next Generation Blockchain}, 2015
+
+\bibitem{lightning}
+    Joseph Poon, Thaddeus Dryja. 
+    \emph{Lightning Network - Scalable, Instant Bitcoin/Blockchain Transactions}, 2017
+
+\bibitem{raiden}
+    brainbot. 
+    \emph{The Raiden Network - Fast, cheap, scalable token transfers for Ethereum}, 2017
+
+\bibitem{state-channels}
+    Jeff Coleman. 
+    \emph{State Channels}, 2015
 
 \bibitem{nist}
-    Mehmet Adalier
-        \emph{Efficient and Secure Elliptic Curve Cryptography Implementation of Curve P-256}
-        \url{https://csrc.nist.gov/csrc/media/events/workshop-on-elliptic-curve-cryptography-standards/documents/papers/session6-adalier-mehmet.pdf}
-
-\bibitem{azure}
-    Microsoft
-        \emph{Azure IoT Hub}, \\
-        \url{https://azure.microsoft.com/en-us/services/iot-hub/}
-
-\bibitem{merkle}
-    Wikipedia
-        \emph{Merkle Trees}, \\
-        \url{https://en.wikipedia.org/wiki/Merkle_tree}
-
-\bibitem{alliance}
-    Helium Alliance, \\
-        \url{https://helium-alliance.org}
+    Mehmet Adalier. 
+    \emph{Efficient and Secure Elliptic Curve Cryptography Implementation of Curve P-256}
 
 \bibitem{filecoin}
-    Filecoin, \\
-        \url{https://filecoin.io}
+    Protocol Labs. 
+    \emph{Fielcoin}, 2017
 
 \bibitem{protocol}
-    Protocol Labs, \\
-        \url{https://protocol.ai}
+    Juan Benet. 
+    \emph{Protocol Labs}, 2014
 
 \bibitem{dijkstra}
-    Dijkstra, E. W.
-    \emph{A note on two problems in connexion with graphs} \\
-    \url{http://www-m3.ma.tum.de/foswiki/pub/MN0506/WebHome/dijkstra.pdf}
-
+    Dijkstra, E. W. 
+    \emph{A note on two problems in connection with graphs}, 1959
 
 \end{thebibliography}
 
