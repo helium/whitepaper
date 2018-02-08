@@ -900,16 +900,16 @@ Finally, the rate of decrease of score is linearly proportional to the previous 
 From the above defined relationships, we construct the following recurrence for the score of the miners:
 \begin{equation*} \label{score}
 	\phi_h = \begin{cases}
-		\phi_{h-1} - \delta_h, &\text{if $\phi_{h-1}$ = $\phi_{max}$.}\\
-		\phi_{h-1} + \epsilon_{h-1} - \delta_h, &\text{otherwise}.
+		\phi_{h-1} - \delta_h, \\
+		\phi_{h-1} + \epsilon_{h-1} - \delta_h
 	\end{cases}
 \end{equation*}
 
 Substituting the values for $\alpha_h$ and $\epsilon_h$, we get the following recurrence relationship as the score of miners:
 \begin{equation*} \label{recurrence}
 	\phi_h = \begin{cases}
-		\phi_{h-1} - \delta_h, &\text{if $\phi_{h-1}$ = $\phi_{max}$.}\\
-		\phi_{h-1} + \frac{\phi_{h-1}}{\sqrt{\phi_{h-1}} + \left(\left\lvert1 - \sqrt{1 - (\phi_{h-1} - 1)^2}\right\rvert \eta_{h-1}\right)^{-2}} -\delta_h, &\text{otherwise}.
+		\phi_{h-1} - \delta_h,\\
+		\phi_{h-1} + \frac{\phi_{h-1}}{\sqrt{\phi_{h-1}} + \left(\left\lvert1 - \sqrt{1 - (\phi_{h-1} - 1)^2}\right\rvert \eta_{h-1}\right)^{-2}} -\delta_h
 	\end{cases}
 \end{equation*}
 
