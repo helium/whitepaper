@@ -802,8 +802,6 @@ The construction logic of $O$ is as follows:
 
 The resulting $O$ can be visually represented as the following:
 
-\todo{NEW DIAGRAM NEEDED, should show T1, T, and TL with T in the center. Also, each layer of O is now a three-tuple of $S, \psi, R$}
-
 \begin{figure}[H]
     \begin{center}
           \includegraphics[width=\columnwidth]{o_construction.eps}
@@ -828,8 +826,6 @@ We describe the approximate flow of \emph{Proof-of-Coverage} creation as follows
 $C$ expects to hear responses from $T_g$ within a time threshold $\lambda$, otherwise it considers the \emph{Proof-of-Coverage} to have concluded. Because $C$ is the only party with complete knowledge of $O$, upper bounds of the values for $\beta$ and $\upsilon$ are assigned by $C$ which are used to verify that each layer of $O$ was transmitted approximately where and when it was expected. The upper bound for $\beta$ ls limited by the speed of light $\tau$ between $T_n$ and $T_n-1$. Thus we know that, subject to some slight delays from reflection or multipath, the packet should not arrive at $T_g$ later than $\tau$ multiplied by the geographical distance $D$ plus some small episilon value, $\upsilon = \tau \times \Big(D + \epsilon\Big)$. For $\upsilon$, because of the inverse-square law, we can calculate the maximum RSSI possible for a packet transmitted, $\mu$, from $T_g-1$ to $T_g$ as $\mu = \frac{1}{D^2}$. Gateways that are closer than expected, or which are transmitting at a higher power to mask their location disparity, are unlikely to get $\mu$ correct, given that they do not know who the next layer of $O$ is addressed to.
 
 Once $T_L$ has delivered receipt to $C$, or $\lambda$ has elapsed, the \emph{Proof-of-Coverage} is completed. The collection of signed receipts, $K_S$, constitute the \emph{Proof-of-Coverage} that $C$ will include when attempting to mine the next block in the blockchain [Section \ref{mining}].
-
-\todo{THIS DIAGRAM SHOULD ALSO BE UPDATED TO BETTER REPRESENT THE T1 -\textgreater T -\textgreater TL TYPE OF FLOW. ALSO THE SIGNED RECEIPTS ARE NOW IN THE FORM OF ${K_S = \left(S || \beta || \upsilon\right)}$}
 
 \begin{figure}[H]
     \begin{center}
@@ -1249,17 +1245,19 @@ Having discussed the philosophy of our transaction system and presented our appr
 
 This paper presents a well thought-out design for building the Helium network. However, we consider this to be just the beginning of the engineering, research and design of decentralized wireless networks. We believe that this tight integration of real-world hardware with a blockchain and a native token is a novel and valuable innovation that can be applied to other kinds of networks and wireless physical layers. We believe that the future of blockchains is not about who has the most hashing power or access to the cheapest electricity, but about blockchains where the mining proof is tied to providing a valuable, verifiable service. 
 
-\subsection{Current Work}
-
-The following are tasks that we are actively working on:
+There are several intiatives that we either have or intend to undertake, including:
 
 \begin{itemize}
-    \item The WHIP wireless protocol specification
-    \item 
+    \item Investigate the applicability of applying these ideas to other physical layers such as WiFi, Bluetooth and Cellular
+    \item Explore the potential for the delivery of 5G 60GHz+ mmWave connectivity through a similar design
+    \item Research and implement more \emph{Proofs-of-Coverage} to keep the network secure as it grows
+    \item Game theoretical analysis of the incentive system
+    \item Formally prove the scoring algorithm used in the \emph{Proof-of-Coverage}
+    \item Create and release the \emph{WHIP} wireless specification
+    \item Manufacture gateways and device modules for availability at network launch
+    \item Investigate the depoyment of smart contracts beyond the basic \verb|DMN| primitives
+    \item Continued work and evolution of Forward Error Correction technqiues
 \end{itemize}
-
-We plan to investigate or partner with interested parties to extend our ideas into other physical layers such as WiFi, Bluetooth and Cellular, as well as explore the potential for the delivery of 5G 60GHz+ mmWave connectivity through a similar mechanism. Additionally we plan to continue to research and implement more \emph{Proofs-of-Coverage} to keep the network secure as it grows.
-
 
 \acks
 
