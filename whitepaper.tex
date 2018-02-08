@@ -106,6 +106,7 @@ Helium is built around the following key components:
      \end{center}
 \end{figure*}
 
+
 \section{The Helium DMN}
 
 We introduce the Helium Decentralized Machine Network (\verb|DMN|). The \verb|DMN| provides wireless access to the internet for devices by way of multiple independent miners, and outlines a network and wireless protocol specification by which participants in the network should conform. Devices pay this network of miners for sending data to and from the internet, and miners are paid for continuously providing network coverage and delivering device data to the internet.
@@ -116,21 +117,21 @@ Any user can participate as a Device, a Miner, or a Router.
 
 \begin{itemize}
     \item \emph{Devices} pay to send encrypted data to and from the internet via the \verb|DMN| using hardware compatible with the Helium wireless protocol, called \emph{WHIP} [Section \ref{whip}]. In geographies with a sufficient number of miners, devices can pay several miners to geolocate themselves without needing satellite location hardware. Data sent from devices is \emph{fingerprinted}, and that fingerprint stored in the blockchain.
-    \item \emph{Miners} provide wireless network coverage to the network via purpose-built hardware, called gateways [Section \ref{gateways}], which provide a long-range bridge between WHIP and the internet. Users join the network as miners by purchasing or building a gateway that conforms to the wireless protocol, and \emph{staking} a token deposit proportional to the density of other miners operating in their area [Section \ref{staking}]. Miners participate in the \emph{Proof-of-Coverage} [Section \ref{poc}] process to prove that they are continuously providing wireless network coverage that devices can use. Miners join the network with a score [Section \ref{scores}] that diminishes as blocks pass without valid proofs being submitted. Miners are eligible to mine new blocks in the blockchain, and receive the block reward and transaction fees for any transactions included in the block once mined. As a miners score drops their probability of mining a block and earning the reward diminishes.
-    \item \emph{Routers} are internet applications that receive encrypted device data from miners. Routers are the termination point for device data encryption. Devices record to the blockchain which routers miners should send their data, such that any gateway on the network can send any devices data to the appropriate router. Routers are responsible for confirming to the network that device data was delivered to the correct destination and that the miner should be paid for their service.
+    \item \emph{Miners} provide wireless network coverage to the network via purpose-built hardware, called gateways [Section \ref{gateways}], which provide a long-range bridge between WHIP and the internet. Users join the network as miners by purchasing or building a gateway that conforms to the wireless protocol, and \emph{staking} a token deposit proportional to the density of other miners operating in their area [Section \ref{staking}]. Miners participate in the \emph{Proof-of-Coverage} [Section \ref{poc}] process to prove that they are continuously providing wireless network coverage that devices can use. Miners join the network with a score [Section \ref{scores}] that diminishes as blocks pass without valid proofs being submitted. Miners are eligible to mine new blocks in the blockchain and receive the block reward and transaction fees for any transactions included in the block once mined. As a miners score drops their probability of mining a block and earning the reward diminishes.
+    \item \emph{Routers} are internet applications that receive encrypted device data from miners. Routers are the termination point for device data encryption. Devices record to the blockchain which routers miners should send their data to, such that any gateway on the network can send any devices data to the appropriate router. Routers are responsible for confirming to the network that device data was delivered to the correct destination and that the miner should be paid for their service.
 \end{itemize}
 
 \subsection{Blockchain} \label{blockchain}
 
-The Helium blockchain is a new type of ledger designed to provide a cost-effective way to run application logic core to the operation of a \verb|DMN|, store immutable device data fingerprints, and furnish a transaction system. We will refer to this as the Blockchain, $B$. $B$ is an immutable append-only list of transactions that achieves consensus by verifying \emph{Proofs-of-Coverage} [Section \ref{poc}]. Users internal and external to the \verb|DMN| have access to $B$, which is a new blockchain network built from scratch specifically for the \verb|DMN|.
+The Helium blockchain is a new type of ledger designed to provide a cost-effective way to run application logic core to the operation of a \verb|DMN|, store immutable device data fingerprints, and furnish a transaction system. We refer to this as the Blockchain, $B$. $B$ is an immutable append-only list of transactions which achieves consensus by verifying \emph{Proofs-of-Coverage} [Section \ref{poc}]. Users internal and external to the \verb|DMN| have access to $B$, which is a new blockchain network built from scratch specifically for the \verb|DMN|.
 
-$B$ consists of blocks $b_n$, which contain a header and a list of transactions. There are several kinds of transactions, outlined in [Section \ref{transactions}]. Although the blocks in chain can be linearly ordered, its data structure is actually a directed acyclic graph.
+$B$ consists of blocks $b_n$, which contain a header and a list of transactions. There are several kinds of transactions, outlined in [Section \ref{transactions}]. Although the blocks in the chain can be linearly ordered, its data represents a directed acyclic graph.
 
 As in other implementations, $b_n$ consist of a hash of the previous block in the chain, a set of transactions, and a proof. At a given epoch $t$ a block $b_t$ consists of the following:
 
 \begin{center}
     \begin{tabular}{|c|}
-    	 \hline
+         \hline
          Block Version \\
          \hline
          Block Height \\
@@ -146,9 +147,9 @@ As in other implementations, $b_n$ consist of a hash of the previous block in th
     \end{tabular}
 \end{center}
 
-Due to the fact that miners are only able to add transactions to the block during the early phases of the mining cycle or that the block may be full, the miner holds pending transactions that it has seen, but that do not appear on the main chain, in a temporary storage area, called the \emph{mempool}. The mempool is consulted every time a new block is constructed, and the most valuable transactions for the miner are included in the new block. Because each miner has a different set of incentives, network topology and resources the mempools may not be consistent between any two miners.
+Due to the fact that miners are only able to add transactions to the block during the early phases of the mining cycle or that the block may be full, the miner holds pending transactions that it has seen, but that do not appear on the main chain, in a temporary storage area, called the \emph{mempool}. The mempool is consulted every time a new block is constructed, and the most valuable transactions for the miner are included in the new block. Because each miner has a different set of incentives, network topology, and resources, the mempools may not be consistent between any two miners.
 
-As the \emph{Proof-of-Coverage} [Section \ref{poc}] is valuable to the network, we store as many $b_n$ and their associated proof to $B$ as \emph{Uncle Blocks}, $U_n$. $U_n$, as described in the \emph{Greedy Heaviest-Observed Sub-Tree (GHOST)}~\cite{ghost} paper and implemented in Ethereum~\cite{ethereum}, allow a miner to earn block rewards even if their submitted block did not become the tip of the chain. $U_n$ help the winning chain accumulate `weight' in terms of both the length and quality of the chain, but also including the amount and quality of $U_n$ and their associated proofs. This means that longer chain forks, either mined maliciously or on the smaller side of a partitioned network, will not be selected over a shorter, weightier chain. This also means that valuable proofs of work aren't lost and can be used by the chain to calculate trust.
+As the \emph{Proof-of-Coverage} [Section \ref{poc}] is valuable to the network, we store as many $b_n$ and their associated proof to $B$ as \emph{Uncle Blocks}, $U_n$. $U_n$, as described in the \emph{Greedy Heaviest-Observed Sub-Tree (GHOST)}~\cite{ghost} paper and implemented in Ethereum~\cite{ethereum}, allow a miner to earn block rewards even if their submitted block did not become the tip of the chain. $U_n$ help the winning chain accumulate `weight' in terms of both the length and quality of the chain, but also including the amount and quality of $U_n$ and their associated proofs. This means that longer chain forks, either mined maliciously or on the smaller side of a partitioned network, are not selected over a shorter, weightier chain. This also means that valuable proofs of work are not lost and can be used by the chain to calculate trust.
 
 Blocks are given a \emph{score} that is used as part of the consensus protocol to determine which block should be considered the tip of the chain. The score is based on the \emph{Proof-of-Coverage} and the score of $U_n$ contained within the submitted block. The consensus protocol is outlined in detail in [Section \ref{consensus}].
 
@@ -162,7 +163,7 @@ Blocks are given a \emph{score} that is used as part of the consensus protocol t
 
 \subsection{Protocol}
 
-In this section we provide an overview of the Helium \verb|DMN| and the functions that Devices, Miners and Routers play in the system.
+In this section, we provide an overview of the Helium \verb|DMN| and the functions that Devices, Miners, and Routers play in the system.
 
 
 \subsubsection{Device Cycle}
@@ -192,7 +193,7 @@ We provide a brief overview of the device cycle and the functions available to d
 \begin{description}
   \item [Provisioning] A device is provisioned on the \verb|DMN|.
 
-    Devices join the network by being programmed with keying material by their owner. This key material includes a private key known only by the device, the public key of the root-of-trust for the organization and a 64-bit MAC address.The MAC address consists of 32 bits of an Organizationally Unique Identifier (OUI) and 32 bits of an organizationally managed device identifier. Via an out of band mechanism the device's public key is added to the organization's device registry, indexed by the MAC address. Details of the management of device identifiers and keys are implementation defined, and out of scope of this document.
+    Devices join the network with keying material programmed by their owner. This keying material includes a private key known only by the device, the public key of the root-of-trust for the organization and a 64-bit MAC address.The MAC address consists of 32 bits of an Organizationally Unique Identifier (OUI) and 32 bits of an organizationally managed device identifier. Via an out of band mechanism, the device's public key is added to the organization's device registry, indexed by the MAC address. Details of the management of device identifiers and keys are implementation-defined, and out of the scope of this document.
 
     \begin{algorithm}[!htb]
       \SetAlgorithmName{Protocol}{List of Protocols}
@@ -218,7 +219,7 @@ We provide a brief overview of the device cycle and the functions available to d
   \item [Send] A device sends data to a router on the internet, via a miner.
 
     Devices can send data to their specified router on the internet by paying miners Helium tokens.
-    A device initiates the sending process by broadcasting a packet via the wireless protocol. When a device broadcasts a packet any miners in a reasonable geographic area hear it. Each packet header contains the device's MAC address, and miners inspect the blockchain using this address to determine which routers are listed for the OUI component of the MAC address. See the Miner Deliver Protocol~[\ref{proto:miner.data.deliver}].
+    A device initiates the sending process by broadcasting a packet via the wireless protocol. When a device broadcasts a packet, any miners in a reasonable geographic area hear it. Each packet header contains the device's MAC address, and miners inspect the blockchain using this address to determine which routers are listed for the OUI component of the MAC address. See the Miner Deliver Protocol~[\ref{proto:miner.data.deliver}].
 
     \begin{algorithm}[!htb]
       \SetAlgorithmName{Protocol}{List of Protocols}
@@ -250,9 +251,9 @@ We provide a brief overview of the device cycle and the functions available to d
     \end{algorithm}
     \FloatBarrier
 
-  \item [Receive] After a device has performed a Send, the device will listen for a response.
+  \item [Receive] After a device performs a Send, it listens for a response.
 
-    The response can be a single acknowledgement or a queued up command or data packet. If the device gets a signalling packet describing a downlink message, it will stay awake until the entire packet has been received, otherwise it is free to turn its radio off or go into power-saving mode.
+    The response can be a single acknowledgment or a queued up command or data packet. If the device gets a signaling packet describing a downlink message, it stays awake until the entire packet is received, otherwise, it is free to turn its radio off or go into power-saving mode.
 
     \begin{algorithm}[!htb]
       \SetAlgorithmName{Protocol}{List of Protocols}
@@ -319,11 +320,11 @@ We provide a brief overview of the mining cycle and the functions available to m
 \begin{description}
   \item [Join] A miner joins the network.
 
-    Joining the network is simply adding the miner's address/public key and its 'owner' (the address mining rewards should be paid to) to the blockchain.
+    Joining the network is merely adding the miner's address/public key and its 'owner' (the address mining rewards should be paid to) to the blockchain.
 
   \item [Assert Location] A miner asserts their GPS location to the network.
 
-    Asserting a location indicates that the miner is claiming it is at particular physical coordinates. To assert a location, a dynamic stake is required. The value of the dynamic stake is related to a parabolic curve where the x axis represents the density of the existing network in that area and the y axis is the staking multiplier. Thus for singleton gateways, or very small networks, the staking requirements are high, once the network approaches an ideal density the stake approaches the lowest point and then as the density of the network exceeds the ideal the staking cost increases. This disincentivizes \emph{Alternate Reality Attacks} because asserting a location in an unpopulated region with no way to confirm network presence is very expensive. Similarly constructing a 'mining warehouse', where an extremely high density of miners is deployed also becomes very expensive. Only miners that have asserted a location are allowed to mine. Assertions of location can be retracted and the stake recovered, or they can be confiscated in cases of misbehavior.
+    Asserting a location indicates that the miner is claiming it is at particular physical coordinates. To assert a location, a dynamic stake is required. The value of the dynamic stake is related to a parabolic curve where the x-axis represents the density of the existing network in that area, and the y-axis is the staking multiplier. Thus for singleton gateways or small networks, the staking requirements are high.  Once the network approaches an ideal density, the stake approaches the minimum. Then, as the density of the network exceeds the ideal, staking costs increase. This final increase disincentivizes \emph{Alternate Reality Attacks} because asserting a location in an unpopulated region with no way to confirm network presence is very expensive. Similarly, constructing a `mining warehouse' with an extremely high density of miners becomes prohibitively expensive. Only miners that have asserted a location are allowed to mine. Assertions of location can be retracted and the stake recovered, or they can be confiscated in cases of misbehavior.
 
   \item [Receive Transactions] A miner connects to the peer-to-peer network and listens for clients publishing transactions to the network.
 
@@ -343,7 +344,7 @@ We provide a brief overview of the mining cycle and the functions available to m
 
   \item [Construct Block] The miner takes the current head of the chain and begins to construct a new block.
 
-    The new block contains the hash of the previous block (the current head), the block height (how many blocks are in the chain between this block and the genesis block) and a set of transactions from the mempool. The set of transactions are added to a merkle tree and the root hash is also stored.
+    The new block contains the hash of the previous block (the current head), the block height (how many blocks are in the chain between this block and the genesis block) and a set of transactions from the mempool. The set of transactions are added to a Merkle tree, and the root hash is also stored.
 
   \item [Challenge] A miner begins the \emph{Proof-of-Coverage} process by becoming a Challenger.
 
@@ -351,7 +352,7 @@ We provide a brief overview of the mining cycle and the functions available to m
 
   \item [Receive Radio Challenge] A miner receives a \emph{Proof-of-Coverage} radio transmission.
 
-    The miner receives a radio challenge. The challenge contains the original challenger, and encrypted data. The encrypted data includes a secret, a next block of data, and the time at which to transmit that remaining data.
+    The miner receives a radio challenge. The challenge contains the original challenger and encrypted data. The encrypted data includes a secret, the next block of data, and the time at which to transmit that remaining data.
 
     The miner delivers a signed receipt of the secret, next transmission time, and the perceived signal strength to the challenger. Finally, it transmits the next data block at the indicated time to complete the challenge.
 
@@ -379,9 +380,9 @@ We provide a brief overview of the mining cycle and the functions available to m
     \end{algorithm}
     \FloatBarrier
 
-  \item [Receive Serialization Challenge] A miner will receive serialization challenges from other miners trying to construct a proof.
+  \item [Receive Serialization Challenge] A miner receives serialization challenges from other miners trying to construct a proof.
 
-    The miner will returned a signed envelope including the challenge and the current time. The challenging miner will use a number of these serialization challenges to prove that the final \emph{Proof-of-Coverage} happened at a given time.
+    The miner returns a signed envelope including the challenge and the current time. The challenging miner uses a number of these serialization challenges to prove that the final \emph{Proof-of-Coverage} happened at a given time.
 
     \begin{algorithm}[!htb]
       \SetAlgorithmName{Protocol}{List of Protocols}
@@ -402,7 +403,7 @@ We provide a brief overview of the mining cycle and the functions available to m
 
   \item [Deliver] A miner delivers data from a device to a router on the internet.
 
-    Once a miner has received a packet from an end device, along with the precise timestamp it was received, it looks up the routers for the organization owning that device and offers the packet to one of those routers, for a fee. The router can accept the fee and return a \emph{chit}, or make a counter offer. The router can also reject the offer if it already has a copy of the packet or it is unwilling to pay the offered price. A router may pay for several copies of the packet if it wishes to solve for the position of the end device. See the corresponding Router Receive Data Protocol~[\ref{proto:router.offer.recv}].
+    Once a miner has received a packet from an end device, along with the precise timestamp it was received, it looks up the routers for the organization owning that device and offers the packet to one of those routers, for a fee. The router can accept the fee and return a \emph{chit}, or make a counteroffer. The router can also reject the offer if it already has a copy of the packet or it is unwilling to pay the offered price. A router may pay for several copies of the packet if it wishes to solve for the position of the end device. See the corresponding Router Receive Data Protocol~[\ref{proto:router.offer.recv}].
 
     \begin{algorithm}[!htb]
       \SetAlgorithmName{Protocol}{List of Protocols}
@@ -449,7 +450,7 @@ We provide a brief overview of the mining cycle and the functions available to m
 
   \item [Receive Data] A miner receives data from a router on the internet for delivery to a device.
 
-    In response to an uplink packet offer, the router can also respond with a downlink packet, with an attached \emph{chit} to have the gateway deliver a downlink packet to the end device. The end device will listen for a downlink packet after transmitting.
+    In response to an uplink packet offer, the router can also respond with a downlink packet, with an attached \emph{chit} to have the gateway deliver a downlink packet to the end device. The end device listens for a downlink packet after transmitting.
 
     \begin{algorithm}[!htb]
       \SetAlgorithmName{Protocol}{List of Protocols}
@@ -473,7 +474,7 @@ We provide a brief overview of the mining cycle and the functions available to m
 
   \item [Submit Block] A miner submits a new candidate block to the network containing a \emph{Proof-of-Coverage}.
 
-    Once a miner has completed a block it publishes it to its p2p peers.
+    Once a miner has completed a block, it publishes it to its p2p peers.
 
     \begin{algorithm}[!htb]
       \SetAlgorithmName{Protocol}{List of Protocols}
@@ -489,7 +490,7 @@ We provide a brief overview of the mining cycle and the functions available to m
 
   \item [Receive Block] A miner receives blocks from one or more of its peers.
 
-    If the received block is considered valid and has not seen it before, the miner will gossip it to its peers. Blocks are ranked in terms of quality; how valuable the proof-of-coverage was, how many transactions were in the block, how many uncles were included and how close to the ideal blocktime was the time difference from the previous block. After a settling period each miner chooses its preferred 'best' block and mines the next block on top of that.
+    If the received block is considered valid and has not seen it before, the miner gossips it to its peers. Blocks are ranked by their quality: how valuable the proof-of-coverage was, how many transactions were in the block, how many uncles were included, and how close to the ideal blocktime was the time difference from the previous block. After a settling period, each miner chooses its preferred 'best' block and mines the next block on top of that.
 
     \begin{algorithm}[!htb]
       \SetAlgorithmName{Protocol}{List of Protocols}
@@ -544,7 +545,7 @@ We provide a brief overview of the routing cycle and the functions available to 
 
       This offer includes the MAC address, the hash of the payload, the device's signature of the packet and the proposed delivery fee as described in Protocol~[\ref{proto:miner.data.deliver}]. The router can determine the authenticity of the packet, know if it already has a copy of the packet, and decide on if the delivery price is acceptable.
 
-      A router can accept the offer, decline it or make a counter offer to the miner. When accepting an offer, the router replies with a \emph{chit} that serves as both a payment as well as an anchoring the proof the packet existed at that point in time.
+      A router can accept the offer, decline it or make a counteroffer to the miner. When accepting an offer, the router replies with a \emph{chit} that serves as payment as well as anchoring proof of the packet's existence at that point in time.
 
     \begin{algorithm}[!htb]
       \SetAlgorithmName{Protocol}{List of Protocols}
@@ -577,7 +578,7 @@ We provide a brief overview of the routing cycle and the functions available to 
 
     \item [Receive Data] A router receives a device packet.
 
-      Once an offer from a miner is accepted, it will send the device packet to the router. The router may accept the same packet multiple times from different miners to perform geo-location on the device.
+      Once an offer from a miner is accepted, it sends the device packet to the router. The router may accept the same packet multiple times from different miners to perform geo-location on the device.
 
     \begin{algorithm}[!htb]
       \SetAlgorithmName{Protocol}{List of Protocols}
