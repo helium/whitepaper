@@ -95,13 +95,15 @@ Helium is built around the following key components:
     \item Devices store their private keys in commodity key-storage hardware and their public keys in the blockchain.
     \item Miners join the network by asserting their satellite-derived location, a special type of transaction in the blockchain, and staking a token deposit.
     \item Miners specify the price they're willing to accept for data transport and geolocation, and devices specify the price they are willing to pay. Miners are paid once they prove they have delivered data to the devices' specified internet endpoint.
-    \item Miners can participate in the creation of new blocks in the blockchain, for which they are rewarded newly minted Helium. A miners probability of mining the next block is approximately equal to the amount of wireless network coverage being provided.
+    \item Miners can participate in the creation of new blocks in the blockchain, for which they are rewarded newly minted Helium. A miners' probability of mining the next block is approximately equal to the amount of wireless network coverage being provided.
     \item The blockchain employs \emph{Proof-of-Coverage} to guarantee that miners are correctly representing the amount of wireless network coverage they are creating.
 \end{itemize}
 
+[Figure \ref{fig:system}] shows a visual representation of the Helium network.
+
 \begin{figure*}[ht]
     \begin{center}
-          \includegraphics[width=\textwidth]{diagram1.eps}
+          \includegraphics[width=\textwidth]{schematic.eps}
           \caption{\emph{System Overview}}
           \label{fig:system}
      \end{center}
@@ -116,16 +118,16 @@ We introduce the Helium Decentralized Machine Network (\verb|DMN|). The \verb|DM
 Any user can participate as a Device, a Miner, or a Router.
 
 \begin{itemize}
-    \item \emph{Devices} pay to send encrypted data to and from the internet via the \verb|DMN| using hardware compatible with the Helium wireless protocol, called \emph{WHIP} [\ref{whip}]. In geographies with a sufficient number of miners, devices can pay several miners to geolocate themselves without needing satellite location hardware. Data sent from devices is \emph{fingerprinted}, and that fingerprint stored in the blockchain.
-    \item \emph{Miners} provide wireless network coverage to the network via purpose-built hardware, called gateways [\ref{gateways}], which provide a long-range bridge between WHIP and the internet. Users join the network as miners by purchasing or building a gateway that conforms to the wireless protocol, and \emph{staking} a token deposit proportional to the density of other miners operating in their area [\ref{staking}]. Miners participate in the \emph{Proof-of-Coverage} [\ref{poc}] process to prove that they are continuously providing wireless network coverage that devices can use. Miners join the network with a score [\ref{scores}] that diminishes as blocks pass without valid proofs being submitted. Miners are eligible to mine new blocks in the blockchain, and receive the block reward and transaction fees for any transactions included in the block once mined. As a miners score drops their probability of mining a block and earning the reward diminishes.
+    \item \emph{Devices} pay to send encrypted data to and from the internet via the \verb|DMN| using hardware compatible with the Helium wireless protocol, called \emph{WHIP} [Section \ref{whip}]. In geographies with a sufficient number of miners, devices can pay several miners to geolocate themselves without needing satellite location hardware. Data sent from devices is \emph{fingerprinted}, and that fingerprint stored in the blockchain.
+    \item \emph{Miners} provide wireless network coverage to the network via purpose-built hardware, called gateways [Section \ref{gateways}], which provide a long-range bridge between WHIP and the internet. Users join the network as miners by purchasing or building a gateway that conforms to the wireless protocol, and \emph{staking} a token deposit proportional to the density of other miners operating in their area [Section \ref{staking}]. Miners participate in the \emph{Proof-of-Coverage} [Section \ref{poc}] process to prove that they are continuously providing wireless network coverage that devices can use. Miners join the network with a score [Section \ref{scores}] that diminishes as blocks pass without valid proofs being submitted. Miners are eligible to mine new blocks in the blockchain, and receive the block reward and transaction fees for any transactions included in the block once mined. As a miners score drops their probability of mining a block and earning the reward diminishes.
     \item \emph{Routers} are internet applications that receive encrypted device data from miners. Routers are the termination point for device data encryption. Devices record to the blockchain which routers miners should send their data, such that any gateway on the network can send any devices data to the appropriate router. Routers are responsible for confirming to the network that device data was delivered to the correct destination and that the miner should be paid for their service.
 \end{itemize}
 
 \subsection{Blockchain} \label{blockchain}
 
-The Helium blockchain is a new type of ledger designed to provide a cost-effective way to run application logic core to the operation of a \verb|DMN|, store immutable device data fingerprints, and furnish a transaction system. We will refer to this as the Blockchain, $B$. $B$ is an immutable append-only list of transactions that achieves consensus by verifying \emph{Proofs-of-Coverage} [\ref{poc}]. Users internal and external to the \verb|DMN| have access to $B$, which is a new blockchain network built from scratch specifically for the \verb|DMN|.
+The Helium blockchain is a new type of ledger designed to provide a cost-effective way to run application logic core to the operation of a \verb|DMN|, store immutable device data fingerprints, and furnish a transaction system. We will refer to this as the Blockchain, $B$. $B$ is an immutable append-only list of transactions that achieves consensus by verifying \emph{Proofs-of-Coverage} [Section \ref{poc}]. Users internal and external to the \verb|DMN| have access to $B$, which is a new blockchain network built from scratch specifically for the \verb|DMN|.
 
-$B$ consists of blocks $b_n$, which contain a header and a list of transactions. There are several kinds of transactions, outlined in [\ref{transactions}]. Although the blocks in chain can be linearly ordered, its data structure is actually a directed acyclic graph.
+$B$ consists of blocks $b_n$, which contain a header and a list of transactions. There are several kinds of transactions, outlined in [Section \ref{transactions}]. Although the blocks in chain can be linearly ordered, its data structure is actually a directed acyclic graph.
 
 As in other implementations, $b_n$ consist of a hash of the previous block in the chain, a set of transactions, and a proof. At a given epoch $t$ a block $b_t$ consists of the following:
 
@@ -149,9 +151,9 @@ As in other implementations, $b_n$ consist of a hash of the previous block in th
 
 Due to the fact that miners are only able to add transactions to the block during the early phases of the mining cycle or that the block may be full, the miner holds pending transactions that it has seen, but that do not appear on the main chain, in a temporary storage area, called the \emph{mempool}. The mempool is consulted every time a new block is constructed, and the most valuable transactions for the miner are included in the new block. Because each miner has a different set of incentives, network topology and resources the mempools may not be consistent between any two miners.
 
-As the \emph{Proof-of-Coverage} [\ref{poc}] is valuable to the network, we store as many $b_n$ and their associated proof to $B$ as \emph{Uncle Blocks}, $U_n$. $U_n$, as described in the \emph{Greedy Heaviest-Observed Sub-Tree (GHOST)}~\cite{ghost} paper and implemented in Ethereum~\cite{ethereum}, allow a miner to earn block rewards even if their submitted block did not become the tip of the chain. $U_n$ help the winning chain accumulate `weight' in terms of both the length and quality of the chain, but also including the amount and quality of $U_n$ and their associated proofs. This means that longer chain forks, either mined maliciously or on the smaller side of a partitioned network, will not be selected over a shorter, weightier chain. This also means that valuable proofs of work aren't lost and can be used by the chain to calculate trust.
+As the \emph{Proof-of-Coverage} [Section \ref{poc}] is valuable to the network, we store as many $b_n$ and their associated proof to $B$ as \emph{Uncle Blocks}, $U_n$. $U_n$, as described in the \emph{Greedy Heaviest-Observed Sub-Tree (GHOST)}~\cite{ghost} paper and implemented in Ethereum~\cite{ethereum}, allow a miner to earn block rewards even if their submitted block did not become the tip of the chain. $U_n$ help the winning chain accumulate `weight' in terms of both the length and quality of the chain, but also including the amount and quality of $U_n$ and their associated proofs. This means that longer chain forks, either mined maliciously or on the smaller side of a partitioned network, will not be selected over a shorter, weightier chain. This also means that valuable proofs of work aren't lost and can be used by the chain to calculate trust.
 
-Blocks are given a \emph{score} that is used as part of the consensus protocol to determine which block should be considered the tip of the chain. The score is based on the \emph{Proof-of-Coverage} and the score of $U_n$ contained within the submitted block. The consensus protocol is outlined in detail in \emph{Section \ref{consensus}}.
+Blocks are given a \emph{score} that is used as part of the consensus protocol to determine which block should be considered the tip of the chain. The score is based on the \emph{Proof-of-Coverage} and the score of $U_n$ contained within the submitted block. The consensus protocol is outlined in detail in [Section \ref{consensus}].
 
 %\begin{figure*}[h]
 %    \begin{center}
@@ -324,11 +326,11 @@ We provide a brief overview of the mining cycle and the functions available to m
 
   \item [Assert Location] A miner asserts their GPS location to the network.
 
-    Asserting a location indicates that the miner is claiming it is at particular physical coordinates. To assert a location, a dynamic stake is required. The value of the dynamic stake is related to a parabolic curve where the x axis represents the density of the existing network in that area and the y axis is the staking multiplier. Thus for singleton gateways, or very small networks, the staking requirements are high, once the network approaches an ideal density the stake approaches the lowest point and then as the density of the network exceeds the ideal the staking cost increases. This disincentivizes \emph{Alternate Reality Attacks} because asserting a location in a unpopulated region with no way to confirm network presence is very expensive. Similarly constructing a 'mining warehouse', where an extremely high density of miners is deployed also becomes very expensive. Only miners that have asserted a location are allowed to mine. Assertions of location can be retracted and the stake recovered, or they can be confiscated in cases of misbehavior.
+    Asserting a location indicates that the miner is claiming it is at particular physical coordinates. To assert a location, a dynamic stake is required. The value of the dynamic stake is related to a parabolic curve where the x axis represents the density of the existing network in that area and the y axis is the staking multiplier. Thus for singleton gateways, or very small networks, the staking requirements are high, once the network approaches an ideal density the stake approaches the lowest point and then as the density of the network exceeds the ideal the staking cost increases. This disincentivizes \emph{Alternate Reality Attacks} because asserting a location in an unpopulated region with no way to confirm network presence is very expensive. Similarly constructing a 'mining warehouse', where an extremely high density of miners is deployed also becomes very expensive. Only miners that have asserted a location are allowed to mine. Assertions of location can be retracted and the stake recovered, or they can be confiscated in cases of misbehavior.
 
   \item [Receive Transactions] A miner connects to the peer-to-peer network and listens for clients publishing transactions to the network.
 
-    Transactions contain fees that the miner can claim if it publishes the winning block [\ref{fees}]. The miner can also capture transactions from blocks published to the peer-to-peer network that did not win as described in Protocol~[\ref{proto:miner.block.recv}].
+    Transactions contain fees that the miner can claim if it publishes the winning block [Section \ref{fees}]. The miner can also capture transactions from blocks published to the peer-to-peer network that did not win as described in Protocol~[\ref{proto:miner.block.recv}].
 
     \begin{algorithm}[!htb]
       \SetAlgorithmName{Protocol}{List of Protocols}
@@ -348,7 +350,7 @@ We provide a brief overview of the mining cycle and the functions available to m
 
   \item [Challenge] A miner begins the \emph{Proof-of-Coverage} process by becoming a Challenger.
 
-    The miner uses their public key to sign a digest of their partially completed block to obtain some verifiable randomness. This randomness is used to choose the Target. Once the Target is selected the proof of coverage is constructed [\ref{poc}]
+    The miner uses their public key to sign a digest of their partially completed block to obtain some verifiable randomness. This randomness is used to choose the Target. Once the Target is selected the proof of coverage is constructed [Section \ref{poc}]
 
   \item [Receive Radio Challenge] A miner receives a \emph{Proof-of-Coverage} radio transmission.
 
@@ -403,7 +405,7 @@ We provide a brief overview of the mining cycle and the functions available to m
 
   \item [Deliver] A miner delivers data from a device to a router on the internet.
 
-    Once a miner has received a packet from an end device, along with the precise timestamp it was received, it looks up the routers for the organization owning that device and offers the packet to one of those routers, for a fee. The router can accept the fee and return a \emph{chit}, make a counter offer. The router can also reject the offer if it already has a copy of the packet or it is unwilling to pay the offered price. A router may pay for several copies of the packet if it wishes to solve for the position of the end device. See the corresponding Router Receive Data Protocol~[\ref{proto:router.offer.recv}].
+    Once a miner has received a packet from an end device, along with the precise timestamp it was received, it looks up the routers for the organization owning that device and offers the packet to one of those routers, for a fee. The router can accept the fee and return a \emph{chit}, or make a counter offer. The router can also reject the offer if it already has a copy of the packet or it is unwilling to pay the offered price. A router may pay for several copies of the packet if it wishes to solve for the position of the end device. See the corresponding Router Receive Data Protocol~[\ref{proto:router.offer.recv}].
 
     \begin{algorithm}[!htb]
       \SetAlgorithmName{Protocol}{List of Protocols}
@@ -628,7 +630,7 @@ In addition to the blockchain network, Helium is a \emph{physical} wireless netw
 \begin{description}
         \item [Wireless Protocol] The wireless network uses a new open wireless protocol, called \emph{WHIP}. WHIP is a long-range, low-power, wireless network protocol suitable for use with commodity open-standards hardware. WHIP compatible hardware can communicate over many square miles in dense urban environments or hundreds of square miles in rural settings. WHIP compatible hardware can also last for several years using standard batteries. WHIP uses strong public key cryptography and authentication occurs using the Helium blockchain, with end-to-end encryption.
 
-        \item [Gateways] Gateways are physical network devices that provide wide-area wireless coverage and participate in the blockchain network. Gateways transmit data back and forth between routers on the internet and devices while generating \emph{Proofs-of-Coverage} for the blockchain network [\ref{poc}]. Gateways are manufactured using commodity open-standards components with no proprietary hardware. Gateways can cooperate and geolocate devices using the wireless network without any additional required hardware. Each Gateway can support thousands of connected devices, and provide coverage over many square miles. Miners operating gateways specify the price they are willing to accept for transport and geolocation services for devices.
+        \item [Gateways] Gateways are physical network devices that provide wide-area wireless coverage and participate in the blockchain network. Gateways transmit data back and forth between routers on the internet and devices while generating \emph{Proofs-of-Coverage} for the blockchain network [Section \ref{poc}]. Gateways are manufactured using commodity open-standards components with no proprietary hardware. Gateways can cooperate and geolocate devices using the wireless network without any additional required hardware. Each Gateway can support thousands of connected devices, and provide coverage over many square miles. Miners operating gateways specify the price they are willing to accept for transport and geolocation services for devices.
 
         \item [Devices] Devices exist in the form of hardware products that contain a WHIP-compatible radio transceiver and communicate with gateways on the wireless network. WHIP is designed to facilitate low power data transmission and reception, so typically devices would exist in the form of battery-powered sensors that can live for several years using standard batteries (although mains-powered devices also work quite well). Devices can exist in a variety of forms, depending on the product or use case, and a variety of transmission and reception strategies can be employed to optimize for transmission/reception frequency or battery life. Device manufacturers should use hardware-based key storage which can securely generate, store, and authenticate public/private key pairs without leaking the private key.
 \end{description}
@@ -659,11 +661,11 @@ The full WHIP specification will be made available by the Helium Alliance.
 
 \subsection{Gateways}\label{gateways}
 
-Gateways are physical network devices operated by miners that create wireless RF coverage over wide areas. They transmit data back and forth between routers on the Internet and devices on the network, process blockchain transactions, and create \emph{Proofs-of-Coverage} for the blockchain network [\ref{poc}]. Gateways can connect to the Internet using any TCP/IP capable backhaul, such as Ethernet, WiFi or Cellular. Each gateway contains a radio frontend chip capable of listening to several MHz of radio spectrum at a time, and is able to hear all network traffic transmitted within that spectrum. In this configuration modulation and demodulation is done in software, which is typically referred to as a \emph{Software Defined Radio (SDR)}. The benefit of this structure is that gateways can hear any device traffic transmitted within the frequency range, and no synchronization between the gateway and device needs to occur. This allows devices to remain inexpensive and relatively simple, and reduces wireless protocol overhead. If a miner wishes to minimize their gateway hardware costs, synchronized frequency hopping schemes are also permitted within the specification as a cheaper alternative to a more expensive radio frontend.
+Gateways are physical network devices operated by miners that create wireless RF coverage over wide areas. They transmit data back and forth between routers on the Internet and devices on the network, process blockchain transactions, and create \emph{Proofs-of-Coverage} for the blockchain network [Section \ref{poc}]. Gateways can connect to the Internet using any TCP/IP capable backhaul, such as Ethernet, WiFi or Cellular. Each gateway contains a radio frontend chip capable of listening to several MHz of radio spectrum at a time, and is able to hear all network traffic transmitted within that spectrum. In this configuration modulation and demodulation is done in software, which is typically referred to as a \emph{Software Defined Radio (SDR)}. The benefit of this structure is that gateways can hear any device traffic transmitted within the frequency range, and no synchronization between the gateway and device needs to occur. This allows devices to remain inexpensive and relatively simple, and reduces wireless protocol overhead. If a miner wishes to minimize their gateway hardware costs, synchronized frequency hopping schemes are also permitted within the specification as a cheaper alternative to a more expensive radio frontend.
 
-Gateways require a GPS or GNSS transceiver to obtain accurate position and date/time information. This satellite-derived location will be used in conjunction with other techniques to verify that a gateway is in fact providing wireless network coverage in the location it claims. Because satellite location messages are easy to fabricate and do not necessarily prove that wireless RF coverage is being created, multiple mechanisms are required to validate this work as described in more detail in [\ref{poc}].
+Gateways require a GPS or GNSS transceiver to obtain accurate position and date/time information. This satellite-derived location will be used in conjunction with other techniques to verify that a gateway is in fact providing wireless network coverage in the location it claims. Because satellite location messages are easy to fabricate and do not necessarily prove that wireless RF coverage is being created, multiple mechanisms are required to validate this work as described in more detail in [Section \ref{poc}].
 
-Satellite location information is also correlated with packet arrival events to provide \emph{Time Differential of Arrival (TDoA)} location for devices if multiple gateways observe the same packet. This allows devices to physically locate themselves without requiring a GPS/GNSS transceiver, and therefore provide accurate location data at a fraction of the battery life and cost of competing methods. This method is described in detail in [\ref{geolocation}].
+Satellite location information is also correlated with packet arrival events to provide \emph{Time Differential of Arrival (TDoA)} location for devices if multiple gateways observe the same packet. This allows devices to physically locate themselves without requiring a GPS/GNSS transceiver, and therefore provide accurate location data at a fraction of the battery life and cost of competing methods. This method is described in detail in [Section \ref{geolocation}].
 
 Helium Systems Inc.\ will make both a complete open-source reference design and a finished product available for immediate participation in the network.
 
@@ -677,7 +679,7 @@ Each device will use the Microchip ECC508A or equivalent hardware-based key stor
 
 \subsection{Routers}
 
-Routers are internet-deployed applications that receive packets from devices via gateways and route them to appropriate destinations such as an HTTP or MQTT endpoint. Routers also act as \emph{full nodes} for the blockchain network [\ref{full-nodes}].
+Routers are internet-deployed applications that receive packets from devices via gateways and route them to appropriate destinations such as an HTTP or MQTT endpoint. Routers also act as \emph{full nodes} for the blockchain network [Section \ref{full-nodes}].
 
 There are several functions that routers serve on the network, which include:
 
@@ -687,7 +689,7 @@ There are several functions that routers serve on the network, which include:
     \item Delivering downlink messages, including OTA updates, to devices via gateways
     \item Providing delivery confirmations to ensure transport transactions are honest
     \item Providing authentication and routing mechanisms into third-party cloud services such as Amazon AWS or Microsoft Azure
-    \item Storing and making available a fully copy of the blockchain ledger
+    \item Storing and making available a full copy of the blockchain ledger
 \end{itemize}
 
 When a gateway receives a data packet from n device on the network, it will query the blockchain to determine which router to use given the devices network address. Anyone anywhere is free to host their own router and define their devices traffic to be delivered there by any gateway on the network. This allows users of the network to essentially create VPN-like functionality whereby encrypted data is delivered only to a router (or set of routers) that they specify and can optionally host themselves.
@@ -740,7 +742,7 @@ These computation-heavy proofs are, however, not otherwise \emph{useful} to the 
 
 The proofs used in Helium must be resistant to \emph{Sybil Attacks} in which dishonest miners create pseudonymous identities and use them to subvert the network and gain access to block rewards to which they should not be entitled. This is a particularly difficult attack vector to manage in a physical network like Helium. We must also be resistant to a new attack vector: \emph{Alternate Reality Attacks} exist where a dishonest group of miners are able to simulate that wireless network coverage exists in the physical world when it in fact does not. An example of this would be running the mining software on a set of virtual machines and simulating GPS coordinates and RF networking.
 
-We later propose a consensus protocol [\ref{consensus}] that uses \emph{Proof-of-Coverage} to both secure the blockchain and provide an extremely useful service to the network; providing wireless network coverage that devices can use to send data to and from the internet.
+We later propose a consensus protocol [Section \ref{consensus}] that uses \emph{Proof-of-Coverage} to both secure the blockchain and provide an extremely useful service to the network; providing wireless network coverage that devices can use to send data to and from the internet.
 
 \subsection{Inspiration}
 
@@ -754,11 +756,11 @@ With \verb|PoC| we aim to solve for the following:
     \item Our goal is to correctly identify which reality is honest when there is a conflict
 \end{itemize}
 
-\emph{Proof-of-Coverage} is inspired by the \emph{Guided Tour Protocol (GTP)} which devises a system for denial of service prevention by requiring a client $c$ to make a request to a variety of ``tour guide'' computers $G_n$ in order to gain access to a server $s$. The tour guides must be visited in a specific order and a hash of data exchanged which reveals the location of the next $G_n$ in order. Only after every $G_n$ has been visited can $c$ gain access to $s$.
+\emph{Proof-of-Coverage} is inspired by the \emph{Guided Tour Protocol (GTP)}~\cite{gtp} which devises a system for denial of service prevention by requiring a client $c$ to make a request to a variety of ``tour guide'' computers $G_n$ in order to gain access to a server $s$. The tour guides must be visited in a specific order and a hash of data exchanged which reveals the location of the next $G_n$ in order. Only after every $G_n$ has been visited can $c$ gain access to $s$.
 
 Once $c$ gets to the last stop of the tour, it submits evidence of the first and last stop to $s$ who is able to verify that the first and last stops of the tour are correct without needing to contact $G_n$, and that $c$ could only know the first and last stops if it had completed the tour correctly.
 
-While an extremely clever and innovative system, GTP is not directly suitable as a proof in our wireless network as radio frequency (RF) networking has limited range and therefore cannot communicate with peers anywhere on the network. We aim to construct a proof loosely based on the ideas presented in GTP, but applicable to our protocol. We refer the interested reader to~\cite{gtp} for a detailed articulation of the GTP protocol.
+While an extremely clever and innovative system, GTP is not directly suitable as a proof in our wireless network as radio frequency (RF) networking has limited range and therefore cannot communicate with peers anywhere on the network. We aim to construct a proof loosely based on the ideas presented in GTP, but applicable to our protocol.
 
 We combine \emph{Proof-of-Coverage} with \emph{Proof-of-Serialization}---a proof that allows miners on the network to achieve cryptographic time consensus among decentralized clients. We aim to achieve rough time synchronization in a secure way that does not depend on any particular time server, and in such a way that, if a time server does misbehave, clients end up with cryptographic proof of that behavior.
 
@@ -773,31 +775,29 @@ We aim to construct a proof that takes advantage of the following characteristic
     \item RF travels at the speed of light with (effectively) no latency
 \end{enumerate}
 
-Our goal is to verify whether miners in a physical region are acting honestly and creating wireless network coverage compatible with the Helium wireless protocol (WHIP). To do this, a challenger $C$ deterministically constructs a multi-layer data packet $O$ which begins at an initial target, $T$, and is broadcast wirelessly to a set of sequential targets, $T_n$, each of which are only able to decrypt the outer-most layer of $O$ if they were the intended recipient. Each target acknowledges receipt, $K_S$, back to $C$, removes their layer of $O$, $O$\textsubscript{l-n}, and broadcasts it for receipt by the next target. Essentially, an ``envelope of envelopes'' only openable by the intended recipient.
-
-\todo{WE SHOULD UPDATE THIS IMAGE TO BETTER REPRESENT THE FLOW OF T1-\textgreater T-\textgreater TL THAT IS DISCUSSED LATER}
+Our goal is to verify whether miners in a physical region are acting honestly and creating wireless network coverage compatible with the Helium wireless protocol (WHIP). To do this, a challenger $C$ deterministically constructs a multi-layer data packet $O$ which begins at an initial target, $T_1$, and is broadcast wirelessly to a set of sequential targets, $T_n$, each of which are only able to decrypt the outer-most layer of $O$ if they were the intended recipient. Each target acknowledges receipt, $K_S$, back to $C$, removes their layer of $O$, $O$\textsubscript{l-n}, and broadcasts it for receipt by the next target. Essentially, an ``envelope of envelopes'' only openable by the intended recipient.
 
 \begin{figure}[H]
     \begin{center}
-          \includegraphics[width=\columnwidth]{diagram2.eps}
+          \includegraphics[width=\columnwidth]{deconstruction.eps}
           \caption{\emph{Multi-Layer Data Packet Deconstruction}}
-          \label{fig:poc-construction}
+          \label{fig:poc-deconstruction}
      \end{center}
 \end{figure}
 
-\textbf{Selecting the Initial Target}. We aim to deterministically locate an initial target, $T$, for the challenger, $C$. $T$ does not need to be geographically proximate to $C$. To locate $T$, $C$ uses a \emph{consistent hash ring} $\omega$, of potential miners. $\omega$ only contains miners eligible as targets as described in [\ref{mining}], and miners are allocated portions of $\omega$ that are inversely proportional to their score, increasing the probability of potentially dishonest miners being targeted. We refer the interested reader to \cite{hashing} for further reading on consistent hashing techniques. Given that a miners score is diminishing linearly over time [\ref{scores}], it is necessary to create this inverse relationship to give low-scoring miners an opportunity to participate in the process and increase their score. We seed verifiable randomness, $\eta$, into the selection process using a signed digest of the partial block from $C$ - thus, it is necessary for $C$ to have begun forming a new candidate block for the blockchain before the \emph{Proof-of-Coverage} process can begin [\ref{mining}].
+\textbf{Selecting the Initial Target}. We aim to deterministically locate a geographic reference target, $T$, for the challenger, $C$. $T$ does not need to be geographically proximate to $C$. To locate $T$, $C$ uses a \emph{consistent hash ring} $\omega$, of potential miners. $\omega$ only contains miners eligible as targets as described in [Section \ref{mining}], and miners are allocated portions of $\omega$ that are inversely proportional to their score, increasing the probability of potentially dishonest miners being targeted. We refer the interested reader to \cite{hashing} for further reading on consistent hashing techniques. Given that a miners score is diminishing linearly over time [Section \ref{scores}], it is necessary to create this inverse relationship to give low-scoring miners an opportunity to participate in the process and increase their score. This diminishing score also incentivizes all the participants to send receipts to the challenger and broadcast the remainder of $O$. We seed verifiable randomness, $\eta$, into the selection process using a signed digest of the partial block from $C$ - thus, it is necessary for $C$ to have begun forming a new candidate block for the blockchain before the \emph{Proof-of-Coverage} process can begin [Section \ref{mining}].
 
-\textbf{Constructing the multi-layer challenge}. Once $T$ has been selected, $C$ must construct a multi-layer challenge, $O$. $O$ is a data packet broadcast by $T$ over the wireless network and received by geographcially proximate targets $T_n$. Geographically proximate is defined as within a radius of $T$, a network value $T$\textsubscript{radius}. Each layer of $O$, $O_l$, consists of a three-tuple of $E\left(S, \psi, R\right)$, where $E$ is a secure public key encryption function, $S$ is a secret value, $\psi$ is the time to broadcast the next layer of the challenge and $R$ is the remainder of $O$ consisting of recursive three-tuples. The maximimum number of $O_l$ is bounded by a network value, $O$\textsubscript{max}.
+\textbf{Constructing the multi-layer challenge}. Once $T$ has been selected, $C$ must construct a multi-layer challenge, $O$. $O$ is a data packet broadcast over the wireless network and received by geographically proximate targets $T_n$. Geographically proximate is defined as within a radius of $T$, a network value $T$\textsubscript{radius}. Each layer of $O$, $O_l$, consists of a three-tuple of $E\left(S, \psi, R\right)$, where $E$ is a secure public key encryption function, $S$ is a secret value, $\psi$ is the time to broadcast the next layer of the challenge and $R$ is the remainder of $O$ consisting of recursive three-tuples. The maximum number of $O_l$ is bounded by a network value, $O$\textsubscript{max}. 
 
 The construction logic of $O$ is as follows:
 
 \begin{enumerate}
   \item A set of candidates, $T_n$, are constructed such that all members of $T_n$ are within a contiguous radio network that also contains $T$
   \item Two targets, $T_1$ and $T_L$, are selected by finding the highest scoring targets in $T_n$ furthest from $T$
-  \item A weighted graph is constructed from $T_n$ such that members of $T_n$ in radio range of each other are connected by an edge weighted by the value of \(1 - \Big({score(T_a) - score(T_b)}\Big)\)
+  \item A weighted graph, $T_g$, is constructed from $T_n$ such that members of $T_g$ in radio range of each other are connected by an edge weighted by the value of \(1 - \Big({score(T_a) - score(T_b)}\Big)\)
   \item The shortest path between $T_1$ to $T$ to $T_L$ is computed using Dijkstra's algorithm\cite{dijkstra}
   \item A layer $O_l$ is created and added to $O$, and $S$ is encrypted with the public key of $T_1$ retrieved from the blockchain  
-  \item This process repeats with additional layers added to $O$ until all $T_n$ have a layer $O_l$ included in $O$
+  \item This process repeats with additional layers added to $O$ until all $T_g$ have a layer $O_l$ included in $O$
 \end{enumerate}
 
 The resulting $O$ can be visually represented as the following:
@@ -806,36 +806,36 @@ The resulting $O$ can be visually represented as the following:
 
 \begin{figure}[H]
     \begin{center}
-          \includegraphics[width=\columnwidth]{diagram3.eps}
+          \includegraphics[width=\columnwidth]{o_construction.eps}
           \caption{Construction of $O$}
-          \label{fig:poc-o}
+          \label{fig:poc-o_construction}
      \end{center}
 \end{figure}
 
-\textbf{Creating the Proof}. Once $O$ has been constructed and delivered to $T$, $T$ immediately broadcasts it. The Helium wireless protocol is not a point-to-point system, so several miners within proximity of $T$ will hear $O$. As described prior, each layer $O_l$ of $O$ contains the three-tuple ${E\left(S, \psi, R\right)}$ where $E$ is a secure public key encryption function, $S$ is a secret value, $\psi$ is a time at which to transmit the next layer of the packet and $R$ is the remainder of $O$ consisting of recursive three-tuples. In this specific example, only the specific target $T_1$ will be able to decrypt $E$ and send a valid receipt back to the challenger, $C$.
+\textbf{Creating the Proof}. Once $O$ has been constructed, it is delivered to $T_1$ via the internet peer-to-peer network and immediately broadcast via the wireless network. The Helium wireless protocol is not a point-to-point system, so several miners within proximity of $T_1$ will hear $O$. As described prior, each layer $O_l$ of $O$ contains the three-tuple ${E\left(S, \psi, R\right)}$ where $E$ is a secure public key encryption function, $S$ is a secret value, $\psi$ is a time at which to transmit the next layer of the packet and $R$ is the remainder of $O$ consisting of recursive three-tuples. In this example, only the specific target $T$ will be able to decrypt $E$ and send a valid receipt back to the challenger, $C$.
 
 We describe the approximate flow of \emph{Proof-of-Coverage} creation as follows:
 
 \begin{enumerate}
-  \item $T$ receives $O$ from $C$ via the peer-to-peer internet network and immediately broadcasts it via the wireless network
-  \item $T_1$ hears $O$ and attempts to decrypt the value of $E$ by using its public key $pk:\ E_{pk}\left(S, \psi, R\right)$
-  \item $T_1$ records both the time of arrival $\beta$ and the signal strength $\upsilon$ of $O$
-  \item If successful, $T_1$ then creates signed receipt $K_S$, ${K_S = \left(S || \beta || \upsilon\right)}$ signed by the private key of $T_1$
-  \item $T_1$ submits $K_S$ to $C$ via the peer-to-peer internet network, removes the outer most layer, and wirelessly broadcasts the remainder $O$
-  \item These steps repeat for $T_2$..$T_L$, with $T_L$ being the last target constructed by $C$
+  \item $T_1$ receives $O$ from $C$ via the peer-to-peer internet network and immediately broadcasts it via the wireless network
+  \item $T$ hears $O$ and attempts to decrypt the value of $E$ by using its public key $pk:\ E_{pk}\left(S, \psi, R\right)$
+  \item $T$ records both the time of arrival $\beta$ and the signal strength $\upsilon$ of $O$
+  \item If successful, $T$ then creates signed receipt $K_S$, ${K_S = \left(S || \beta || \upsilon\right)}$ signed by the private key of $T$
+  \item $T$ submits $K_S$ to $C$ via the peer-to-peer internet network, removes the outer most layer, and wirelessly broadcasts the remainder $O$
+  \item These steps repeat for $T_1$..$T$..$T_L$, with $T_L$ being the last target in the graph
 \end{enumerate}
 
-$C$ expects to hear responses from $T_n$ within a time threshold $\lambda$, otherwise it considers the \emph{Proof-of-Coverage} to have concluded. Because $C$ is the only party with complete knowledge of $O$, upper bounds of the values for $\beta$ and $\upsilon$ are assigned by $C$ which are used to verify that each layer of $O$ was transmitted approximately where and when it was expected. The upper bound for $\beta$ ls limited by the speed of light $\tau$ between $T_n$ and $T_n-1$. Thus we know that, subject to some slight delays from reflection or multipath, the packet should not arrive at $T_n$ later than $\tau$ multiplied by the geographical distance $D$ plus some small episilon value, $\upsilon = \tau \times \Big(D + \epsilon\Big)$. For $\upsilon$, because of the inverse-square law, we can calculate the maximum RSSI possible for a packet transmitted, $\mu$, from $T_n-1$ to $T_n$ as $\mu = \frac{1}{D^2}$. Gateways that are closer than expected, or which are transmitting at a higher power to mask their location disparity, are unlikely to get $\mu$ correct, given that they do not know who the next layer of $O$ is addressed to.
+$C$ expects to hear responses from $T_g$ within a time threshold $\lambda$, otherwise it considers the \emph{Proof-of-Coverage} to have concluded. Because $C$ is the only party with complete knowledge of $O$, upper bounds of the values for $\beta$ and $\upsilon$ are assigned by $C$ which are used to verify that each layer of $O$ was transmitted approximately where and when it was expected. The upper bound for $\beta$ ls limited by the speed of light $\tau$ between $T_n$ and $T_n-1$. Thus we know that, subject to some slight delays from reflection or multipath, the packet should not arrive at $T_g$ later than $\tau$ multiplied by the geographical distance $D$ plus some small episilon value, $\upsilon = \tau \times \Big(D + \epsilon\Big)$. For $\upsilon$, because of the inverse-square law, we can calculate the maximum RSSI possible for a packet transmitted, $\mu$, from $T_g-1$ to $T_g$ as $\mu = \frac{1}{D^2}$. Gateways that are closer than expected, or which are transmitting at a higher power to mask their location disparity, are unlikely to get $\mu$ correct, given that they do not know who the next layer of $O$ is addressed to.
 
-Once $T_L$ has delivered receipt to $C$, or $\lambda$ has elapsed, the \emph{Proof-of-Coverage} is completed. The collection of signed receipts, $K_S$, constitute the \emph{Proof-of-Coverage} that $C$ will include when attempting to mine the next block in the blockchain [\ref{mining}].
+Once $T_L$ has delivered receipt to $C$, or $\lambda$ has elapsed, the \emph{Proof-of-Coverage} is completed. The collection of signed receipts, $K_S$, constitute the \emph{Proof-of-Coverage} that $C$ will include when attempting to mine the next block in the blockchain [Section \ref{mining}].
 
 \todo{THIS DIAGRAM SHOULD ALSO BE UPDATED TO BETTER REPRESENT THE T1 -\textgreater T -\textgreater TL TYPE OF FLOW. ALSO THE SIGNED RECEIPTS ARE NOW IN THE FORM OF ${K_S = \left(S || \beta || \upsilon\right)}$}
 
 \begin{figure}[H]
     \begin{center}
-          \includegraphics[width=\columnwidth]{diagram4.eps}
+          \includegraphics[width=\columnwidth]{o_propagation.eps}
           \caption{\emph{Proof-of-Coverage} flow}
-          \label{fig:poc-flow}
+          \label{fig:poc-propogation}
      \end{center}
 \end{figure}
 
@@ -914,10 +914,9 @@ Substituting the values for $\alpha_h$ and $\epsilon_h$, we get the following re
 
 \emph{Figure \ref{fig:score-graph}} shows a snapshot of a random subset of the network at any blockchain height \textit{h}. The miners represent random locations with an illustrated score, while the edges are calculated using Dijkstra's algorithm\cite{dijkstra}.
 
-\todo{PETE CAN WE MAKE THESE ANY EASIER TO READ? NOT A HUGE DEAL}
 \begin{figure}[H]
     \begin{center}
-          \includegraphics[width=0.8\columnwidth]{graph.eps}
+          \includegraphics[width=0.8\columnwidth]{chart.eps}
           \caption{\emph{Snapshot of a random subset of the initial network}}
           \label{fig:score-graph}
      \end{center}
@@ -925,10 +924,9 @@ Substituting the values for $\alpha_h$ and $\epsilon_h$, we get the following re
 
 After 10,000 iterations the network appears as represented in \emph{Figure \ref{fig:score-graph10000}}.
 
-\todo{PETE CAN WE MAKE THESE ANY EASIER TO READ? NOT A HUGE DEAL}
 \begin{figure}[H]
     \begin{center}
-          \includegraphics[width=0.8\columnwidth]{graph10000.eps}
+          \includegraphics[width=0.8\columnwidth]{chart1000.eps}
           \caption{\emph{Snapshot of a random subset of the network after 10000 iterations}}
           \label{fig:score-graph10000}
      \end{center}
@@ -936,7 +934,7 @@ After 10,000 iterations the network appears as represented in \emph{Figure \ref{
 
 The goal of this system is to ensure the scoring of miners considers that some miners may attempt to act dishonestly. However, because the calculated edge-weights (via Dijkstra's algorithm) and the target selection mechanism ensure that we only boost the score of a miner when it is being verified by other high scoring miners, we believe that the system will favor legitimate miners and deter dishonest ones.
 
-\textbf{Verifying the Proof}. Once $T_L$ has delivered $K_S$, or $\lambda$ has elapsed, the \emph{Proof-of-Coverage} is considered complete. When $C$ attempts to mine the next block, all receipts $K_S$ from $T_1$...$T_L$ are included in the candidate block, $B_C$, published to the blockchain network [\ref{mining}]. As all the steps originally completed by $C$ are deterministic in nature with verifiable and recreatable randomness, it is simple for a verifying miners, $V$, to recreate the original steps and verify that the proof is legitimate.
+\textbf{Verifying the Proof}. Once $T_L$ has delivered $K_S$, or $\lambda$ has elapsed, the \emph{Proof-of-Coverage} is considered complete. When $C$ attempts to mine the next block, all receipts $K_S$ from $T_1$...$T_L$ are included in the candidate block, $B_C$, published to the blockchain network [Section \ref{mining}]. As all the steps originally completed by $C$ are deterministic in nature with verifiable and recreatable randomness, it is simple for a verifying miners, $V$, to recreate the original steps and verify that the proof is legitimate.
 
 Verifying miners who see $B_C$ are able to verify the \emph{Proof-of-Coverage} prior to considering the block by recreating the following steps:
 
@@ -945,11 +943,11 @@ Verifying miners who see $B_C$ are able to verify the \emph{Proof-of-Coverage} p
         \item Because $V$ is able to now see $B_C$, the random seed $\eta$ can be verified to have been created by the private key of $C$
         \item $V$ then selects $T$ from $\omega$, as seeding with $\eta$ will result in the same target selection
         \item The set of candidate $T_n$ are reconstructed from which $T_1$ and $T_L$ are determined
-        \item Dijkstra's algorithm is used to reconstruct the walk of $T_n$ from $T_1$ to $T_L$
-        \item The $K_S$ receipts contained in $B_C$ are verified to have been signed by the private keys of $T_1$..$T_L$
+        \item Dijkstra's algorithm is used to reconstruct the graph $T_g$
+        \item The $K_S$ receipts contained in $B_C$ are verified to have been signed by the private keys of $T_1$..$T$..$T_L$
 \end{enumerate}
 
-Assuming these steps are completed successfully, the \emph{Proof-of-Coverage} is verified and $B_C$ can be considered for inclusion in the blockchain [\ref{consensus}].
+Assuming these steps are completed successfully, the \emph{Proof-of-Coverage} is verified and $B_C$ can be considered for inclusion in the blockchain [Section \ref{consensus}].
 
 \subsection{Constructing \emph{Proof-of-Serialization}}
 
@@ -979,7 +977,13 @@ Because $M$ can not trust $M_1$ it will ask for another time from $M_2$:
 
 With only two servers, $M$ can end up with proof that something is wrong, but no idea what the correct time is. But with half a dozen or more independent servers, $M$ will end up with chain of proof of any server's misbehaviour, signed by several others, and enough accurate replies to establish what the correct time is, $T_t$.
 
-\todo{PETE - WORTH HAVING A DIAGRAM HERE?}
+\begin{figure}[H]
+    \begin{center}
+          \includegraphics[width=\columnwidth]{serialization.eps}
+          \caption{\emph{Creating Proof-of-Serialization}}
+          \label{fig:serialization}
+     \end{center}
+\end{figure}
 
 \textbf{Verifying the Proof}. If we assume that the times from $M_1$ and $M_2$ are significantly different, and the time from $M_2$ is before $M_1$, then $M$ has proof of misbehaviour. The reply from $M_2$ implicitly shows that it was created later because of the way that $M$ constructed the nonce. If the time from $M_2$ is after, then $M$ can reverse the roles of $M_1$ and $M_2$ and repeat the process to obtain, assuming steady clocks, a misordered proof as in the other case.
 
@@ -995,7 +999,13 @@ To verify the correct time, it is necessary for $M$ to repeat the time synchroni
     \item $T_n$ can then be confirmed to be $T_t$, the correct time
 \end{enumerate}
 
-\todo{PETE - WORTH HAVING A DIAGRAM HERE?}
+\begin{figure}[H]
+    \begin{center}
+          \includegraphics[width=\columnwidth]{verify_serialization.eps}
+          \caption{\emph{Verifying Proof-of-Serialization}}
+          \label{fig:verify-serialization}
+     \end{center}
+\end{figure}
 
 \textbf{Utilizing the Proven Time}. Once the correct time $T_t$ has been determined via \emph{Proof-of-Serialization}, it is used by $M$ and included during block construction as described in [Section \ref{blockchain}]. The randomness $\eta$ used to compute $O$ and thus obtain the \emph{Proof-of-Coverage} is tied to the previous block, which contains $T_t$. This allows us to prove, with relative certainty, that some piece of data $D$ was created between the time of the previous block $b_t$ and $T_t$. $D$ in this case is the \emph{Proof-of-Coverage}. Thus we know that $D$ must have been constructed between $b_t$ and $T_t$. This ensures that the \emph{Proof-of-Coverage} cannot be pre-computed and that that blocks in the blockchain must have a minimum spacing in time; the \emph{blocktime}. Blocks which do not have at least \emph{blocktime} distance in time from their parent block are considered invalid.
 
@@ -1009,7 +1019,7 @@ Many current generation blockchains rely on a computationally difficult \emph{Pr
 
 Related to the power problem is the mining pool problem. Many blockchains have mining pools where users band together to, in parallel, mine a single block; listing the pool's address as the party to get paid. The pool then shares the block reward with the members of the pool. This ends up defeating many of the advantages of decentralization as both Bitcoin and Ethereum have come to be dominated by less than 10 mining pools each. These large pools effectively prevent independent parties from mining blocks on their own. This means that the consensus protocol for these blockchains is effectively controlled by a very small number of mining pools and risks becoming further centralized.
 
-More recently there has been increased momentum around making blockchain consensus protocols less wasteful and more useful to the network. Filecoin \cite{filecoin} has a Proof-of-Spacetime and Ethereum \cite{ethereum} is moving towards a Proof-of-Stake approach. Helium has designed a unique consensus protocol around \emph{Proof-of-Coverage} to capture the useful but still difficult work of verifying the network of Helium miner as a replacement for \emph{Proof-of-Work}. In fact this proof is so valuable and fundamental to the network that we attempt to capture valid, but not winning, proofs in the main chain by the use of uncle blocks [\ref{blockchain}].
+More recently there has been increased momentum around making blockchain consensus protocols less wasteful and more useful to the network. Filecoin \cite{filecoin} has a Proof-of-Spacetime and Ethereum \cite{ethereum} is moving towards a Proof-of-Stake approach. Helium has designed a unique consensus protocol around \emph{Proof-of-Coverage} to capture the useful but still difficult work of verifying the network of Helium miner as a replacement for \emph{Proof-of-Work}. In fact this proof is so valuable and fundamental to the network that we attempt to capture valid, but not winning, proofs in the main chain by the use of uncle blocks [Section \ref{blockchain}].
 
 In addition, because each proof is unique to the miner producing it, pooling can not occur. This dramatically equalizes the chances that any particular miner can win a block and reduces the ability for any single entity to exert undue influence over the network or its consensus.
 
@@ -1017,7 +1027,7 @@ In addition, because each proof is unique to the miner producing it, pooling can
 
 We propose a consensus protocol where the probability that a miner submits a winning block to the network is roughly proportional to the number of \emph{other} miners that were verified in the \emph{Proof-of-Coverage}. Because the \emph{Proof-of-Coverage} is generated in an unpredictable way, mining power is fairly equally distributed among the network. Miners offer wireless network coverage and verify others as proof to participate in the consensus.
 
-Each miner has a score assigned to it by the blockchain, a value between 0 and 1. When miners join the network a default score $\phi$ is assigned. This score changes over time in response to \emph{Proof-of-Coverage} challenges. A miner that successfully answers a challenge is granted a boost to its score, as described in [\ref{scores}]. Miners with a higher score have a larger chance of submitting the winning block and miners with a lower score have a higher chance of being challenged. Thus the Helium consensus protocol rewards good behavior on the network and punishes bad behavior.
+Each miner has a score assigned to it by the blockchain, a value between 0 and 1. When miners join the network a default score $\phi$ is assigned. This score changes over time in response to \emph{Proof-of-Coverage} challenges. A miner that successfully answers a challenge is granted a boost to its score, as described in [Section \ref{scores}]. Miners with a higher score have a larger chance of submitting the winning block and miners with a lower score have a higher chance of being challenged. Thus the Helium consensus protocol rewards good behavior on the network and punishes bad behavior.
 
 At each blocktime, a subset of miners $M_S$ are allowed to submit a candidate block. The chances of being chosen to submit a block are proportional to the miner's current score. $M_S$ are selected from a \emph{consistent hash ring} $\omega$ of potential miners. For miners with a low score proportionally more "blank" entries are inserted in the target candidate set. If a miner is assigned a blank target it cannot mine the block at this height. 
 
@@ -1062,7 +1072,7 @@ Now that we have discussed the requirements of transactions within Helium, we ou
 This first option is suitable only for larger transactions as the service fee is smaller than the payment. This method does not work well for very small transactions as whoever pays the transaction fee ends up potentially paying more for the transaction fees than the value being exchanged. This is a similar problem to buying small-value items using credit cards today. The vendor pays a minimum fee on each credit card transaction, and under a certain charge they lose money on the transaction. These heavyweight transactions are clearly not suitable for use as a micro transaction system within Helium.
 
 \paragraph{Zero-fee Transactions}
-While highly desirable from a device perspective, a true zero-fee blockchain would be frought with spam transactions. It would be trivial to write a script to pollute the blockchain with transactions meant only to waste space on the blockchain and increase congestion on the network. Some ostensibly zero-fee blockchain implemetations solve this issue in clever ways, such as offloading the work of processing and verifying transactions to the transactors themselves \cite{iota}. However, these implementations have their own issues, for example IOTA has not yet proved it is capable of operating this type of system without tne need for a centralized coordinator.
+While highly desirable from a device perspective, a true zero-fee blockchain would be frought with spam transactions. It would be trivial to write a script to pollute the blockchain with transactions meant only to waste space on the blockchain and increase congestion on the network. Some ostensibly zero-fee blockchain implementations solve this issue in clever ways, such as offloading the work of processing and verifying transactions to the transactors themselves \cite{iota}. However, these implementations have their own issues, for example IOTA has not yet proved it is capable of operating this type of system without the need for a centralized coordinator.
 
 \paragraph{State Channels}
 State channels \cite{state-channels} allow two parties to exchange value, usually in small increments at a time, with very limited risk. If one party thinks the other is acting dishonestly, they can publish the final transaction in the state channel to the blockchain and close the channel. At most one payment is usually at risk. However, there are several downsides: the payer has to lock up significant funds for the lifetime of the state channel, meaning they may be unable to open state channels with other parties or pay other dues; transactions in the state channel do not appear on the main chain at all; and these implementations are relatively complex to execute well (note that neither Lightning \cite{lightning} nor Raiden \cite{raiden} have become widely used yet).
@@ -1074,7 +1084,7 @@ Payment in arrear, after the services have been rendered, is an extremely risky 
 
 In order to satisfy our requirement of on-blockchain micro transactions with no fees, we propose a system that takes inspiration from staking and state channels.
 
-In order for devices to issue zero fee payments to miners, they must first stake a \emph{deposit} of tokens using the \emph{create\_deposit} transaction [\ref{primitives}]. This transaction has a fee. Once the initial deposit has been created, the network user can proceed to issue \emph{chits} against their deposit until it is exhaused. Chits are a type of transaction; a promissory note that payment will be delivered in the future, and enough information to trust a favorable outcome. These chits are returned in response to a gateway offering a packet for delivery. Chits are linked to each other; the blockchain needs to have seen the previous chits before subsequent ones will be accepted. Each chit references the deposit, the sequence number (nonce), the amount to pay and any additional information about the packet.
+In order for devices to issue zero fee payments to miners, they must first stake a \emph{deposit} of tokens using the \emph{create\_deposit} transaction [Section \ref{primitives}]. This transaction has a fee. Once the initial deposit has been created, the network user can proceed to issue \emph{chits} against their deposit until it is exhaused. Chits are a type of transaction; a promissory note that payment will be delivered in the future, and enough information to trust a favorable outcome. These chits are returned in response to a gateway offering a packet for delivery. Chits are linked to each other; the blockchain needs to have seen the previous chits before subsequent ones will be accepted. Each chit references the deposit, the sequence number (nonce), the amount to pay and any additional information about the packet.
 
 Because the miner concerned wants to be paid for transport, it will add the chit to its mempool, along with any previous chits that it depends on. This means that several miners are all incentivized to include these chits in their current blockchain. The entity issuing \emph[chits] can use the final \emph[chit] in the transaction chain to incentivize a miner to include all the previous (or missing) chits in a block. If previous chits are not included in the chain, nobody gets paid.
 
@@ -1115,7 +1125,7 @@ In this section we address potential problems that could arise with the deposit 
 
 \paragraph{Degenerate Miner} A miner, after being issued a chit for the service it has agreed to perform, could neglect to follow through and perform the service. If a miner fails to send the agreed packet to the router after the router issues a chit, the router can re-request it (for some period of time). The threat of losing future business from a router and the relatively low overhead of completing the transfer of the packet acts to disincentivize miners from acting in bad faith. This is consistent with state channel implementations where the task is subdivided such that the scope of potential loss is below a meaningful threshold.
 
-\paragraph{Chit Bomb} A malicious actor could stake a deposit and then proceed to issue a near limitless amount of miniscule chits against that deposit without incurring transaction fees. This could flood mempools and pollute the blockchain with spam transactions. Assuming we trust our network of miners [\ref{scores}], this could never happen. Miners are the only entity on the network capable of creating new blocks for the blockchain, and chits can only be issued to miners in payment for their services. Because we assume all miners to be selfish, we anticipate they will only include transactions that benefit themselves. These are either transactions with fees attached, or chits that they have a direct investment in, either because they will get paid, or because the transaction is attached to a stake in which they have chits. Therefore, we expect miners to ignore any spam chits that were not issued in exchange for a service provided.
+\paragraph{Chit Bomb} A malicious actor could stake a deposit and then proceed to issue a near limitless amount of miniscule chits against that deposit without incurring transaction fees. This could flood mempools and pollute the blockchain with spam transactions. Assuming we trust our network of miners [Section \ref{scores}], this could never happen. Miners are the only entity on the network capable of creating new blocks for the blockchain, and chits can only be issued to miners in payment for their services. Because we assume all miners to be selfish, we anticipate they will only include transactions that benefit themselves. These are either transactions with fees attached, or chits that they have a direct investment in, either because they will get paid, or because the transaction is attached to a stake in which they have chits. Therefore, we expect miners to ignore any spam chits that were not issued in exchange for a service provided.
 
 \paragraph{Final Transaction}
 In theory, it is possible for the chit issuer to spend all the staked tokens and not have anything left to incentivize a miner to include the final transaction. All the miners involved in the chain of chits have an incentive to get the transaction included in a block, and because there is a fair chance of any individual miner winning a block, this should eventually clear.
@@ -1130,15 +1140,15 @@ This raises a question: who is responsible for operating full nodes, and what is
 
 \subsection{Fees} \label{fees}
 
-Transaction fees are an essential part of most blockchain implementations. They incentivize miners to include a transaction in their draft block and ensure that spam transactions do not pollute the blockchain and network. We've discussed how the \emph{chit} transaction [\ref{chit}] is able to eliminate fees in the prior section on Microtransactions [\ref{microtransactions}]. However, all other transactions on the \verb|DMN| require transaction fees.
+Transaction fees are an essential part of most blockchain implementations. They incentivize miners to include a transaction in their draft block and ensure that spam transactions do not pollute the blockchain and network. We've discussed how the \emph{chit} transaction [Section \ref{chit}] is able to eliminate fees in the prior section on Microtransactions [Section \ref{microtransactions}]. However, all other transactions on the \verb|DMN| require transaction fees.
 
 To determine the appropriate fee for a new transaction, the transactor will take the median of the past $\delta$ packet transport fees, within some margin of error. Until $\delta$ packet transports have been completed, the fee will be fixed at a constant value $\alpha$. By anchoring the transaction fee to the current fees being charged for transport on the network, we root them in reality. Helium's primary purpose is to facilitate a network of wireless ineternet coverage. In order to accomplish this in the long term, all of the economics of the system must align to make it practical for the primary users to transact on the network. If one set of fees were to outstrip the other, the network would quickly lose its utility for the key user segment.
 
-To enable miners and other light clients to determine an appropriate fee, full nodes [\ref{full-nodes}] will expose a fee suggestion API. This way resource constrained entities that do not maintain a complete copy of the blockchain will not need to compute the fee from the most recent transactions. When submitting a block, peer miners will verify the correctness of the block and ensure that no fee has deviated beyond the acceptable threshold of $\delta$.
+To enable miners and other light clients to determine an appropriate fee, full nodes [Section \ref{full-nodes}] will expose a fee suggestion API. This way resource constrained entities that do not maintain a complete copy of the blockchain will not need to compute the fee from the most recent transactions. When submitting a block, peer miners will verify the correctness of the block and ensure that no fee has deviated beyond the acceptable threshold of $\delta$.
 
 \subsection{Staking} \label{staking}
 
-The \emph{assert\_location} transaction, mentioned below [\ref{primitives}], has a special type of fee calculation; a \emph{dynamic} fee. Because the Helium network reaches maximum \emph{usefulness} at a specific density of gateways, we want the fees to incentivize the network density to be as close to that ideal as possible. To that end, the transaction fee for asserting a location can be thought of as the y coordinate on a curve with the formula \[\mathit{y = \left(x - D\right)^4 + F}\] where $D$ is the ideal gateway density and $F$ is the unit fee for a location transaction. A sample graph of this function where $D$ = 3 and $F$ = 1 follows:
+The \emph{assert\_location} transaction, mentioned below [Section \ref{primitives}], has a special type of fee calculation; a \emph{dynamic} fee. Because the Helium network reaches maximum \emph{usefulness} at a specific density of gateways, we want the fees to incentivize the network density to be as close to that ideal as possible. To that end, the transaction fee for asserting a location can be thought of as the y coordinate on a curve with the formula \[\mathit{y = \left(x - D\right)^4 + F}\] where $D$ is the ideal gateway density and $F$ is the unit fee for a location transaction. A sample graph of this function where $D$ = 3 and $F$ = 1 follows:
 
 \pgfplotsset{width=12cm,compat=1.9}
 \begin{tikzpicture}[scale=\columnwidth/12cm]
@@ -1157,7 +1167,7 @@ Miners who move physical location will need to assert a new location, and pay th
 Having discussed the philosophy of our transaction system and presented our approach to facilitating zero-fee mictrotransactions on the Helium network, we now delineate the transaction primitives and their properties.
 
 \begin{description}
-  \item [add\_gateway] Registers a new gateway on the network, adding it to an existing account which will be responsible for supplying its stake (required for mining) and will receive mining rewards [\ref{mining}] and fees earned by the gateway
+  \item [add\_gateway] Registers a new gateway on the network, adding it to an existing account which will be responsible for supplying its stake (required for mining) and will receive mining rewards [Section \ref{mining}] and fees earned by the gateway
 
 \begin{table}[H]
   \centering
@@ -1187,7 +1197,7 @@ Having discussed the philosophy of our transaction system and presented our appr
   \end{tabularx}
 \end{table}
 
-\item [payment] \label{payment} Moves tokens from one account, the \emph{payer}, to another account, the \emph{payee}. N.B. this payment transaction requires a fee, while \emph{chit} [\ref{chit}] does not.
+\item [payment] \label{payment} Moves tokens from one account, the \emph{payer}, to another account, the \emph{payee}. N.B. this payment transaction requires a fee, while \emph{chit} [Section \ref{chit}] does not.
 
 \begin{table}[H]
   \centering
@@ -1202,7 +1212,7 @@ Having discussed the philosophy of our transaction system and presented our appr
   \end{tabularx}
 \end{table}
 
-\item [create\_deposit] Creates a staked deposit which can later be fractionally issued and redeemed in the form of \emph{chits} [\ref{chit}] without incurring transaction fees. Any unused portion of the deposit will be burned after some time.
+\item [create\_deposit] Creates a staked deposit which can later be fractionally issued and redeemed in the form of \emph{chits} [Section \ref{chit}] without incurring transaction fees. Any unused portion of the deposit will be burned after some time.
 
 \begin{table}[H]
   \centering
@@ -1217,7 +1227,7 @@ Having discussed the philosophy of our transaction system and presented our appr
   \end{tabularx}
 \end{table}
 
-\item [chit] \label{chit} Issues a chit against a previously staked deposit in payment for transport or other services. N.B. this payment transaction does not require a fee, while \emph{payment} [\ref{payment}] does.
+\item [chit] \label{chit} Issues a chit against a previously staked deposit in payment for transport or other services. N.B. this payment transaction does not require a fee, while \emph{payment} [Section \ref{payment}] does.
 
 \begin{table}[H]
   \centering
@@ -1237,7 +1247,20 @@ Having discussed the philosophy of our transaction system and presented our appr
 
 \section{Future Work}
 
-We believe that this tight integration of real-world hardware with a blockchain and a native token is a novel and valuable innovation that can be applied to other kinds of networks and wireless physical layers. We believe that the future of blockchains is not about who has the most hashing power or access to the cheapest electricity, but about blockchains where the mining proof is tied to providing a valuable, verifiable service. We plan to investigate or partner with interested parties to extend our ideas into other physical layers such as WiFi, Bluetooth and Cellular, as well as explore the potential for the delivery of 5G 60GHz+ mmWave connectivity through a similar mechanism. Additionally we plan to continue to research and implement more \emph{Proofs-of-Coverage} to keep the network secure as it grows.
+This paper presents a well thought-out design for building the Helium network. However, we consider this to be just the beginning of the engineering, research and design of decentralized wireless networks. We believe that this tight integration of real-world hardware with a blockchain and a native token is a novel and valuable innovation that can be applied to other kinds of networks and wireless physical layers. We believe that the future of blockchains is not about who has the most hashing power or access to the cheapest electricity, but about blockchains where the mining proof is tied to providing a valuable, verifiable service. 
+
+\subsection{Current Work}
+
+The following are tasks that we are actively working on:
+
+\begin{itemize}
+    \item The WHIP wireless protocol specification
+    \item 
+\end{itemize}
+
+We plan to investigate or partner with interested parties to extend our ideas into other physical layers such as WiFi, Bluetooth and Cellular, as well as explore the potential for the delivery of 5G 60GHz+ mmWave connectivity through a similar mechanism. Additionally we plan to continue to research and implement more \emph{Proofs-of-Coverage} to keep the network secure as it grows.
+
+
 \acks
 
 This document is the result of collaborative work by members of the Helium team, and would not have been possible without the help, feedback, and review of the board of directors, advisors, investors and collaborators of Helium. We extend our most heartfelt thanks to all involved.
@@ -1268,7 +1291,7 @@ We would also like to acknowledge many of the prior works and inventions that ha
 
 \bibitem{bitcoin}
     Satoshi Nakamoto. 
-    \emph{Bitcoinn: A peer-to-peer electronic cash system}, 2008
+    \emph{Bitcoin: A peer-to-peer electronic cash system}, 2008
 
 \bibitem{hashing}
     David Karger, Eric Lehman, Tom Leighton, Matthew Levine, Daniel Lewin, Rina Panigrahy. 
@@ -1320,7 +1343,7 @@ We would also like to acknowledge many of the prior works and inventions that ha
 
 \bibitem{filecoin}
     Protocol Labs. 
-    \emph{Fielcoin}, 2017
+    \emph{Filecoin}, 2017
 
 \bibitem{protocol}
     Juan Benet. 
