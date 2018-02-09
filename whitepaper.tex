@@ -586,7 +586,7 @@ In order to satisfy our requirement of on-blockchain micro transactions with no 
 
 In order for devices to issue zero fee payments to miners, they must first stake a \emph{deposit} of tokens using the \emph{create\_deposit} transaction [Section \ref{primitives}]. This transaction has a fee. Once the initial deposit has been created, the network user can proceed to issue \emph{chits} against their deposit until it is exhaused. Chits are a type of transaction; a promissory note that payment will be delivered in the future, and enough information to trust a favorable outcome. These chits are returned in response to a gateway offering a packet for delivery. Chits are linked to each other; the blockchain needs to have seen the previous chits before subsequent ones will be accepted. Each chit references the deposit, the sequence number (nonce), the amount to pay and any additional information about the packet.
 
-Because the miner concerned wants to be paid for transport, it will add the chit to its mempool, along with any previous chits that it depends on. This means that several miners are all incentivized to include these chits in their current blockchain. The entity issuing \emph[chits] can use the final \emph[chit] in the transaction chain to incentivize a miner to include all the previous (or missing) chits in a block. If previous chits are not included in the chain, nobody gets paid.
+Because the miner concerned wants to be paid for transport, it will add the chit to its mempool, along with any previous chits that it depends on. This means that several miners are all incentivized to include these chits in their current blockchain. The entity issuing \emph{chits} can use the final \emph{chit} in the transaction chain to incentivize a miner to include all the previous (or missing) chits in a block. If previous chits are not included in the chain, nobody gets paid.
 
 At first glance this is similar to how state channels work, but with a couple of significant differences. State channels are a one to one construct, while chits can be one to many. Critically, this method keeps the record of all included transactions on-chain. The crucial benefit to this design is that all transaction fees for these payments can be eliminated. The first staking transaction can be sent along with the first chit, so the gateway is incentivized to add it to their block. If the first miner doesn't include it, the second \emph{chit} can be accompanied with the staking transaction and the first chit when communicating with the next miner. Eventually the advantage of including the transactions outweighs the disadvantages.
 
@@ -594,7 +594,7 @@ It is important to note that nobody gets paid until everybody gets paid. Chits s
 
 \subsubsection{Example Deposit Lifecycle}
 
-In this section, we will walk through an example lifecycle of a router staking a deposit, miners performing work on behalf of the router, and being compensated by the router through chits agaist the deposit.
+In this section, we will walk through an example lifecycle of a router staking a deposit, miners performing work on behalf of the router, and being compensated by the router through chits against the deposit. See [Section~\ref{cycle:router}] for a more detailed set of protocols related to the router deposit and data lifecycle.
 
 \begin{enumerate}
 
@@ -787,13 +787,13 @@ In this section, we provide a more formal overview of the Helium \verb|DMN| and 
 
 \subsubsection{Device Cycle}
 
-We provide a brief overview of the device cycle and the functions available to devices on the network in Cycle~ref{cycle:device}
+We provide a brief overview of the device cycle and the functions available to devices on the network in Protocol~ref{proto:device}
 
 \begin{algorithm}[!htb]
-  \SetAlgorithmName{Cycle}{List of Lifecycles}
+  \SetAlgorithmName{Protocol}{List of Protocols}
   \DontPrintSemicolon
   \SetKwProg{Device}{\BlankLine Device}{}{}
-  \caption{Device Cycle Overview}\label{cycle:device}
+  \caption{Device Protocol Overview}\label{proto:device}
 
   \Device{at any time} {
     Send data \;
@@ -830,7 +830,7 @@ We provide a brief overview of the device cycle and the functions available to d
         \BlankLine
         Securely \Store{$E_k$, $E_{pk}$, $R_k$, ${OUI}_d$, ${ID}_d$} \;
         \BlankLine
-        Output $E_{pk}$ \;
+        Output $E_k$ \;
       }
     \end{algorithm}
     \FloatBarrier
@@ -850,13 +850,13 @@ We provide a brief overview of the device cycle and the functions available to d
       \SetKwFunction{Transmit}{Transmit}
       \caption{Device Send Data}\label{proto:device.data.send}
 
-      \Send{from device ${ID}_d$, data A} {
-        $M \leftarrow $ \SignalData{A} \;
+      \Send{from device ${ID}_d$, packet P} {
+        $M \leftarrow $ \SignalData{P} \;
         \Transmit{M} \;
         \BlankLine
 
-        $A_e \leftarrow $ \Encrypt{A, private key $E_{pk}$} \;
-        $B \leftarrow $ \Data{${OUI}_d$, ${ID}_d$, $A_e$} \;
+        $P_e \leftarrow $ \Encrypt{P, private key $E_{pk}$} \;
+        $B \leftarrow $ \Data{${OUI}_d$, ${ID}_d$, $P_e$} \;
         \Transmit{B} \;
         \BlankLine
 
@@ -883,7 +883,7 @@ We provide a brief overview of the device cycle and the functions available to d
 
       \Recv{at device ${ID}_d$, signaling message M} {
         Size $S \leftarrow $ \Decode{M} \;
-        \Switch{Receive Data D} {
+        \Switch{Receive Packet P} {
           \Case{success} {hand to application}
           \Case{timeout} {sleep}
         }
@@ -896,15 +896,15 @@ We provide a brief overview of the device cycle and the functions available to d
 
 \subsubsection{Miner Cycle}\label{mining}
 
-We provide a brief overview of the mining cycle and the functions available to miners on the network in Cycle~[\ref{cycle:miner}]
+We provide a brief overview of the mining cycle and the functions available to miners on the network in Protocol~[\ref{proto:miner}]
 
 \begin{algorithm}[!htb]
-  \SetAlgorithmName{Cycle}{List of Lifecycles}
+  \SetAlgorithmName{Protocol}{List of Protocols}
   \DontPrintSemicolon
   \SetKwProg{Miner}{\BlankLine Miner}{}{}
-  \caption{Miner Cycle Overview}\label{cycle:miner}
+  \caption{Miner Protocol Overview}\label{proto:miner}
 
-  \Miner{At every epoch \emph{blocktime}} {
+  \Miner{at every epoch \emph{blocktime}} {
     Construct a block\;
     Add transactions from non-winning blocks\;
     Add transactions from mempool\;
@@ -913,7 +913,7 @@ We provide a brief overview of the mining cycle and the functions available to m
     Submit block to peers\;
   }
 
-  \Miner{At any time} {
+  \Miner{at any time} {
     Receive transactions\;
     Receive block\;
     Receive coverage challenge\;
@@ -1029,7 +1029,7 @@ We provide a brief overview of the mining cycle and the functions available to m
       \DontPrintSemicolon
       \SetKwProg{Recv}{\BlankLine Receive}{}{}
       \SetKwFunction{FindRouters}{FindRouters}
-      \SetKwFunction{CalculateDeliverFee}{CalculateDeliverFee}
+      \SetKwFunction{CalculateFee}{CalculateFee}
       \SetKwFunction{Sign}{Sign}
       \SetKwFunction{Deliver}{Deliver}
       \SetKwFunction{Hash}{Hash}
@@ -1037,23 +1037,23 @@ We provide a brief overview of the mining cycle and the functions available to m
       \SetKwFunction{AcceptableOffer}{AcceptableOffer}
       \caption{Miner Deliver Device Data}\label{proto:miner.data.deliver}
 
-      \Recv{at miner M, timestamp T, from device D, data A, data signature $S_a$} {
+      \Recv{at miner M, timestamp T, from device D, Packet P, Signature $K_p$} {
         Router $R \leftarrow R \in $ \FindRouters{D} \;
-        Fee $F \leftarrow $ \CalculateDeliverFee{R, D, A} \;
-        Hash $H_a \leftarrow $ \Hash{A} \;
-        Offer $O \leftarrow $ \Sign{$\ll ID_d, H_a, S_a, F \gg $, $E_{pk}$} \;
-        \Switch{\Deliver{R, O}} {
-          \Case{$Chit$}{
-            Validate $Chit$\;
-            \Deliver{R, T, A}\;
-            $T \leftarrow $ \Transaction{redeem, M, Chit} \;
-            Submit $T$ to peers\;
+        Fee $F_p \leftarrow $ \CalculateFee{R, D, P} \;
+        Hash $H_p \leftarrow $ \Hash{P} \;
+        Offer $O_p \leftarrow $ \Sign{$\ll ID_d, H_p, K_p, F_p \gg $, $E_{pk}$} \;
+        \Switch{\Deliver{R, $O_p$}} {
+          \Case{Chit $C_p$}{
+            Validate $C_p$\;
+            \Deliver{R, T, P}\;
+            Submit $C_p$ to peers\;
+            Add $C_p$ to mempool\;
           }
-          \Case{counter offer $O_c$, fee $F_c$} {
-            Validate $O_c$
-            \Switch{\AcceptableOffer{$O_c$}} {
+          \Case{counter offer ${O\prime}_p$, fee ${F\prime}_p$} {
+            Validate ${O\prime}_p$\;
+            \Switch{\AcceptableOffer{${O\prime}_p$}} {
               \Case{accept} {
-                Restart offer with fee $F_c$\;
+                Restart offer with fee ${F\prime}_p$\;
               }
               \lCase{decline} {
                 drop A
@@ -1079,13 +1079,13 @@ We provide a brief overview of the mining cycle and the functions available to m
       \SetKwFunction{Transaction}{Transaction}
       \caption{Miner Receive Router Data}\label{proto:miner.data.receive}
 
-      \Recv{at miner M, data A, signature $S_a$, for device $ID_d$, with $Chit$} {
+      \Recv{at miner M, Packet P, signature $K_p$, for device $ID_d$, chit $C_p$} {
         \emph{This can only happen in response to G delivering data to R}
-        Validate data $A$ \;
-        Validate $Chit$\;
-        \Transmit{$ID_d$, A} \;
-        $T \leftarrow $ \Transaction{redemption, M, $Chit$} \;
-        Submit $T$ to peers\;
+        Validate data $P$ \;
+        Validate chit $C_p$\;
+        \Transmit{$ID_d$, $ \ll P, K_p \gg $ } \;
+        Add $C_p$ to mempool\;
+        Submit $C_p$ to peers\;
       }
     \end{algorithm}
     \FloatBarrier
@@ -1136,17 +1136,18 @@ We provide a brief overview of the mining cycle and the functions available to m
 \end{description}
 
 
-\subsubsection{Routing Cycle}
+\subsubsection{Routing Cycle}\label{cycle:router}
 
-We provide a brief overview of the routing cycle and the functions available to routers on the network.
+We provide a brief overview of the routing cycle and the functions available to routers on the network in Protocol~\ref{proto:router}.
 
 \begin{algorithm}[!htb]
-  \SetAlgorithmName{Cycle}{List of Lifecycles}
+  \SetAlgorithmName{Protocol}{List of Protocols}
   \DontPrintSemicolon
   \SetKwProg{Router}{\BlankLine Router}{}{}
-  \caption{Router Cycle Overview}\label{cycle:router}
+  \caption{Router Protocol Overview}\label{proto:router}
 
-  \Router{At any time} {
+  \Router{at any time} {
+    Create Deposit
     Receive Data Offer \;
     Receive Data \;
   }
@@ -1160,11 +1161,33 @@ We provide a brief overview of the routing cycle and the functions available to 
 
 \begin{description}
 
-    \item [Receive Data Offer] A router receives an offer to deliver a device packet.
+\item [Create Deposit] A router creates a deposit to send and receive data packets.
 
-      This offer includes the MAC address, the hash of the payload, the device's signature of the packet and the proposed delivery fee as described in Protocol~[\ref{proto:miner.data.deliver}]. The router can determine the authenticity of the packet, know if it already has a copy of the packet, and decide on if the delivery price is acceptable.
+  As described in [Section~\ref{transactions}] a router makes a deposit in order to declare it is able to receive and send data packets from devices through miners. The deposit is used to issue \emph{chits} when miners offer to deliver packets or when the router needs to deliver data to a device.
 
-      A router can accept the offer, decline it or make a counteroffer to the miner. When accepting an offer, the router replies with a \emph{chit} that serves as payment as well as anchoring proof of the packet's existence at that point in time.
+    \begin{algorithm}[!htb]
+      \SetAlgorithmName{Protocol}{List of Protocols}
+      \DontPrintSemicolon
+      \SetKwProg{Deposit}{\BlankLine Deposit}{}{}
+      \SetKwFunction{Transaction}{Transaction}
+      \SetKwFunction{Sign}{Sign}
+      \caption{Router Create Deposit}\label{proto:router.deposit}
+
+      \Deposit{Amount S, Expiry Height H} {
+        Chit Keys $C_k, C_{pk}, \leftarrow $ generate public/private keypair \;
+        Transaction $T \leftarrow $ \Transaction(deposit, S, ExpiryHeight, $C_k$) \;
+        Add $T$ to mempool\;
+        Submit $T$ to peers\;
+      }
+    \end{algorithm}
+    \FloatBarrier
+
+
+  \item [Receive Data Offer] A router receives an offer to deliver a device packet.
+
+    This offer includes the address of the device, the hash of the payload, the device's signature of the packet and the proposed delivery fee as described in Protocol~[\ref{proto:miner.data.deliver}]. The router can determine the authenticity of the packet, know if it already has a copy of the packet, and decide on if the delivery price is acceptable.
+
+    A router can accept the offer, decline it or make a counteroffer to the miner. When accepting an offer, the router replies with a \emph{chit} that serves as payment as well as anchoring proof of the packet's existence at that point in time.
 
     \begin{algorithm}[!htb]
       \SetAlgorithmName{Protocol}{List of Protocols}
@@ -1174,19 +1197,19 @@ We provide a brief overview of the routing cycle and the functions available to 
       \SetKwFunction{Sign}{Sign}
       \caption{Router Receive Data Offer}\label{proto:router.offer.recv}
 
-      \Recv{from miner M, device $ID_d$, data signature $S_a$, hash $H_a$, fee F} {
+      \Recv{from miner M, device $ID_d$, packet signature $K_p$, hash $H_p$, fee $F_p$} {
         Verify device $ID_d$ \;
-        \Switch{\AcceptableOffer{F, $ID_d$, $S_a$, $H_a$}}{
-          \Case{counter $F_c$} {
-            Offer $O \leftarrow $ \Sign{$\ll ID_d, H_a, S_a, F_c \gg $, $E_{pk}$} \;
-            \Deliver{M, O}
+        \Switch{\AcceptableOffer{$F_p$, $ID_d$, $K_p$, $H_p$}}{
+          \Case{counter ${F\prime}_c$} {
+            Offer $O\prime \leftarrow $ \Sign{$\ll ID_d, H_p, K_p, {F\prime}_c \gg $, $E_{pk}$} \;
+            \Deliver{M, $O\prime$}
           }
           \Case{accept} {
-            Chit $C \leftarrow $ \Sign{$ \ll accept, ID_d, H_a, F \gg $, $E_{pk}$} \;
+            Chit $C \leftarrow $ \Sign{$ \ll accept, ID_d, K_p, F \gg $, $E_{pk}$} \;
             \Deliver{M, C} \;
           }
           \Case{decline} {
-            Decline $D \leftarrow $ \Sign{$ \ll decline, ID_d, H_a, F \gg $, $E_{pk}$} \;
+            Decline $D \leftarrow $ \Sign{$ \ll decline, ID_d, K_p, F \gg $, $E_{pk}$} \;
             \Deliver{M, D} \;
           }
         }
@@ -1205,9 +1228,9 @@ We provide a brief overview of the routing cycle and the functions available to 
       \SetKwProg{Recv}{\BlankLine Receive}{}{}
       \caption{Router Receive Data }\label{proto:router.data.recv}
 
-      \Recv{from miner M, device $ID_d$, data signature $S_a$, data A} {
-        Verify data $A$ \;
-        handle device data \;
+      \Recv{from miner M, device $ID_d$, packet signature $K_p$, packet P} {
+        Verify packet $P$ \;
+        Process packet \;
       }
     \end{algorithm}
     \FloatBarrier
@@ -1223,16 +1246,16 @@ We provide a brief overview of the routing cycle and the functions available to 
       \SetKwProg{Send}{\BlankLine Send}{}{}
       \SetKwFunction{Sign}{Sign}
       \SetKwFunction{Hash}{Hash}
-      \SetKwFunction{CalculateDeliverFee}{CalculateDeliverFee}
+      \SetKwFunction{CalculateFee}{CalculateFee}
       \SetKwFunction{Deliver}{Deliver}
       \caption{Router Send Data }\label{proto:router.data.send}
 
-      \Send{using miner M, for device $ID_d$, data A} {
-        $S_a \leftarrow $ \Sign{A, $E_{pk}$} \;
-        $H_a \leftarrow $ \Hash(A) \;
-        Fee $F \leftarrow $ \CalculateDeliverFee{$ID_d$, A} \;
-        Chit $C \leftarrow $ \Sign{$ \ll deliver, ID_d, H_a, F \gg $, $E_{pk}$} \;
-        \Deliver{M, $ID_d$, A, $S_a$, Chit} \;
+      \Send{using miner M, for device $ID_d$, packet P} {
+        $K_p \leftarrow $ \Sign{A, $E_{pk}$} \;
+        $H_p \leftarrow $ \Hash(P) \;
+        Fee $F_p \leftarrow $ \CalculateFee{$ID_d$, P} \;
+        Chit $C \leftarrow $ \Sign{$ \ll deliver, ID_d, K_p, F \gg $, $E_{pk}$} \;
+        \Deliver{M, $ID_d$, P, $K_p$, C} \;
       }
     \end{algorithm}
     \FloatBarrier
