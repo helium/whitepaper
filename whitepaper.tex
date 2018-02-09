@@ -327,7 +327,7 @@ Our goal is to verify whether miners in a physical region are acting honestly an
 
 \textbf{Selecting the Initial Target}. We aim to deterministically locate a geographic reference target, $T$, for the challenger, $C$. $T$ does not need to be geographically proximate to $C$. To locate $T$, $C$ uses a \emph{consistent hash ring} $\omega$, of potential miners. $\omega$ only contains miners eligible as targets as described in [Section \ref{mining}], and miners are allocated portions of $\omega$ that are inversely proportional to their score, increasing the probability of potentially dishonest miners being targeted. We refer the interested reader to \cite{hashing} for further reading on consistent hashing techniques. Given that a miners score is diminishing linearly over time [Section \ref{scores}], it is necessary to create this inverse relationship to give low-scoring miners an opportunity to participate in the process and increase their score. This diminishing score also incentivizes all the participants to send receipts to the challenger and broadcast the remainder of $O$. We seed verifiable randomness, $\eta$, into the selection process using a signed digest of the partial block from $C$ - thus, it is necessary for $C$ to have begun forming a new candidate block for the blockchain before the \emph{Proof-of-Coverage} process can begin [Section \ref{mining}].
 
-\textbf{Constructing the multi-layer challenge}. Once $T$ has been selected, $C$ must construct a multi-layer challenge, $O$. $O$ is a data packet broadcast over the wireless network and received by geographically proximate targets $T_n$. Geographically proximate is defined as within a radius of $T$, a network value $T$\textsubscript{radius}. Each layer of $O$, $O_l$, consists of a three-tuple of $E\left(S, \psi, R\right)$, where $E$ is a secure public key encryption function, $S$ is a secret value, $\psi$ is the time to broadcast the next layer of the challenge and $R$ is the remainder of $O$ consisting of recursive three-tuples. The maximum number of $O_l$ is bounded by a network value, $O$\textsubscript{max}. 
+\textbf{Constructing the multi-layer challenge}. Once $T$ has been selected, $C$ must construct a multi-layer challenge, $O$. $O$ is a data packet broadcast over the wireless network and received by geographically proximate targets $T_n$. Geographically proximate is defined as within a radius of $T$, a network value $T$\textsubscript{radius}. Each layer of $O$, $O_l$, consists of a three-tuple of $E\left(S, \psi, R\right)$, where $E$ is a secure public key encryption function, $S$ is a secret value, $\psi$ is the time to broadcast the next layer of the challenge and $R$ is the remainder of $O$ consisting of recursive three-tuples. The maximum number of $O_l$ is bounded by a network value, $O$\textsubscript{max}.
 
 The construction logic of $O$ is as follows:
 
@@ -336,7 +336,7 @@ The construction logic of $O$ is as follows:
   \item Two targets, $T_1$ and $T_L$, are selected by finding the highest scoring targets in $T_n$ furthest from $T$
   \item A weighted graph, $T_g$, is constructed from $T_n$ such that members of $T_g$ in radio range of each other are connected by an edge weighted by the value of \(1 - \Big({score(T_a) - score(T_b)}\Big)\)
   \item The shortest path between $T_1$ to $T$ to $T_L$ is computed using Dijkstra's algorithm\cite{dijkstra}
-  \item A layer $O_l$ is created and added to $O$, and $S$ is encrypted with the public key of $T_1$ retrieved from the blockchain  
+  \item A layer $O_l$ is created and added to $O$, and $S$ is encrypted with the public key of $T_1$ retrieved from the blockchain
   \item This process repeats with additional layers added to $O$ until all $T_g$ have a layer $O_l$ included in $O$
 \end{enumerate}
 
@@ -379,17 +379,17 @@ Once $T_L$ has delivered receipt to $C$, or $\lambda$ has elapsed, the \emph{Pro
 
 Given,\newline
 \begin{tabular}{l l}
-	$M$,       	  & miners                                         \\
-	$h$,          & height of the blockchain                       \\
-	$P(M)$,       & probability of $M$ being selected as target    \\
-	$\phi_0$,     & score of $M$ initially                         \\
-	$\phi_h$,     & score of $M$ at height h                       \\
-	$\phi'_h$,    & depreciation value of $\phi_h$                 \\
-	$\delta_h$,   & rate of decay of $\phi_h$                      \\
-	$\epsilon_h$, & boost for $\phi_h$ on successful verification  \\
-	$\alpha_h$,   & boost factor                                   \\
-	$\eta_h$,     & honest miners                                  \\
-	$\phi_{max}$, & local maximum score for $\eta_h$               \\
+        $M$,              & miners                                         \\
+        $h$,          & height of the blockchain                       \\
+        $P(M)$,       & probability of $M$ being selected as target    \\
+        $\phi_0$,     & score of $M$ initially                         \\
+        $\phi_h$,     & score of $M$ at height h                       \\
+        $\phi'_h$,    & depreciation value of $\phi_h$                 \\
+        $\delta_h$,   & rate of decay of $\phi_h$                      \\
+        $\epsilon_h$, & boost for $\phi_h$ on successful verification  \\
+        $\alpha_h$,   & boost factor                                   \\
+        $\eta_h$,     & honest miners                                  \\
+        $\phi_{max}$, & local maximum score for $\eta_h$               \\
 \end{tabular}
 
 At every height h in the blockchain we have the following constraints:
@@ -434,18 +434,18 @@ Finally, the rate of decrease of score is linearly proportional to the previous 
 
 From the above defined relationships, we construct the following recurrence for the score of the miners:
 \begin{equation*} \label{score}
-	\phi_h = \begin{cases}
-		\phi_{h-1} - \delta_h, \\
-		\phi_{h-1} + \epsilon_{h-1} - \delta_h
-	\end{cases}
+        \phi_h = \begin{cases}
+                \phi_{h-1} - \delta_h, \\
+                \phi_{h-1} + \epsilon_{h-1} - \delta_h
+        \end{cases}
 \end{equation*}
 
 Substituting the values for $\alpha_h$ and $\epsilon_h$, we get the following recurrence relationship as the score of miners:
 \begin{equation*} \label{recurrence}
-	\phi_h = \begin{cases}
-		\phi_{h-1} - \delta_h,\\
-		\phi_{h-1} + \frac{\phi_{h-1}}{\sqrt{\phi_{h-1}} + \left(\left\lvert1 - \sqrt{1 - (\phi_{h-1} - 1)^2}\right\rvert \eta_{h-1}\right)^{-2}} -\delta_h
-	\end{cases}
+        \phi_h = \begin{cases}
+                \phi_{h-1} - \delta_h,\\
+                \phi_{h-1} + \frac{\phi_{h-1}}{\sqrt{\phi_{h-1}} + \left(\left\lvert1 - \sqrt{1 - (\phi_{h-1} - 1)^2}\right\rvert \eta_{h-1}\right)^{-2}} -\delta_h
+        \end{cases}
 \end{equation*}
 
 \emph{Figure \ref{fig:score-graph}} shows a snapshot of a random subset of the network at any blockchain height \textit{h}. The miners represent random locations with an illustrated score, while the edges are calculated using Dijkstra's algorithm\cite{dijkstra}.
@@ -765,7 +765,7 @@ We propose a consensus protocol where the probability that a miner submits a win
 
 Each miner has a score assigned to it by the blockchain, a value between 0 and 1. When miners join the network a default score $\phi$ is assigned. This score changes over time in response to \emph{Proof-of-Coverage} challenges. A miner that successfully answers a challenge is granted a boost to its score, as described in [Section \ref{scores}]. Miners with a higher score have a larger chance of submitting the winning block and miners with a lower score have a higher chance of being challenged. Thus the Helium consensus protocol rewards good behavior on the network and punishes bad behavior.
 
-At each blocktime, a subset of miners $M_S$ are allowed to submit a candidate block. The chances of being chosen to submit a block are proportional to the miner's current score. $M_S$ are selected from a \emph{consistent hash ring} $\omega$ of potential miners. For miners with a low score proportionally more "blank" entries are inserted in the target candidate set. If a miner is assigned a blank target it cannot mine the block at this height. 
+At each blocktime, a subset of miners $M_S$ are allowed to submit a candidate block. The chances of being chosen to submit a block are proportional to the miner's current score. $M_S$ are selected from a \emph{consistent hash ring} $\omega$ of potential miners. For miners with a low score proportionally more "blank" entries are inserted in the target candidate set. If a miner is assigned a blank target it cannot mine the block at this height.
 
 Once all the blocks for the interval $\lambda$ have been submitted, the network of miners each choose the block they think is the best, according to the scoring algorithm. The scoring algorithm favors blocks that are valuable to the network. The primary dimension affecting score is the \emph{Proof-of-Coverage} contained within the submitted block. A high scoring proof should either use successful, valid challenge responses to raise the score of as many miners as possible, or it should contain irrefutable proof of misbehavior. It should also come from a miner that has a good score itself. Secondarily, it should include references to high-quality uncle blocks that, while not winners at the time, contain highly valuable proofs themselves that would be wasteful to discard. Finally a good block should include as many valid transactions as possible, transactions are the life blood of a blockchain and it is vital miners are incentivized to include them.
 
@@ -1046,7 +1046,7 @@ We provide a brief overview of the mining cycle and the functions available to m
           \Case{$Chit$}{
             Validate $Chit$\;
             \Deliver{R, T, A}\;
-            $T \leftarrow $ \Transaction{redemption, M, Chit} \;
+            $T \leftarrow $ \Transaction{redeem, M, Chit} \;
             Submit $T$ to peers\;
           }
           \Case{counter offer $O_c$, fee $F_c$} {
@@ -1056,7 +1056,7 @@ We provide a brief overview of the mining cycle and the functions available to m
                 Restart offer with fee $F_c$\;
               }
               \lCase{decline} {
-                drop A \;
+                drop A
               }
             }
           }
@@ -1241,7 +1241,7 @@ We provide a brief overview of the routing cycle and the functions available to 
 
 \section{Future Work}
 
-This paper presents a well thought-out design for building the Helium network. However, we consider this to be just the beginning of the engineering, research and design of decentralized wireless networks. We believe that this tight integration of real-world hardware with a blockchain and a native token is a novel and valuable innovation that can be applied to other kinds of networks and wireless physical layers. We believe that the future of blockchains is not about who has the most hashing power or access to the cheapest electricity, but about blockchains where the mining proof is tied to providing a valuable, verifiable service. 
+This paper presents a well thought-out design for building the Helium network. However, we consider this to be just the beginning of the engineering, research and design of decentralized wireless networks. We believe that this tight integration of real-world hardware with a blockchain and a native token is a novel and valuable innovation that can be applied to other kinds of networks and wireless physical layers. We believe that the future of blockchains is not about who has the most hashing power or access to the cheapest electricity, but about blockchains where the mining proof is tied to providing a valuable, verifiable service.
 
 There are several intiatives that we either have or intend to undertake, including:
 
@@ -1269,84 +1269,84 @@ We would also like to acknowledge many of the prior works and inventions that ha
 \begin{thebibliography}{10}
 \softraggedright
 
-\bibitem{napster} 
-    Shawn Fanning. 
+\bibitem{napster}
+    Shawn Fanning.
     \emph{Napster - independent peer-to-peer file sharing}, 1999
 
 \bibitem{mckinsey}
-    James Manyika, Michael Chui, Peter Bisson, Jonathan Woetzel, Richard Dobbs, Jacques Bughin, Dan Aharon. 
+    James Manyika, Michael Chui, Peter Bisson, Jonathan Woetzel, Richard Dobbs, Jacques Bughin, Dan Aharon.
     \emph{Unlocking the potential of the Internet of Things}, 2015
 
 \bibitem{ghost}
-    Yonatan Sompolinsky. 
+    Yonatan Sompolinsky.
     \emph{Secure High-Rate Transaction Processing in Bitcoin}
 
 \bibitem{nist}
-    Mehmet Adalier. 
+    Mehmet Adalier.
     \emph{Efficient and Secure Elliptic Curve Cryptography Implementation of Curve P-256}
 
 \bibitem{ethereum}
-    Vitalik Buterin. 
+    Vitalik Buterin.
     \emph{Ethereum}, 2014
 
 \bibitem{lora}
-    LoRa Alliance. 
+    LoRa Alliance.
     \emph{LoRa Alliance - Wide Area Networks for IoT}, 2013
 
 \bibitem{rpma}
-    Ingenu. 
+    Ingenu.
     \emph{RPMA Technology}
 
 \bibitem{ieee802_15_4}
-    IEEE. 
+    IEEE.
     \emph{IEEE Standard for Low-Rate Wireless Networks}, 2015
 
 \bibitem{bitcoin}
-    Satoshi Nakamoto. 
+    Satoshi Nakamoto.
     \emph{Bitcoin: A peer-to-peer electronic cash system}, 2008
 
 \bibitem{dijkstra}
-    Dijkstra, E. W. 
+    Dijkstra, E. W.
     \emph{A note on two problems in connection with graphs}, 1959
 
 \bibitem{hashing}
-    David Karger, Eric Lehman, Tom Leighton, Matthew Levine, Daniel Lewin, Rina Panigrahy. 
+    David Karger, Eric Lehman, Tom Leighton, Matthew Levine, Daniel Lewin, Rina Panigrahy.
     \emph{Consistent Hashing and Random Trees: Distributed Caching Protocols for Relieving Hot Spots on the World Wide Web}, 1997
 
 \bibitem{roughtime}
-    Adam Langley, Google. 
+    Adam Langley, Google.
     \emph{Roughtime - a project that aims to provide secure time synchronisation}
 
 \bibitem{gtp}
-    Mehmud Abliz, Taieb Znati. 
+    Mehmud Abliz, Taieb Znati.
     \emph{A Guided Tour Puzzle for Denial of Service Prevention}, 2009
 
 \bibitem{tdoa}
-    Regina Kaune, Julian Horst, Wolfgang Koch. 
+    Regina Kaune, Julian Horst, Wolfgang Koch.
     \emph{Accuracy Analysis for TDOA Localization in Sensor Networks}, 2011
 
 \bibitem{iota}
-    David Sønstebø, Sergey Ivancheglo, Dominik Schiener, and Serguei Popov. 
+    David Sønstebø, Sergey Ivancheglo, Dominik Schiener, and Serguei Popov.
     \emph{IOTA - Next Generation Blockchain}, 2015
 
 \bibitem{lightning}
-    Joseph Poon, Thaddeus Dryja. 
+    Joseph Poon, Thaddeus Dryja.
     \emph{Lightning Network - Scalable, Instant Bitcoin/Blockchain Transactions}, 2017
 
 \bibitem{raiden}
-    brainbot. 
+    brainbot.
     \emph{The Raiden Network - Fast, cheap, scalable token transfers for Ethereum}, 2017
 
 \bibitem{state-channels}
-    Jeff Coleman. 
+    Jeff Coleman.
     \emph{State Channels}, 2015
 
 \bibitem{filecoin}
-    Protocol Labs. 
+    Protocol Labs.
     \emph{Filecoin}, 2017
 
 \bibitem{protocol}
-    Juan Benet. 
+    Juan Benet.
     \emph{Protocol Labs}, 2014
 
 \end{thebibliography}
