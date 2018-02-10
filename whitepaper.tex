@@ -967,7 +967,48 @@ We provide a brief overview of the mining cycle and the functions available to m
 
   \item [Challenge] A miner begins the \emph{Proof-of-Coverage} process by becoming a Challenger.
 
-    The miner uses their public key to sign a digest of their partially completed block to obtain some verifiable randomness. This randomness is used to choose the Target. Once the Target is selected the proof of coverage is constructed [Section \ref{poc}]
+    The miner uses their public key to sign a digest of their partially completed block to obtain some verifiable randomness. This randomness is used to choose the Target. Once the Target is selected the proof of coverage is constructed and deliver to the Target to begin the challenge as detailed in [Section \ref{poc}].
+
+
+    \begin{algorithm}[!htb]
+      \SetAlgorithmName{Protocol}{List of Protocols}
+      \DontPrintSemicolon
+      \SetKwProg{Challenge}{\BlankLine PoC Challenge}{}{}
+      \SetKwFunction{SelectTarget}{SelectTarget}
+      \SetKwFunction{SelectCandidates}{SelectCandidates}
+      \SetKwFunction{WeightedGraph}{WeightedGraph}
+      \SetKwFunction{ShortestPath}{ShortestPath}
+      \SetKwFunction{FoldR}{FoldR}
+      \SetKwFunction{Encrypt}{Encrypt}
+      \SetKwProg{MakeLayer}{\BlankLine MakeLayer}{}{}
+      \SetKwFunction{ML}{MakeLayer}
+      \caption{Miner PoC Challenge}\label{proto:miner.poc.challenge}
+
+      \Challenge{at challenger C} {
+        $T \leftarrow $ \SelectTarget{C}\;
+        $T_n \leftarrow $ \SelectCandidates{T}\;
+        $T_g \leftarrow $ \WeightedGraph{$T_n$}\;
+        $T_{1 \dots l} \leftarrow $ \ShortestPath{$T_g$}\;
+
+        $S \leftarrow $ generate secret \;
+        $O \leftarrow $ \FoldR{\MakeLayer{S}, [], $T_{1 \dots l}$} \;
+      }
+
+      \MakeLayer{Secret S, [$T_h$ $\vert$ $T_t$]} {
+        $E_h \leftarrow $ public key of $T_h$\;
+
+        \Switch{$T_t$} {
+          \lCase{[]} { $ \ll \gg $}
+          \Other{
+            Remainder $R \leftarrow $ \ML{S, $T_t$} \;
+            $L \leftarrow $  $\ll S:64, \psi:32, R \gg $ \;
+            \Encrypt{L, $E_x$} \;
+          }
+        }
+      }
+    \end{algorithm}
+    \FloatBarrier
+
 
   \item [Receive Radio Challenge] A miner receives a \emph{Proof-of-Coverage} radio transmission.
 
