@@ -916,7 +916,8 @@ We provide a brief overview of the mining cycle and the functions available to m
   \Miner{at any time} {
     Receive transactions\;
     Receive block\;
-    Receive coverage challenge\;
+    Receive PoC challenge\;
+    Receive radio challenge\;
     Receive serialization challenge\;
     Receive data from device\;
     Receive data from router\;
@@ -965,7 +966,7 @@ We provide a brief overview of the mining cycle and the functions available to m
 
     The new block contains the hash of the previous block (the current head), the block height (how many blocks are in the chain between this block and the genesis block) and a set of transactions from the mempool. The set of transactions are added to a Merkle tree, and the root hash is also stored.
 
-  \item [Challenge] A miner begins the \emph{Proof-of-Coverage} process by becoming a Challenger.
+  \item [Construct PoC] A miner begins the \emph{Proof-of-Coverage} process by becoming a Challenger.
 
     The miner uses their public key to sign a digest of their partially completed block to obtain some verifiable randomness. This randomness is used to choose the Target. Once the Target is selected the proof of coverage is constructed and deliver to the Target to begin the challenge as detailed in [Section \ref{poc}].
 
@@ -1005,6 +1006,24 @@ We provide a brief overview of the mining cycle and the functions available to m
             \Encrypt{L, $E_x$} \;
           }
         }
+      }
+    \end{algorithm}
+    \FloatBarrier
+
+
+  \item [Receive PoC Challenge] A miner receives a PoC challenge from one of it's peers.
+
+    A PoC challenge is handed to the first of the targets in the challenge. The target is responsible for immediately transmitting the challenge as described in[Section \ref{poc}].
+
+    \begin{algorithm}[!htb]
+      \SetAlgorithmName{Protocol}{List of Protocols}
+      \DontPrintSemicolon
+      \SetKwProg{Recv}{\BlankLine Receive}{}{}
+      \SetKwFunction{Transmit}{Transmit}
+      \caption{Miner PoC Challenge Transmit}\label{proto:miner.recv.poc.challenge}
+
+      \Recv{at miner T, challenge O} {
+        \Transmit{O}\;
       }
     \end{algorithm}
     \FloatBarrier
