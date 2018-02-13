@@ -60,7 +60,7 @@
 \maketitle
 
 \begin{abstract}
-The Internet of Things is a \textdollar1.6 trillion industry, with over 8.4 billion connected devices online, and predicted to more than double over the next 2 years. All of these devices need to connect to the internet to function. However, current solutions such as cellular, WiFi, and Bluetooth are suboptimal: they are too expensive, too power hungry, or too limited in range.
+The Internet of Things is an \textdollar800 billion industry, with over 8.4 billion connected devices online, and spending is predicted to reach nearly \textdollar1.4 trillion by 2021~\cite{idc}. All of these devices need to connect to the internet to function. However, current solutions such as cellular, WiFi, and Bluetooth are suboptimal: they are too expensive, too power hungry, or too limited in range.
 
 Helium is a \emph{decentralized machine network} that enables devices anywhere in the world to wirelessly connect to the internet and geolocate themselves without the need for power-hungry satellite location hardware or expensive cellular plans. Powering the network is a blockchain with a native protocol token incentivizing a two-sided marketplace between coverage providers and coverage consumers. With the introduction of a blockchain, Helium injects decentralization into an industry currently controlled by monopolistic companies. The result is that wireless network coverage becomes a utility, fueled by competition, available anywhere in the world, at a fraction of current costs.
 
@@ -362,7 +362,7 @@ The construction logic of $O$ is as follows:
   \item A weighted graph, $T_g$, is constructed from $T_n$ such that members of $T_g$ in radio range of each other are connected by an edge weighted by the value of \(1 - \Big({score(T_a) - score(T_b)}\Big)\)
   \item The shortest path between $T_1$ to $T$ to $T_L$ is computed using Dijkstra's algorithm\cite{dijkstra} using the edge weights from the previous step
 	\item An ephemeral public/private keypair $E_k$ and $E$\textsubscript{k-1} are generated
-	\item A layer $O_l$ is created and added to $O$, and $S$ is encrypted with the combination of the public key of $T_L$, retrieved from the blockchain as $T_L$$_k$ and $E$\textsubscript{k-1} as an Elliptic-Curve Diffie-Hellman(ECDH) exchange to compute a shared secret, known only to both parties $C$ and $T_L$
+	\item A layer $O_l$ is created and added to $O$, and $S$ is encrypted with the combination of the public key of $T_L$, retrieved from the blockchain as $T_L$$_k$ and $E$\textsubscript{k-1} as an Elliptic-Curve Diffie-Hellman (ECDH) exchange to compute a shared secret, known only to both parties $C$ and $T_L$
   \item The previous step repeats with additional layers added to $O$ until all $T_L$ $\rightarrow$ $T_1$ have a layer $O_l$ included in $O$
 \end{enumerate}
 
@@ -1326,9 +1326,13 @@ We would also like to acknowledge many of the prior works and inventions that ha
     Shawn Fanning.
     \emph{Napster - independent peer-to-peer file sharing}, 1999
 
+\bibitem{idc}
+    Marcus Torchia, Monika Kumar. 
+    \emph{IDC - Worldwide Semiannual Internet of Things Spending Guide}, 2017
+
 \bibitem{mckinsey}
     James Manyika, Michael Chui, Peter Bisson, Jonathan Woetzel, Richard Dobbs, Jacques Bughin, Dan Aharon.
-    \emph{Unlocking the potential of the Internet of Things}, 2015
+    \emph{McKinsey - Unlocking the potential of the Internet of Things}, 2015
 
 \bibitem{ghost}
     Yonatan Sompolinsky.
