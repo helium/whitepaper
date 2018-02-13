@@ -111,7 +111,7 @@ Helium is built around the following key components:
 \subsection{System Overview}
 
 \begin{itemize}
-    \item The Helium protocol is a \emph{Decentralized Machine Network} system built around a new wireless protocol (WHIP) on a purpose-built blockchain with a native token.
+    \item Helium is a \emph{Decentralized Machine Network} built around a new wireless protocol (WHIP) on a purpose-built blockchain with a native token.
     \item Devices take the form of hardware containing a radio chip and firmware compatible with WHIP, and spend tokens by paying miners to send data to and from the internet.
     \item Miners earn tokens by providing wireless network coverage via purpose-built hardware which provides a bridge between WHIP and routers, which are internet applications.
     \item Devices store their private keys in commodity key-storage hardware and their public keys in the blockchain.
@@ -138,7 +138,7 @@ We introduce the Helium Decentralized Machine Network (\verb|DMN|). The \verb|DM
 
 \subsection{Participants}
 
-Any user can participate as a Device, a Miner, or a Router.
+There are three types of participants in the network: Device, Miner, or a Router.
 
 \begin{itemize}
     \item \emph{Devices} pay to send encrypted data to and from the internet via the \verb|DMN| using hardware compatible with the Helium wireless protocol, called \emph{WHIP} \secref{whip}. In geographies with a sufficient number of miners, devices can pay several miners to geolocate themselves without needing satellite location hardware. Data sent from devices is \emph{fingerprinted}, and that fingerprint stored in the blockchain.
@@ -205,11 +205,11 @@ In this section, we expand on the components of the wireless network.
 \subsection{Wireless Protocol (\emph{WHIP})}\label{whip}
 
 \begin{description}
-        \item [Motivation] Several Low Power Wide Area Network (LPWAN) technologies are available today. These wireless technologies focus on creating extremely long-range, low-power internet communication for sensors and other smart devices. Typically these technologies trade throughput for range, with data rates as low as 18~bits~per~second (bps) and range measured in miles. In comparison, a typical WiFi network has significantly higher data rates but ranges limited to only a few hundred feet. Several of these new technologies, such as LoRa~\cite{lora} and RPMA~\cite{rpma}, have gained good traction and there are many commercial products available compatible with these systems. However, we believe that the wireless network of the future should use non-proprietary protocols and modulation schemes and that participants in this ecosystem should have the freedom to choose between competing hardware vendors. We do not consider an open alliance built on top of proprietary hardware to be an acceptable compromise. While there are many open-standard wireless networking stacks, such as IEEE~802.15.4~\cite{ieee802_15_4} used in the first generation of Helium wireless products, none meet our extremely long range and low power criteria. It is this lack of open solutions that drove the creation of a new protocol.
+        \item [Motivation] Several Low Power Wide Area Network (LPWAN) technologies are available today. These wireless technologies focus on creating extremely long-range, low-power internet communication for sensors and other smart devices. Typically these technologies trade throughput for range, with data rates as low as 18~bits~per~second (bps) and range measured in miles. In comparison, a typical WiFi network has significantly higher data rates but ranges limited to only a few hundred feet. Several of these new technologies, such as LoRa~\cite{lora} and RPMA~\cite{rpma}, have gained good traction and there are many commercial products available compatible with these systems. However, we believe a decentralized machine network should use non-proprietary protocols and modulation schemes and that participants in this ecosystem should have the freedom to choose between competing hardware vendors. We do not consider an open alliance built on top of proprietary hardware to be an acceptable compromise. While there are many open-standard wireless networking stacks, such as IEEE~802.15.4~\cite{ieee802_15_4} used in the first generation of Helium wireless products, none meet our extremely long range and low power criteria. It is this lack of open solutions that drove the creation of a new protocol.
 
-        \item [Outline] We introduce a new open-source Low Power Wide Area Network (LPWAN) protocol called \emph{WHIP}. WHIP is a highly secure, long range, low power wireless network protocol that is compatible with any Frequency Shift Keying (FSK) radio transceiver operating in the sub-GHz unlicensed frequency spectrum. Authentication with the wireless network uses modern public-key encryption and NIST~P-256 ECC key pairs, with the public keys for all participants stored in the blockchain.
+        \item [Outline] We introduce a new open-source Low Power Wide Area Network (LPWAN) protocol called \emph{WHIP}. WHIP is a highly secure, long range, low power wireless network protocol that is compatible with a wide range of existing radio transceivers operating in the sub-GHz unlicensed frequency spectrum. Authentication with the wireless network uses modern public-key encryption and NIST~P-256 ECC key pairs, with the public keys for all participants stored in the blockchain.
 
-        FSK is a simple and widely supported modulation format which easy to implement and has excellent resistance to RF noise. There are dozens of vendors implementing FSK radio transceivers compatible with WHIP, such as Texas Instruments, Microchip, and Silicon Labs.
+        The modulation format is simple and widely supported, easy to implement and has excellent resistance to RF noise. There are dozens of vendors implementing radio transceivers compatible with WHIP, such as Texas Instruments, Microchip, and Silicon Labs.
 
         WHIP is a \emph{narrowband} wireless protocol which creates several channels within the unlicensed spectrum and employs frequency hopping to hop between channels. Typically frequency hopping requires a complex time-synchronized system that is limited in capacity. However, devices using WHIP do not need to coordinate with gateways on channel selection as gateways are capable of hearing all channels within the available spectrum at any time. We choose narrow-band to accomplish the following goals:
 
@@ -384,7 +384,7 @@ We describe the approximate flow of \emph{Proof-of-Coverage} creation as follows
   \item $T_1$ receives $O$ from $C$ via the peer-to-peer internet network, decrypts the outermost layer and immediately broadcasts it $R$ via the wireless network
   \item $T$ hears $O$ and attempts to decrypt the value of $E$ by using its private key $pk:\ E_{pk}\left(S, \psi, R\right)$
   \item $T$ records both the time of arrival $\beta$ and the signal strength $\upsilon$ of $O$
-  \item If successful, $T$ then creates signed receipt $K_S$, ${K_S = \left(S || \beta || \upsilon\right)}$ signed by the private key of $T$
+  \item If successful, $T$ then creates signed receipt $K_S$, \\${K_S = \left(S || \beta || \upsilon\right)}$ signed by the private key of $T$
   \item $T$ submits $K_S$ to $C$ via the peer-to-peer internet network, removes the outer most layer, and wirelessly broadcasts the remainder $O$
   \item These steps repeat for $T_1$..$T$..$T_L$, with $T_L$ being the last target in the graph
 \end{enumerate}
