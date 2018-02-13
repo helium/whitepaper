@@ -257,11 +257,11 @@ There are several functions that routers serve on the network, which include:
     \item Storing and making available a full copy of the blockchain ledger
 \end{itemize}
 
-When a gateway receives a data packet from n device on the network, it queries the blockchain to determine which router to use given the device's network address. Anyone is free to host their own router and define their devices' traffic to be delivered there by any gateway on the network. This ability allows users of the network to create VPN-like functionality whereby encrypted data is delivered only to a router (or set of routers) that they specify and can optionally host themselves.
+When a gateway receives a data packet from a device on the network, it queries the blockchain to determine which router to use given the device's network address. Anyone is free to host their own router and define their devices' traffic to be delivered there by any gateway on the network. This ability allows users of the network to create VPN-like functionality whereby encrypted data is delivered only to a router (or set of routers) that they specify and can optionally host themselves.
 
 Routers can implement a system called a \emph{Channel} which handles the authentication and routing of data to a specific third party Internet application, such as Microsoft's Azure IoT Hub. These channel implementations can take advantage of a device's onboard hardware security to create a secure, hardware-authenticated connection to a third party which would otherwise be difficult to implement directly on an embedded microcontroller. Helium will make available an open source reference implementation of a Channel that can be used to build additional interfaces to Internet services.
 
-Helium Systems Inc hosts a high-availability cloud router for anyone to use and also provides and maintains an open-source router that is available either as source code or a binary package for a variety of operating systems and distributions.
+Helium Systems Inc will also host a high-availability cloud router for anyone to use and also provides and maintains an open-source router that is available either as source code or a binary package for a variety of operating systems and distributions.
 
 The protocol specification required for implementing a router is defined in the WHIP Wireless Specification document that will be made available by the Helium Alliance.
 
@@ -295,13 +295,13 @@ We refer the interested reader to\cite{tdoa} for a detailed description of TDoA 
 
 \section{\emph{Proof-of-Coverage} \& \emph{Proof-of-Serialization}}\label{poc}
 
-In the Helium network, miners must prove that they are providing wireless network coverage that devices are able to use to communicate with the internet. Miners do this by complying with the \emph{Proof-of-Coverage} protocol which the blockchain network and other miners audit and verify. We use a \emph{Proof-of-Serialization} to ensure that miners are correctly representing their time in relation to others on the network, and obtain cryptographic proof of dishonest behavior. Several components of the Helium network, such as blocks in the blockchain, use \emph{Proof-of-Serialization} as a cryptographic ``anchor'' that root those occurrences  with a cryptographic time proof. With a combination of \emph{Proof-of-Coverage} and \emph{Proof-of-Serialization} we can obtain cryptographic proof of the approximate location and time of events occurring within Helium.
+In the Helium network, miners must prove that they are providing wireless network coverage that devices are able to use to communicate with the internet. Miners do this by complying with the \emph{Proof-of-Coverage} protocol which the blockchain network and other miners audit and verify. We use a \emph{Proof-of-Serialization} to ensure that miners are correctly representing their time in relation to others on the network, and obtain cryptographic proof of dishonest behavior. Several components of the Helium network, such as blocks in the blockchain, use \emph{Proof-of-Serialization} as a cryptographic ``anchor'' that root those occurrences  with a cryptographic time proof. With a combination of \emph{Proof-of-Coverage} and \emph{Proof-of-Serialization} we can obtain cryptographic proof of the approximate location and time of events occurring within the Helium network.
 
 In this section we outline the motivation and implementation for \emph{Proof-of-Coverage} and \emph{Proof-of-Serialization}.
 
 \subsection{Motivation}
 
-Most existing blockchain networks such as Bitcoin~\cite{bitcoin} and Ethereum~\cite{ethereum} use a \emph{Proof-of-Work} system that relies on an algorithmic puzzle that is asymmetric in nature. These proofs are extremely difficult to generate, but simple for a third party to verify. Security on these networks is achieved by the network-wide \emph{consensus} that the amount of computing power required to generate a valid proof is difficult to forge, and as subsequent blocks are added, the cumulative difficulty of the chain becoming realistically impossible to fabricate.
+Most existing blockchain networks such as Bitcoin~\cite{bitcoin} and Ethereum~\cite{ethereum} use a \emph{Proof-of-Work} system that relies on an algorithmic puzzle that is asymmetric in nature. These proofs are extremely difficult to generate, but simple for a third party to verify. Security on these networks is achieved by the network-wide \emph{consensus} that the amount of computing power required to generate a valid proof is difficult to forge, and as subsequent blocks are added, the cumulative difficulty of the chain becoming prohibitively difficult to fabricate.
 
 These computation-heavy proofs are, however, not otherwise \emph{useful} to the network. We define useful as work that is valuable to the network beyond securing the blockchain. While there have been attempts in other networks to turn mining power into something useful, such as Ethereum executing small programs, the majority of the work is not useful or reusable. The mining process is also extremely wasteful, as the determining factor in the work is typically computational power which consumes massive amounts of power and hardware to execute.
 
@@ -318,7 +318,7 @@ With \verb|PoC| we aim to solve for the following:
 \begin{itemize}
     \item Our goal is to prove that miners are operating radio frequency (RF) hardware and firmware compatible with the wireless protocol
     \item Our goal is to prove that miners are located in the geography they claim by having them communicate via RF
-    \item Our goal is to correctly identify which reality is honest when there is a conflict
+    \item Our goal is to correctly identify which version of reality is correct when there is a conflict
 \end{itemize}
 
 \emph{Proof-of-Coverage} is inspired by the \emph{Guided Tour Protocol (GTP)}~\cite{gtp} which devises a system for denial of service prevention by requiring a client $c$ to make a request to a variety of ``tour guide'' computers $G_n$ in order to gain access to a server $s$. The tour guides must be visited in a specific order and a hash of data exchanged which reveals the location of the next $G_n$ in order. Only after every $G_n$ has been visited can $c$ gain access to $s$.
@@ -352,7 +352,7 @@ Our goal is to verify whether miners in a physical region are acting honestly an
 
 \textbf{Selecting the Initial Target}. We aim to deterministically locate a geographic reference target, $T$, for the challenger, $C$. $T$ does not need to be geographically proximate to $C$. To locate $T$, $C$ uses a \emph{consistent hash ring} $\omega$, of potential miners. $\omega$ only contains miners eligible as targets as described in \secref{mining}, and miners are allocated portions of $\omega$ that are inversely proportional to their score, increasing the probability of potentially dishonest miners being targeted. We refer the interested reader to \cite{hashing} for further reading on consistent hashing techniques. Given that a miners score is diminishing linearly over time \secref{scores}, it is necessary to create this inverse relationship to give low-scoring miners an opportunity to participate in the process and increase their score. This diminishing score also incentivizes all the participants to send receipts to the challenger and broadcast the remainder of $O$. We seed verifiable randomness, $\eta$, into the selection process using a signed digest of the partial block from $C$ - thus, it is necessary for $C$ to have begun forming a new candidate block for the blockchain before the \emph{Proof-of-Coverage} process can begin \secref{mining}.
 
-\textbf{Constructing the multi-layer challenge}. Once $T$ has been selected, $C$ must construct a multi-layer challenge, $O$. $O$ is a data packet broadcast over the wireless network and received by geographically proximate targets $T_n$. Geographically proximate is defined as within a radius of $T$, a network value $T$\textsubscript{radius}. Each layer of $O$, $O_l$, consists of a three-tuple of $E\left(S, \psi, R\right)$, where $E$ is a secure public key encryption function, $S$ is a secret value, $\psi$ is the time to broadcast the next layer of the challenge and $R$ is the remainder of $O$ consisting of recursive three-tuples. The maximum number of $O_l$ is bounded by a network value, $O$\textsubscript{max}.
+\textbf{Constructing the multi-layer challenge}. Once $T$ has been selected, $C$ must construct a multi-layer challenge, $O$. $O$ is a data packet broadcast over the wireless network and received by geographically proximate targets $T_n$. Geographically proximate is defined as within a radius of $T$, a network value $T$\textsubscript{radius}. Each layer of $O$, $O_l$, consists of a three-tuple of $E\left(S, \psi, R\right)$, where $E$ is a secure encryption function using the ECDH derived secret key, $S$ is a secret value, $\psi$ is the time to broadcast the next layer of the challenge and $R$ is the remainder of $O$ consisting of recursive three-tuples. The maximum number of $O_l$ is bounded by a network value, $O$\textsubscript{max}.
 
 The construction logic of $O$ is as follows:
 
@@ -360,9 +360,10 @@ The construction logic of $O$ is as follows:
   \item A set of candidates, $T_n$, are constructed such that all members of $T_n$ are within a contiguous radio network that also contains $T$
   \item Two targets, $T_1$ and $T_L$, are selected by finding the highest scoring targets in $T_n$ furthest from $T$
   \item A weighted graph, $T_g$, is constructed from $T_n$ such that members of $T_g$ in radio range of each other are connected by an edge weighted by the value of \(1 - \Big({score(T_a) - score(T_b)}\Big)\)
-  \item The shortest path between $T_1$ to $T$ to $T_L$ is computed using Dijkstra's algorithm\cite{dijkstra}
-  \item A layer $O_l$ is created and added to $O$, and $S$ is encrypted with the public key of $T_1$ retrieved from the blockchain
-  \item This process repeats with additional layers added to $O$ until all $T_g$ have a layer $O_l$ included in $O$
+  \item The shortest path between $T_1$ to $T$ to $T_L$ is computed using Dijkstra's algorithm\cite{dijkstra} using the edge weights from the previous step
+	\item An ephemeral public/private keypair $E_k$ and $E$\textsubscript{k-1} are generated
+	\item A layer $O_l$ is created and added to $O$, and $S$ is encrypted with the combination of the public key of $T_L$, retrieved from the blockchain as $T_L$$_k$ and $E$\textsubscript{k-1} as an Elliptic-Curve Diffie-Hellman(ECDH) exchange to compute a shared secret, known only to both parties $C$ and $T_L$
+  \item The previous step repeats with additional layers added to $O$ until all $T_L$ $\rightarrow$ $T_1$ have a layer $O_l$ included in $O$
 \end{enumerate}
 
 The resulting $O$ can be visually represented as the following:
@@ -375,13 +376,13 @@ The resulting $O$ can be visually represented as the following:
      \end{center}
 \end{figure}
 
-\textbf{Creating the Proof}. Once $O$ has been constructed, it is delivered to $T_1$ via the internet peer-to-peer network and immediately broadcast via the wireless network. The Helium wireless protocol is not a point-to-point system, so several miners within proximity of $T_1$ will hear $O$. As described prior, each layer $O_l$ of $O$ contains the three-tuple ${E\left(S, \psi, R\right)}$ where $E$ is a secure public key encryption function, $S$ is a secret value, $\psi$ is a time at which to transmit the next layer of the packet and $R$ is the remainder of $O$ consisting of recursive three-tuples. In this example, only the specific target $T$ will be able to decrypt $E$ and send a valid receipt back to the challenger, $C$.
+\textbf{Creating the Proof}. Once $O$ has been constructed, it is delivered to $T_1$ via the internet peer-to-peer network and immediately broadcast via the wireless network. The Helium wireless protocol is not a point-to-point system, so several miners within proximity of $T_1$ will hear $O$. As described prior, each layer $O_l$ of $O$ contains the three-tuple ${E\left(S, \psi, R\right)}$ where $E$ is a secure encryption function using the ECDH-derived key, $S$ is a secret value, $\psi$ is a time at which to transmit the next layer of the packet and $R$ is the remainder of $O$ consisting of recursive three-tuples. In this example, only the specific target $T$ will be able to decrypt $E$ and send a valid receipt back to the challenger, $C$.
 
 We describe the approximate flow of \emph{Proof-of-Coverage} creation as follows:
 
 \begin{enumerate}
-  \item $T_1$ receives $O$ from $C$ via the peer-to-peer internet network and immediately broadcasts it via the wireless network
-  \item $T$ hears $O$ and attempts to decrypt the value of $E$ by using its public key $pk:\ E_{pk}\left(S, \psi, R\right)$
+  \item $T_1$ receives $O$ from $C$ via the peer-to-peer internet network, decrypts the outermost layer and immediately broadcasts it $R$ via the wireless network
+  \item $T$ hears $O$ and attempts to decrypt the value of $E$ by using its private key $pk:\ E_{pk}\left(S, \psi, R\right)$
   \item $T$ records both the time of arrival $\beta$ and the signal strength $\upsilon$ of $O$
   \item If successful, $T$ then creates signed receipt $K_S$, ${K_S = \left(S || \beta || \upsilon\right)}$ signed by the private key of $T$
   \item $T$ submits $K_S$ to $C$ via the peer-to-peer internet network, removes the outer most layer, and wirelessly broadcasts the remainder $O$
@@ -512,7 +513,7 @@ Assuming these steps are completed successfully, the \emph{Proof-of-Coverage} is
 
 \subsection{Constructing \emph{Proof-of-Serialization}}
 
-To achieve cryptographic time consensus among decentralized clients, we implement a simplified form of Google’s Roughtime \cite{roughtime}. Roughtime is a protocol that aims to achieve roughtime synchronization in a secure way that does not depend on any particular time server, and in such a way that, if a time server does misbehave, clients end up with cryptographic proof of that behavior.
+To achieve cryptographic time consensus among decentralized clients, we implement a simplified form of Google's Roughtime \cite{roughtime}. Roughtime is a protocol that aims to achieve roughtime synchronization in a secure way that does not depend on any particular time server, and in such a way that, if a time server does misbehave, clients end up with cryptographic proof of that behavior.
 
 This section describes the construction of the \emph{Proof-of-Serialization} protocol.
 
