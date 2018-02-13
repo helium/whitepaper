@@ -382,7 +382,7 @@ We describe the approximate flow of \emph{Proof-of-Coverage} creation as follows
 
 \begin{enumerate}
   \item $T_1$ receives $O$ from $C$ via the peer-to-peer internet network, decrypts the outermost layer and immediately broadcasts it $R$ via the wireless network
-  \item $T$ hears $O$ and attempts to decrypt the value of $E$ by using its private $pk:\ E_{pk}\left(S, \psi, R\right)$
+  \item $T$ hears $O$ and attempts to decrypt the value of $E$ by using its private key $pk:\ E_{pk}\left(S, \psi, R\right)$
   \item $T$ records both the time of arrival $\beta$ and the signal strength $\upsilon$ of $O$
   \item If successful, $T$ then creates signed receipt $K_S$, ${K_S = \left(S || \beta || \upsilon\right)}$ signed by the private key of $T$
   \item $T$ submits $K_S$ to $C$ via the peer-to-peer internet network, removes the outer most layer, and wirelessly broadcasts the remainder $O$
