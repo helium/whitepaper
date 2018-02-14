@@ -60,7 +60,7 @@
 \maketitle
 
 \begin{abstract}
-The Internet of Things is an \textdollar800 billion industry, with over 8.4 billion connected devices online, and spending is predicted to reach nearly \textdollar1.4 trillion by 2021~\cite{idc}. All of these devices need to connect to the internet to function. However, current solutions such as cellular, WiFi, and Bluetooth are suboptimal: they are too expensive, too power hungry, or too limited in range.
+The Internet of Things is an \textdollar800 billion industry, with over 8.4 billion connected devices online, and spending predicted to reach nearly \textdollar1.4 trillion by 2021~\cite{idc}. All of these devices need to connect to the internet to function. However, current solutions such as cellular, WiFi, and Bluetooth are suboptimal: they are too expensive, too power hungry, or too limited in range.
 
 Helium is a \emph{decentralized machine network} that enables devices anywhere in the world to wirelessly connect to the internet and geolocate themselves without the need for power-hungry satellite location hardware or expensive cellular plans. Powering the network is a blockchain with a native protocol token incentivizing a two-sided marketplace between coverage providers and coverage consumers. With the introduction of a blockchain, Helium injects decentralization into an industry currently controlled by monopolistic companies. The result is that wireless network coverage becomes a utility, fueled by competition, available anywhere in the world, at a fraction of current costs.
 
@@ -340,9 +340,9 @@ We aim to construct a proof that takes advantage of the following characteristic
     \item RF travels at the speed of light with (effectively) no latency
 \end{enumerate}
 
-Our goal is to verify whether miners in a physical region are acting honestly and creating wireless network coverage compatible with the Helium wireless protocol (WHIP). To do this, a challenger $C$ deterministically constructs a multi-layer data packet $O$ which begins at an initial target, $T_1$, and is broadcast wirelessly to a set of sequential targets, $T_n$, each of which are only able to decrypt the outer-most layer of $O$ if they were the intended recipient. Each target acknowledges receipt, $K_S$, back to $C$, removes their layer of $O$, $O$\textsubscript{l-n}, and broadcasts it for receipt by the next target. Essentially, an ``envelope of envelopes'' only openable by the intended recipient.
+Our goal is to verify whether miners in a physical region are acting honestly and creating wireless network coverage compatible with the Helium wireless protocol (WHIP). To do this, a challenger $C$ deterministically constructs a multi-layer data packet $O$ which begins at an initial target, $T_1$, and is broadcast wirelessly to a set of sequential targets, $T_n$, each of which are only able to decrypt the outer-most layer of $O$ if they were the intended recipient. Each target acknowledges receipt, $K_S$, back to $C$, removes their layer of $O$, $O$\textsubscript{l-n}, and broadcasts it for receipt by the next target. Essentially, an ``envelope of envelopes'' only decipherable by the intended recipient.
 
-\begin{figure}[H]
+\begin{figure}[ht]
     \begin{center}
           \includegraphics[width=\columnwidth]{deconstruction.eps}
           \caption{\emph{Multi-Layer Data Packet Deconstruction}}
@@ -368,7 +368,7 @@ The construction logic of $O$ is as follows:
 
 The resulting $O$ can be visually represented as the following:
 
-\begin{figure}[H]
+\begin{figure}[ht]
     \begin{center}
           \includegraphics[width=\columnwidth]{o_construction.eps}
           \caption{Construction of $O$}
@@ -393,7 +393,7 @@ $C$ expects to hear responses from $T_g$ within a time threshold $\lambda$, othe
 
 Once $T_L$ has delivered receipt to $C$, or $\lambda$ has elapsed, the \emph{Proof-of-Coverage} is completed. The collection of signed receipts, $K_S$, constitute the \emph{Proof-of-Coverage} that $C$ will include when attempting to mine the next block in the blockchain \secref{mining}.
 
-\begin{figure}[H]
+\begin{figure}[ht]
     \begin{center}
           \includegraphics[width=\columnwidth]{o_propagation.eps}
           \caption{\emph{Proof-of-Coverage} flow}
@@ -476,7 +476,7 @@ Substituting the values for $\alpha_h$ and $\epsilon_h$, we get the following re
 
 \figref{fig:score-graph} shows a snapshot of a random subset of the network at any blockchain height \textit{h}. The miners represent random locations with an illustrated score, while the edges are calculated using Dijkstra's algorithm\cite{dijkstra}.
 
-\begin{figure}[H]
+\begin{figure}[ht]
     \begin{center}
           \includegraphics[width=0.8\columnwidth]{chart.eps}
           \caption{\emph{Snapshot of a random subset of the initial network}}
@@ -486,7 +486,7 @@ Substituting the values for $\alpha_h$ and $\epsilon_h$, we get the following re
 
 After 10,000 iterations the network appears as represented in \figref{fig:score-graph10000}.
 
-\begin{figure}[H]
+\begin{figure}[ht]
     \begin{center}
           \includegraphics[width=0.8\columnwidth]{chart1000.eps}
           \caption{\emph{Snapshot of a random subset of the network after 10000 iterations}}
@@ -539,7 +539,7 @@ Because $M$ can not trust $M_1$ it will ask for another time from $M_2$:
 
 With only two servers, $M$ can end up with proof that something is wrong, but no idea what the correct time is. But with half a dozen or more independent servers, $M$ will end up with chain of proof of any server's misbehaviour, signed by several others, and enough accurate replies to establish what the correct time is, $T_t$.
 
-\begin{figure}[H]
+\begin{figure}[ht]
     \begin{center}
           \includegraphics[width=\columnwidth]{serialization.eps}
           \caption{\emph{Creating Proof-of-Serialization}}
@@ -561,7 +561,7 @@ To verify the correct time, it is necessary for $M$ to repeat the time synchroni
     \item $T_n$ can then be confirmed to be $T_t$, the correct time
 \end{enumerate}
 
-\begin{figure}[H]
+\begin{figure}[ht]
     \begin{center}
           \includegraphics[width=\columnwidth]{verify_serialization.eps}
           \caption{\emph{Verifying Proof-of-Serialization}}
