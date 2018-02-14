@@ -340,7 +340,7 @@ We aim to construct a proof that takes advantage of the following characteristic
     \item RF travels at the speed of light with (effectively) no latency
 \end{enumerate}
 
-Our goal is to verify whether miners in a physical region are acting honestly and creating wireless network coverage compatible with the Helium wireless protocol (WHIP). To do this, a challenger $C$ deterministically constructs a multi-layer data packet $O$ which begins at an initial target, $T_1$, and is broadcast wirelessly to a set of sequential targets, $T_n$, each of which are only able to decrypt the outer-most layer of $O$ if they were the intended recipient. Each target acknowledges receipt, $K_S$, back to $C$, removes their layer of $O$, $O$\textsubscript{l-n}, and broadcasts it for receipt by the next target. Essentially, an ``envelope of envelopes'' only decipherable by the intended recipient.
+Our goal is to verify whether miners in a physical region are acting honestly and creating wireless network coverage compatible with the Helium wireless protocol (WHIP). To do this, a challenger $C$ deterministically constructs a multi-layer data packet $O$ which begins at an initial target, $T_1$, and is broadcast wirelessly to a set of sequential targets, $T_n$, each of which are only able to decrypt the outer-most layer of $O$ if they were the intended recipient. Each target signs a receipt, $K_s$, delivers it to $C$, removes their layer of $O$, and broadcasts it for the next target. Essentially, an ``envelope of envelopes'' only decipherable by the intended recipient.
 
 \begin{figure}[ht]
     \begin{center}
@@ -384,14 +384,14 @@ We describe the approximate flow of \emph{Proof-of-Coverage} creation as follows
   \item $T_1$ receives $O$ from $C$ via the peer-to-peer internet network, decrypts the outermost layer and immediately broadcasts it $R$ via the wireless network
   \item $T$ hears $O$ and attempts to decrypt the value of $E$ by using its private key $pk:\ E_{pk}\left(S, \psi, R\right)$
   \item $T$ records both the time of arrival $\beta$ and the signal strength $\upsilon$ of $O$
-  \item If successful, $T$ then creates signed receipt $K_S$, \\${K_S = \left(S || \beta || \upsilon\right)}$ signed by the private key of $T$
-  \item $T$ submits $K_S$ to $C$ via the peer-to-peer internet network, removes the outer most layer, and wirelessly broadcasts the remainder $O$
+  \item If successful, $T$ then creates signed receipt $K_s$, \\${K_s = \left(S || \beta || \upsilon\right)}$ signed by the private key of $T$
+  \item $T$ submits $K_s$ to $C$ via the peer-to-peer internet network, removes the outer most layer, and wirelessly broadcasts the remainder $O$
   \item These steps repeat for $T_1$..$T$..$T_L$, with $T_L$ being the last target in the graph
 \end{enumerate}
 
 $C$ expects to hear responses from $T_g$ within a time threshold $\lambda$, otherwise it considers the \emph{Proof-of-Coverage} to have concluded. Because $C$ is the only party with complete knowledge of $O$, upper bounds of the values for $\beta$ and $\upsilon$ are assigned by $C$ which are used to verify that each layer of $O$ was transmitted approximately where and when it was expected. The upper bound for $\beta$ ls limited by the speed of light $\tau$ between $T_n$ and $T_n-1$. Thus we know that, subject to some slight delays from reflection or multipath, the packet should not arrive at $T_g$ later than $\tau$ multiplied by the geographical distance $D$ plus some small episilon value, $\upsilon = \tau \times \Big(D + \epsilon\Big)$. For $\upsilon$, because of the inverse-square law, we can calculate the maximum RSSI possible for a packet transmitted, $\mu$, from $T_g-1$ to $T_g$ as $\mu = \frac{1}{D^2}$. Gateways that are closer than expected, or which are transmitting at a higher power to mask their location disparity, are unlikely to get $\mu$ correct, given that they do not know who the next layer of $O$ is addressed to.
 
-Once $T_L$ has delivered receipt to $C$, or $\lambda$ has elapsed, the \emph{Proof-of-Coverage} is completed. The collection of signed receipts, $K_S$, constitute the \emph{Proof-of-Coverage} that $C$ will include when attempting to mine the next block in the blockchain \secref{mining}.
+Once $T_L$ has delivered receipt to $C$, or $\lambda$ has elapsed, the \emph{Proof-of-Coverage} is completed. The collection of signed receipts, $K_s$, constitute the \emph{Proof-of-Coverage} that $C$ will include when attempting to mine the next block in the blockchain \secref{mining}.
 
 \begin{figure}[ht]
     \begin{center}
@@ -496,7 +496,7 @@ After 10,000 iterations the network appears as represented in \figref{fig:score-
 
 The goal of this system is to ensure that the scoring algorithm considers that some miners may attempt to act dishonestly. However, because the calculated edge-weights (via Dijkstra's algorithm) and the target selection mechanism ensure that we only boost the score of a miner when it is being verified by other high scoring miners, we believe that the system will favor legitimate miners and deter dishonest ones.
 
-\textbf{Verifying the Proof}. Once $T_L$ has delivered $K_S$, or $\lambda$ has elapsed, the \emph{Proof-of-Coverage} is considered complete. When $C$ attempts to mine the next block, all receipts $K_S$ from $T_1$...$T_L$ are included in the candidate block, $B_C$, published to the blockchain network \secref{mining}. As all the steps originally completed by $C$ are deterministic in nature with verifiable and recreatable randomness, it is simple for a verifying miners, $V$, to recreate the original steps and verify that the proof is legitimate.
+\textbf{Verifying the Proof}. Once $T_L$ has delivered $K_s$, or $\lambda$ has elapsed, the \emph{Proof-of-Coverage} is considered complete. When $C$ attempts to mine the next block, all receipts $K_s$ from $T_1$...$T_L$ are included in the candidate block, $B_C$, published to the blockchain network \secref{mining}. As all the steps originally completed by $C$ are deterministic in nature with verifiable and recreatable randomness, it is simple for a verifying miners, $V$, to recreate the original steps and verify that the proof is legitimate.
 
 Verifying miners who see $B_C$ are able to verify the \emph{Proof-of-Coverage} prior to considering the block by recreating the following steps:
 
@@ -506,7 +506,7 @@ Verifying miners who see $B_C$ are able to verify the \emph{Proof-of-Coverage} p
         \item $V$ then selects $T$ from $\omega$, as seeding with $\eta$ will result in the same target selection
         \item The set of candidate $T_n$ are reconstructed from which $T_1$ and $T_L$ are determined
         \item Dijkstra's algorithm is used to reconstruct the graph $T_g$
-        \item The $K_S$ receipts contained in $B_C$ are verified to have been signed by the private keys of $T_1$..$T$..$T_L$
+        \item The $K_s$ receipts contained in $B_C$ are verified to have been signed by the private keys of $T_1$..$T$..$T_L$
 \end{enumerate}
 
 Assuming these steps are completed successfully, the \emph{Proof-of-Coverage} is verified and $B_C$ can be considered for inclusion in the blockchain \secref{consensus}.
