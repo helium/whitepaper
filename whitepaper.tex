@@ -15,6 +15,7 @@
 \usepackage{pgfplots}
 \usepackage{amsmath}
 \usepackage{titlesec}
+\usepackage[printwatermark]{xwatermark}
 
 \graphicspath{ {images/} }
 
@@ -22,6 +23,17 @@
 \renewcommand{\todo}[1]{{\color{red} TODO:\ {#1}}}
 
 \SetAlgorithmName{Protocol}{Protocol}{List of Protocols}
+
+%% 'DRAFT' Watermark
+\newsavebox\mybox
+\savebox\mybox{\tikz[color=black,opacity=0.05]\node{DRAFT};}
+\newwatermark*[
+  allpages,
+  angle=45,
+  scale=10,
+  xpos=0,
+  ypos=0
+]{\usebox\mybox}
 
 % Define the protocol environment
 \newenvironment{protocol}[2]{
