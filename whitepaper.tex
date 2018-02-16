@@ -167,20 +167,13 @@ $B$ consists of blocks $b_n$, which contain a header and a list of transactions.
 As in other implementations, $b_n$ consist of a hash of the previous block in the chain, a set of transactions, and a proof. At a given epoch $t$ a block $b_t$ consists of the following:
 
 \begin{center}
-    \begin{tabular}{|c|}
-         \hline
-         Block Version \\
-         \hline
-         Block Height \\
-         \hline
-         Previous Block Hash \\
-         \hline
-         Transactions \emph{1..n} Merkle Hash $T_t$ \\
-         \hline
-         \emph{Proofs-of-Coverage} \\
-         \hline
-         \emph{Proof-of-Serialization} \\
-         \hline
+    \begin{tabular}{l}
+         Block Version                                   \\
+         Block Height                                    \\
+         Previous Block Hash                             \\
+         Transactions \emph{1\ldots n} Merkle Hash $T_t$ \\
+         \emph{Proofs-of-Coverage}                       \\
+         \emph{Proof-of-Serialization}                   \\
     \end{tabular}
 \end{center}
 
