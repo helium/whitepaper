@@ -1,4 +1,4 @@
-\documentclass[10pt, nonatbib, nocopyrightspace, reprint]{sigplanconf}
+\documentclass[UTF8, 10pt, nonatbib, nocopyrightspace, reprint]{sigplanconf}
 
 \usepackage[backref=section, linkbordercolor={1 1 1}, urlbordercolor={1 1 1}, citebordercolor={1 1 1}]{hyperref}
 \usepackage[ruled, vlined]{algorithm2e}
@@ -28,11 +28,11 @@
 \newsavebox\mybox
 \savebox\mybox{\tikz[color=black,opacity=0.05]\node{DRAFT};}
 \newwatermark*[
-  allpages,
-  angle=45,
-  scale=10,
-  xpos=0,
-  ypos=0
+ allpages,
+ angle=45,
+ scale=10,
+ xpos=0,
+ ypos=0
 ]{\usebox\mybox}
 
 % Define the protocol environment
@@ -186,9 +186,9 @@ As in other implementations, $b_n$ consist of a hash of the previous block in th
 
 Due to the fact that miners are only able to add transactions to the block during the early phases of the mining cycle or that the block may be full, the miner holds pending transactions that it has seen, but that do not appear on the main chain, in a temporary storage area, called the \emph{mempool}. The mempool is consulted every time a new block is constructed, and the most valuable transactions for the miner are included in the new block. Because each miner has a different set of incentives, network topology, and resources, the mempools may not be consistent between any two miners.
 
-As the \emph{Proof-of-Coverage} \secref{poc} is valuable to the network, we store as many $b_n$ and their associated proof to $B$ as \emph{Uncle Blocks}, $U_n$. $U_n$, as described in the \emph{Greedy Heaviest-Observed Sub-Tree (GHOST)}~\cite{ghost} paper and implemented in Ethereum~\cite{ethereum}, allow a miner to earn block rewards even if their submitted block did not become the tip of the chain. $U_n$ help the winning chain accumulate `weight' in terms of both the length and quality of the chain, but also including the amount and quality of $U_n$ and their associated proofs. This means that longer chain forks, either mined maliciously or on the smaller side of a partitioned network, are not selected over a shorter, weightier chain. This also means that valuable proofs of work are not lost and can be used by the chain to calculate trust.
+As the \emph{Proof-of-Coverage} \secref{poc} is valuable to the network, we store as many $b_n$ and their associated proof to $B$ as \emph{Uncle Blocks}, $u_n$. $u_n$, as described in the \emph{Greedy Heaviest-Observed Sub-Tree (GHOST)}~\cite{ghost} paper and implemented in Ethereum~\cite{ethereum}, allow a miner to earn block rewards even if their submitted block did not become the tip of the chain. $u_n$ help the winning chain accumulate `weight' in terms of both the length and quality of the chain, but also including the amount and quality of $u_n$ and their associated proofs. This means that longer chain forks, either mined maliciously or on the smaller side of a partitioned network, are not selected over a shorter, weightier chain. This also means that valuable proofs of work are not lost and can be used by the chain to calculate trust.
 
-Blocks are given a \emph{score} that is used as part of the consensus protocol to determine which block should be considered the tip of the chain. The score is based on the \emph{Proof-of-Coverage} and the score of $U_n$ contained within the submitted block. The consensus protocol is outlined in detail in \secref{consensus}.
+Blocks are given a \emph{score} that is used as part of the consensus protocol to determine which block should be considered the tip of the chain. The score is based on the \emph{Proof-of-Coverage} and the score of $u_n$ contained within the submitted block. The consensus protocol is outlined in detail in \secref{consensus}.
 
 \figref{fig:chain} shows a visualization of the Helium blockchain at a given epoch, $t$.
 
@@ -205,11 +205,11 @@ Blocks are given a \emph{score} that is used as part of the consensus protocol t
 In addition to the blockchain network, Helium is a \emph{physical} wireless network instantiation. The participants in the network, from a physical hardware perspective, can be thought of as follows:
 
 \begin{description}
-        \item [Wireless Protocol] The wireless network uses a new open wireless protocol, called \emph{WHIP}. WHIP is a long-range, low-power, wireless network protocol suitable for use with commodity open-standards hardware. WHIP compatible hardware can communicate over many square miles in dense urban environments or hundreds of square miles in rural settings. WHIP compatible hardware can also last for several years using standard batteries. WHIP uses strong public key cryptography and authentication occurs using the Helium blockchain, with end-to-end encryption.
+    \item [Wireless Protocol] The wireless network uses a new open wireless protocol, called \emph{WHIP}. WHIP is a long-range, low-power, wireless network protocol suitable for use with commodity open-standards hardware. WHIP compatible hardware can communicate over many square miles in dense urban environments or hundreds of square miles in rural settings. WHIP compatible hardware can also last for several years using standard batteries. WHIP uses strong public key cryptography and authentication occurs using the Helium blockchain, with end-to-end encryption.
 
-        \item [Gateways] Gateways are physical network devices that provide wide-area wireless coverage and participate in the blockchain network. Gateways transmit data back and forth between routers on the internet and devices while generating \emph{Proofs-of-Coverage} for the blockchain network \secref{poc}. Gateways are manufactured using commodity open-standards components with no proprietary hardware. Gateways can cooperate and geolocate devices using the wireless network without any additional required hardware. Each Gateway can support thousands of connected devices, and provide coverage over many square miles. Miners operating gateways specify the price they are willing to accept for transport and geolocation services for devices.
+    \item [Gateways] Gateways are physical network devices that provide wide-area wireless coverage and participate in the blockchain network. Gateways transmit data back and forth between routers on the internet and devices while generating \emph{Proofs-of-Coverage} for the blockchain network \secref{poc}. Gateways are manufactured using commodity open-standards components with no proprietary hardware. Gateways can cooperate and geolocate devices using the wireless network without any additional required hardware. Each Gateway can support thousands of connected devices, and provide coverage over many square miles. Miners operating gateways specify the price they are willing to accept for transport and geolocation services for devices.
 
-        \item [Devices] Devices exist in the form of hardware products that contain a WHIP-compatible radio transceiver and communicate with gateways on the wireless network. WHIP is designed to facilitate low power data transmission and reception, so typically devices would exist in the form of battery-powered sensors that can live for several years using standard batteries (although mains-powered devices also work quite well). Devices can exist in a variety of forms, depending on the product or use case, and a variety of transmission and reception strategies can be employed to optimize for transmission/reception frequency or battery life. Device manufacturers should use hardware-based key storage which can securely generate, store, and authenticate public/private key pairs without leaking the private key.
+    \item [Devices] Devices exist in the form of hardware products that contain a WHIP-compatible radio transceiver and communicate with gateways on the wireless network. WHIP is designed to facilitate low power data transmission and reception, so typically devices would exist in the form of battery-powered sensors that can live for several years using standard batteries (although mains-powered devices also work quite well). Devices can exist in a variety of forms, depending on the product or use case, and a variety of transmission and reception strategies can be employed to optimize for transmission/reception frequency or battery life. Device manufacturers should use hardware-based key storage which can securely generate, store, and authenticate public/private key pairs without leaking the private key.
 \end{description}
 
 In this section, we expand on the components of the wireless network.
@@ -217,21 +217,21 @@ In this section, we expand on the components of the wireless network.
 \subsection{Wireless Protocol (\emph{WHIP})}\label{whip}
 
 \begin{description}
-        \item [Motivation] Several Low Power Wide Area Network (LPWAN) technologies are available today. These wireless technologies focus on creating extremely long-range, low-power internet communication for sensors and other smart devices. Typically these technologies trade throughput for range, with data rates as low as 18~bits~per~second (bps) and range measured in miles. In comparison, a typical WiFi network has significantly higher data rates but ranges limited to only a few hundred feet. Several of these new technologies, such as LoRa~\cite{lora} and RPMA~\cite{rpma}, have gained good traction and there are many commercial products available compatible with these systems. However, we believe a decentralized machine network should use non-proprietary protocols and modulation schemes and that participants in this ecosystem should have the freedom to choose between competing hardware vendors. We do not consider an open alliance built on top of proprietary hardware to be an acceptable compromise. While there are many open-standard wireless networking stacks, such as IEEE~802.15.4~\cite{ieee802_15_4} used in the first generation of Helium wireless products, none meet our extremely long range and low power criteria. It is this lack of open solutions that drove the creation of a new protocol.
+    \item [Motivation] Several Low Power Wide Area Network (LPWAN) technologies are available today. These wireless technologies focus on creating extremely long-range, low-power internet communication for sensors and other smart devices. Typically these technologies trade throughput for range, with data rates as low as 18~bits~per~second (bps) and range measured in miles. In comparison, a typical WiFi network has significantly higher data rates but ranges limited to only a few hundred feet. Several of these new technologies, such as LoRa~\cite{lora} and RPMA~\cite{rpma}, have gained good traction and there are many commercial products available compatible with these systems. However, we believe a decentralized machine network should use non-proprietary protocols and modulation schemes and that participants in this ecosystem should have the freedom to choose between competing hardware vendors. We do not consider an open alliance built on top of proprietary hardware to be an acceptable compromise. While there are many open-standard wireless networking stacks, such as IEEE~802.15.4~\cite{ieee802_15_4} used in the first generation of Helium wireless products, none meet our extremely long range and low power criteria. It is this lack of open solutions that drove the creation of a new protocol.
 
-        \item [Outline] We introduce a new open-source Low Power Wide Area Network (LPWAN) protocol called \emph{WHIP}. WHIP is a highly secure, long range, low power wireless network protocol that is compatible with a wide range of existing radio transceivers operating in the sub-GHz unlicensed frequency spectrum. Authentication with the wireless network uses modern public-key encryption and NIST~P-256 ECC key pairs, with the public keys for all participants stored in the blockchain.
+    \item [Outline] We introduce a new open-source Low Power Wide Area Network (LPWAN) protocol called \emph{WHIP}. WHIP is a highly secure, long range, low power wireless network protocol that is compatible with a wide range of existing radio transceivers operating in the sub-GHz unlicensed frequency spectrum. Authentication with the wireless network uses modern public-key encryption and NIST~P-256 ECC key pairs, with the public keys for all participants stored in the blockchain.
 
-        The modulation format is simple and widely supported, easy to implement and has excellent resistance to RF noise. There are dozens of vendors implementing radio transceivers compatible with WHIP, such as Texas Instruments, Microchip, and Silicon Labs.
+    The modulation format is simple and widely supported, easy to implement and has excellent resistance to RF noise. There are dozens of vendors implementing radio transceivers compatible with WHIP, such as Texas Instruments, Microchip, and Silicon Labs.
 
-        WHIP is a \emph{narrowband} wireless protocol which creates several channels within the unlicensed spectrum and employs frequency hopping to hop between channels. Typically frequency hopping requires a complex time-synchronized system that is limited in capacity. However, devices using WHIP do not need to coordinate with gateways on channel selection as gateways are capable of hearing all channels within the available spectrum at any time. We choose narrow-band to accomplish the following goals:
+    WHIP is a \emph{narrowband} wireless protocol which creates several channels within the unlicensed spectrum and employs frequency hopping to hop between channels. Typically frequency hopping requires a complex time-synchronized system that is limited in capacity. However, devices using WHIP do not need to coordinate with gateways on channel selection as gateways are capable of hearing all channels within the available spectrum at any time. We choose narrow-band to accomplish the following goals:
 
-        \begin{description}
-                \item[Spectral Efficiency] it is necessary to operate within unlicensed RF spectrum very efficiently. RF is a shared, limited resource, and therefore a focus on efficiency to increase capacity and improve robustness is a must.
-                \item[Co-Existence Performance] as the number of devices and networks increase, the ability to operate in \emph{noisy} RF environments without interference is a critical consideration.
-                \item[Range] narrowband allows for extremely long-range communications, with data rates that scale both up and down depending on the density of gateways.
-        \end{description}
+    \begin{description}
+        \item[Spectral Efficiency] it is necessary to operate within unlicensed RF spectrum very efficiently. RF is a shared, limited resource, and therefore a focus on efficiency to increase capacity and improve robustness is a must.
+        \item[Co-Existence Performance] as the number of devices and networks increase, the ability to operate in \emph{noisy} RF environments without interference is a critical consideration.
+        \item[Range] narrowband allows for extremely long-range communications, with data rates that scale both up and down depending on the density of gateways.
+    \end{description}
 
-        \item [Implementation] WHIP supports several data rates, channel bandwidths, and error-correction techniques. Gateways and devices dynamically negotiate the combination of these options using a \emph{signalling packet} delivered at the lowest bandwidth and symbol rate to ensure maximum range for the initial communication.
+    \item [Implementation] WHIP supports several data rates, channel bandwidths, and error-correction techniques. Gateways and devices dynamically negotiate the combination of these options using a \emph{signalling packet} delivered at the lowest bandwidth and symbol rate to ensure maximum range for the initial communication.
 \end{description}
 
 The full WHIP specification will be made available by the Helium Alliance.
@@ -315,7 +315,7 @@ In this section we outline the motivation and implementation for \emph{Proof-of-
 
 Most existing blockchain networks such as Bitcoin~\cite{bitcoin} and Ethereum~\cite{ethereum} use a \emph{Proof-of-Work} system that relies on an algorithmic puzzle that is asymmetric in nature. These proofs are extremely difficult to generate, but simple for a third party to verify. Security on these networks is achieved by the network-wide \emph{consensus} that the amount of computing power required to generate a valid proof is difficult to forge, and as subsequent blocks are added, the cumulative difficulty of the chain becoming prohibitively difficult to fabricate.
 
-These computation-heavy proofs are, however, not otherwise \emph{useful} to the network. We define useful as work that is valuable to the network beyond securing the blockchain. While there have been attempts in other networks to turn mining power into something useful, such as Ethereum executing small programs, the majority of the work is not useful or reusable. The mining process is also extremely wasteful, as the determining factor in the work is typically computational power which consumes massive amounts of power and hardware to execute.
+These computation-heavy proofs are, however, not otherwise \emph{useful} to the network. We define useful as work that is valuable to the network beyond securing the blockchain. While there have been attempts in other networks to turn mining power into something useful, such as Ethereum executing small programs, the majority of the work is not useful or reusable. The mining process is also extremely wasteful, as the determining factor in the work is typically computational power which consumes massive amounts of electricity and requires significant hardware to execute.
 
 The proofs used in Helium must be resistant to \emph{Sybil Attacks} in which dishonest miners create pseudonymous identities and use them to subvert the network and gain access to block rewards to which they should not be entitled. This is a particularly difficult attack vector to manage in a physical network like Helium. We must also be resistant to a new attack vector: \emph{Alternate Reality Attacks} exist where a dishonest group of miners are able to simulate that wireless network coverage exists in the physical world when it in fact does not. An example of this would be running the mining software on a set of virtual machines and simulating GPS coordinates and RF networking.
 
@@ -378,7 +378,7 @@ The construction logic of $O$ is as follows:
   \item The previous step repeats with additional layers added to $O$ until all $T_L$ $\rightarrow$ $T_1$ have a layer $O_l$ included in $O$
 \end{enumerate}
 
-The resulting $O$ can be visually represented as the following:
+The resulting $O$ can be visually represented as depicted in \figref{fig:poc-o_construction}.
 
 \begin{figure}[ht]
     \begin{center}
