@@ -16,11 +16,21 @@
 \usepackage{amsmath}
 \usepackage{titlesec}
 \usepackage[printwatermark]{xwatermark}
+\usepackage[textsize=small]{todonotes}
+\usepackage{soul}
 
 \graphicspath{ {images/} }
 
-\newcommand{\todo}[1]{}
-\renewcommand{\todo}[1]{{\color{red} TODO:\ {#1}}}
+\makeatletter
+\if@todonotes@disabled
+\newcommand{\todohl}[2]{#2}
+\newcommand{\todost}[2]{#2}
+\else
+\setstcolor{red}
+\newcommand{\todohl}[2]{\todo{#1}\hl{#2}}
+\newcommand{\todost}[2]{\todo{#1}\st{#2}}
+\fi
+\makeatother
 
 \SetAlgorithmName{Protocol}{Protocol}{List of Protocols}
 
