@@ -397,41 +397,41 @@ Once $T_L$ has delivered receipt to $C$, or $\lambda$ has elapsed, the \emph{Pro
      \end{center}
 \end{figure}
 
-\textbf{Scoring} \label{scores} The score allocated to a miner, and therefore the resulting score of the \emph{Proof-of-Coverage}, is an integral part of the consensus protocol, further outlined in \secref{consensus}. When miners join the Helium network, they are assigned a score, $\phi_m$, with a value of \textbf{0.500}. We consider any miner with a score greater than 0.500 to be an honest miner, $\eta$. This score depreciates according to the number of verifications the miner has as well as the height since their last successful verfication. As $\phi_m$ decreases the probability of the miner $m$ being the target for $c$ increases such that the network continually attempts to prove that the lowest scoring miners are acting honestly, and giving miners a reasonable chance to improve their score.
+\textbf{Scoring} \label{scores} The score allocated to a miner, and therefore the resulting score of the \emph{Proof-of-Coverage}, is an integral part of the consensus protocol, further outlined in \secref{consensus}. When miners join the Helium network, they are assigned a score, $\phi_m$, with a value of \textbf{0.500}. We consider any miner with a score greater than 0.500 to be an honest miner, $\eta$. This score depreciates according to the number of verifications the miner has as well as the height since their last successful verfication. As $\phi_m$ decreases the probability of the miner $M$ being the target for $C$ increases such that the network continually attempts to prove that the lowest scoring miners are acting honestly, and giving miners a reasonable chance to improve their score.
 
 In order to achieve such behavior we define the following invariants:
 
 \begin{tabular}{l l}
-        $m$, & miner                                         \\
-        $c$, &number of successful verfications for $m$ -\\
-        & number of failed verifications for $m$ \\
-        $h$,          & height since the last successful verification for $m$\\
+        $M$, & miner                                         \\
+        $v$, &number of successful verfications for $M$ -\\
+        & number of failed verifications for $M$ \\
+        $h$,          & height since the last successful verification for $M$\\
 \end{tabular}
 
-Further, assuming that the ideal verification interval for any miner is close to 240 blocks ( 4 hours with 60 seconds per block time). We scale the above defined invariants to fit the scoring functions defined subsequently:
+If we assume that the ideal verification interval for any miner is close to 240 blocks (4 hours if we assume a 60 second block time), we scale the defined invariants to fit the scoring functions:
 
 \begin{tabular}{l l}
-        $c'$, &$c/10.0$\\
+        $v'$, &$v/10.0$\\
         $h'$, &$h/480$ \\
 \end{tabular}
 
-Using the above defined invariants, we can now construct a staleness-factor, $\delta{m}$ which would be used in determining the score of the miner $M$.
+Using the above we can now construct a staleness-factor, $\delta$, which would be used in determining the score of the miner $M$.
 
 \begin{equation*} \label{score}
         \delta{m} = \begin{cases}
-        	-(8.h')^{2}&\text{$c'$ = 0}\\
-        	c'.(1 - \frac{h'^{2}}{min(0.25, c')})&\text{$c'$ $>$ 0}\\
-        	c'.(1 - $c$.h'^{2})&\text{$c'$ $<$ 0}
+        	-(8.h')^{2}&\text{$v'$ = 0}\\
+        	v'.(1 - \frac{h'^{2}}{min(0.25, v')})&\text{$v'$ $>$ 0}\\
+        	v'.(1 - $v$.h'^{2})&\text{$v'$ $<$ 0}
         \end{cases}
 \end{equation*}
 
 The above conditions strictly adhere to the following principles:
 
 \begin{enumerate}
-  \item A negative $c$ indicates that the miner, consistently is failing verification.
-  \item If $c$ = 0, we don't have any trust information, therefore, we use a steep parabolic curve for the decay dependent on $h'$.
-  \item If $c$ $>$ 0, it implies that the miner has been successfully verified consistently, hence, we use an inverse parabolic curve that crosses the Y axis at 1, where the width of the parabola increases as a factor of $c$ up to 0.25. This implies that the more positive verifications\secref{poc} the miner has accrued, the slower its score decays as a factor of $h'$.
-  \item Finally, if $c$ $<$ 0, this is the inverse of the above case, wherein, a miner has consistently been failing verification. Therefore, we use a similar parabola as above, however, the width of the parabola decreases as a factor of $c$, leading to a higher score decay for the miner as a factor of $h'$.
+  \item A negative $v$ indicates that the miner is consistently failing verification.
+  \item If $v$ = 0, we don't have any trust information, therefore we use a steep parabolic curve for the decay dependent on $h'$.
+  \item If $v$ $>$ 0, it implies that the miner has been successfully verified consistently, hence we use an inverse parabolic curve that crosses the Y axis at 1, where the width of the parabola increases as a factor of $v$ up to 0.25. This implies that the more positive verifications \secref{poc} the miner has accrued, the slower its score decays as a factor of $h'$.
+  \item Finally if $v$ $<$ 0, this is the inverse of the above case and it can be determined that a miner has consistently failed verification. Therefore we use a similar parabola as above, however the width of the parabola decreases as a factor of $v$, leading to a higher score decay for the miner as a factor of $h'$.
 \end{enumerate}
 
 Following the above set of rules, we define the following scoring function, which is essentially a variation of a sigmoid curve fluctuating between values (-1, 1):
