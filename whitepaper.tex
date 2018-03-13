@@ -430,12 +430,9 @@ The above conditions strictly adhere to the following principles:
 \begin{enumerate}
   \item A negative $c$ indicates that the miner, consistently is failing verification.
   \item If $c$ = 0, we don't have any trust information, therefore, we use a steep parabolic curve for the decay dependent on $h'$.
-  \item If $c$ $>$ 0, it implies that the miner has been successfully verified consistently, hence, we use an inverse parabolic curve that crosses the Y axis at 1, where the width of the parabola increases as a factor of $c$ up to 0.25. This implies that the more positive verifications the miner has accrued, the slower its score decays as a factor of $h'$.
+  \item If $c$ $>$ 0, it implies that the miner has been successfully verified consistently, hence, we use an inverse parabolic curve that crosses the Y axis at 1, where the width of the parabola increases as a factor of $c$ up to 0.25. This implies that the more positive verifications\secref{poc} the miner has accrued, the slower its score decays as a factor of $h'$.
   \item Finally, if $c$ $<$ 0, this is the inverse of the above case, wherein, a miner has consistently been failing verification. Therefore, we use a similar parabola as above, however, the width of the parabola decreases as a factor of $c$, leading to a higher score decay for the miner as a factor of $h'$.
 \end{enumerate}
-
-\todo{what is verification}\newline
-\todo{add plots for the parabolas}
 
 Following the above set of rules, we define the following scoring function, which is essentially a variation of a sigmoid curve fluctuating between values (-1, 1):
 
@@ -443,6 +440,15 @@ Following the above set of rules, we define the following scoring function, whic
         \phi_m = \frac{\arctan(2.\delta{m}) + 1.58}{3.16}
 \end{equation*}
 
+\figref{fig:parabola-graph} shows each of the above defined plot trend for reference.
+
+\begin{figure}[ht]
+    \begin{center}
+          \includegraphics[width=0.8\columnwidth]{parabolas.png}
+          \caption{\emph{Plots showing the trend for the scoring and staleness-factor function}}
+          \label{fig:parabola-graph}
+     \end{center}
+\end{figure}
 
 \figref{fig:score-graph} shows a snapshot of a random subset of the network at any blockchain height \textit{h}. The miners represent random locations with an illustrated score, while the edges are calculated using Dijkstra's algorithm\cite{dijkstra}.
 
