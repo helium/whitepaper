@@ -421,7 +421,7 @@ Using the above we can now construct a staleness-factor, $\delta$, which would b
         \delta{m} = \begin{cases}
         	-(8.h')^{2}&\text{$v'$ = 0}\\
         	v'.(1 - \frac{h'^{2}}{min(0.25, v')})&\text{$v'$ $>$ 0}\\
-        	v'.(1 - $v$.h'^{2})&\text{$v'$ $<$ 0}
+        	v'.(1 - 10.v'.h'^{2})&\text{$v'$ $<$ 0}
         \end{cases}
 \end{equation*}
 
@@ -429,32 +429,62 @@ The above conditions strictly adhere to the following principles:
 
 \begin{enumerate}
   \item A negative $v$ indicates that the miner is consistently failing verification.
-  \item If $v$ = 0, we don't have any trust information, therefore we use a steep parabolic curve for the decay dependent on $h'$.
-  \item If $v$ $>$ 0, it implies that the miner has been successfully verified consistently, hence we use an inverse parabolic curve that crosses the Y axis at 1, where the width of the parabola increases as a factor of $v$ up to 0.25. This implies that the more positive verifications \secref{poc} the miner has accrued, the slower its score decays as a factor of $h'$.
-  \item Finally if $v$ $<$ 0, this is the inverse of the above case and it can be determined that a miner has consistently failed verification. Therefore we use a similar parabola as above, however the width of the parabola decreases as a factor of $v$, leading to a higher score decay for the miner as a factor of $h'$.
+  
+  \item If $v$ = 0, we don't have any trust information, therefore, we use a steep parabolic curve for the decay dependent on $h'$.
+  
+  \item If $v$ $>$ 0, it implies that the miner has been successfully verified consistently, hence, we use an inverse parabolic curve that crosses the Y axis at 1, where the width of the parabola increases as a factor of $v$ up to 0.25. This implies that the more positive verifications\secref{poc} the miner has accrued, the slower its score decays as a factor of $h'$.
+   
+  \item Finally, if $v$ $<$ 0, this is the inverse of the above case, wherein, a miner has consistently been failing verification. Therefore, we use a similar parabola as above, however, the width of the parabola decreases as a factor of $v$, leading to a higher score decay for the miner as a factor of $h'$.
+  
 \end{enumerate}
 
-Following the above set of rules, we define the following scoring function, which is essentially a variation of a sigmoid curve fluctuating between values (-1, 1):
+The following graph shows the trends for each of the above defined functions:
+
+\pgfplotsset{width=7cm, compat=newest}
+\begin{tikzpicture}
+    \begin{axis}[xlabel = $h'$,
+    ylabel = $\delta{m}$,
+    xmin=0,
+    xmax=1.5,
+    ymin=-20,
+    xtick={0, 0.125,...,1.5},
+    ytick={-20, -19,...,5},
+    scale only axis,
+    grid=major,
+    tick label style={font=\tiny}]
+        \addplot[smooth, color=gray, samples=500]{-(8*x)^2};
+        \node [anchor=south, color=gray] at (axis cs:0.55, -12)  {$v'=0$};
+        \addplot[smooth, color=gray, samples=500]{1 -((x)^2)/0.25};
+        \node [anchor=south, color=gray] at (axis cs:1.38, -5.5)  {$v'>0$};
+        \addplot[smooth, color=gray, samples=500]{1 +((x)^2)};
+        \node [anchor=south, color=gray] at (axis cs:1.38, 3.5)  {$v'<0$};
+    \end{axis}
+\end{tikzpicture}     
+
+Adhering to the above set of rules, we define the following scoring function, which is essentially a variation of a sigmoid curve fluctuating between values (0, 1):
 
 \begin{equation*} \label{score}
         \phi_m = \frac{\arctan(2.\delta{m}) + 1.58}{3.16}
 \end{equation*}
 
-\figref{fig:parabola-graph} shows each of the above defined plot trend for reference.
+This scoring function yields the below graph, which shows the variation of the score with the staleness-factor:
 
-\begin{figure}[ht]
-    \begin{center}
-          \includegraphics[width=0.8\columnwidth]{parabolas.png}
-          \caption{\emph{Plots showing the trend for the scoring and staleness-factor function}}
-          \label{fig:parabola-graph}
-     \end{center}
-\end{figure}
+\pgfplotsset{width=7cm, compat=newest}
+\begin{tikzpicture}
+    \begin{axis}[xlabel = $\delta{m}$, ylabel = $\phi{m}$,
+    scale only axis,
+    grid=major,
+    tick label style={font=\tiny}]
+        \addplot[smooth, color=gray, domain=-10:10, samples=200]{(1.58 + rad(atan(2*x)))/3.16};
+    \end{axis}
+\end{tikzpicture}     
+
 
 \figref{fig:score-graph} shows a snapshot of a random subset of the network at any blockchain height \textit{h}. The miners represent random locations with an illustrated score, while the edges are calculated using Dijkstra's algorithm\cite{dijkstra}.
 
 \begin{figure}[ht]
     \begin{center}
-          \includegraphics[width=0.8\columnwidth]{chart.eps}
+          \includegraphics[width=0.8\columnwidth]{chart.eps}    
           \caption{\emph{Snapshot of a random subset of the initial network}}
           \label{fig:score-graph}
      \end{center}
