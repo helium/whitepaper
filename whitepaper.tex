@@ -438,28 +438,32 @@ The above conditions strictly adhere to the following principles:
   
 \end{enumerate}
 
-The following graph shows the trends for each of the above defined functions:
+The following graph shows the trends for each of the above functions:
 
-\pgfplotsset{width=7cm, compat=newest}
-\begin{tikzpicture}
-    \begin{axis}[xlabel = $h'$,
-    ylabel = $\delta{m}$,
-    xmin=0,
-    xmax=1.5,
-    ymin=-20,
-    xtick={0, 0.125,...,1.5},
-    ytick={-20, -19,...,5},
-    scale only axis,
-    grid=major,
-    tick label style={font=\tiny}]
-        \addplot[smooth, color=gray, samples=500]{-(8*x)^2};
-        \node [anchor=south, color=gray] at (axis cs:0.55, -12)  {$v'=0$};
-        \addplot[smooth, color=gray, samples=500]{1 -((x)^2)/0.25};
-        \node [anchor=south, color=gray] at (axis cs:1.38, -5.5)  {$v'>0$};
-        \addplot[smooth, color=gray, samples=500]{1 +((x)^2)};
-        \node [anchor=south, color=gray] at (axis cs:1.38, 3.5)  {$v'<0$};
-    \end{axis}
-\end{tikzpicture}     
+\begin{figure}[ht]
+    \pgfplotsset{width=7cm, compat=newest}
+    \begin{tikzpicture}
+        \begin{axis}[xlabel = $h'$,
+        ylabel = $\delta{m}$,
+        xmin=0,
+        xmax=1.5,
+        ymin=-20,
+        xtick={0, 0.125,...,1.5},
+        ytick={-20, -19,...,5},
+        scale only axis,
+        grid=major,
+        tick label style={font=\tiny}]
+            \addplot[smooth, color=gray, samples=500]{-(8*x)^2};
+            \node [anchor=south, color=gray] at (axis cs:0.55, -12)  {$v'=0$};
+            \addplot[smooth, color=gray, samples=500]{1 -((x)^2)/0.25};
+            \node [anchor=south, color=gray] at (axis cs:1.38, -5.5)  {$v'>0$};
+            \addplot[smooth, color=gray, samples=500]{1 +((x)^2)};
+            \node [anchor=south, color=gray] at (axis cs:1.38, 3.5)  {$v'<0$};
+        \end{axis}
+    \end{tikzpicture}
+    \caption{\emph{Trendlines for the scoring functions}}
+    \label{fig:score-trends}     
+\end{figure}
 
 Adhering to the above set of rules, we define the following scoring function, which is essentially a variation of a sigmoid curve fluctuating between values (0, 1):
 
@@ -469,15 +473,19 @@ Adhering to the above set of rules, we define the following scoring function, wh
 
 This scoring function yields the below graph, which shows the variation of the score with the staleness-factor:
 
-\pgfplotsset{width=7cm, compat=newest}
-\begin{tikzpicture}
-    \begin{axis}[xlabel = $\delta{m}$, ylabel = $\phi{m}$,
-    scale only axis,
-    grid=major,
-    tick label style={font=\tiny}]
-        \addplot[smooth, color=gray, domain=-10:10, samples=200]{(1.58 + rad(atan(2*x)))/3.16};
-    \end{axis}
-\end{tikzpicture}     
+\begin{figure}[ht]
+    \pgfplotsset{width=7cm, compat=newest}
+    \begin{tikzpicture}
+        \begin{axis}[xlabel = $\delta{m}$, ylabel = $\phi{m}$,
+        scale only axis,
+        grid=major,
+        tick label style={font=\tiny}]
+            \addplot[smooth, color=gray, domain=-10:10, samples=200]{(1.58 + rad(atan(2*x)))/3.16};
+        \end{axis}
+    \end{tikzpicture}
+    \caption{\emph{Scoring algorithm and the resulting staleness factor}}
+    \label{fig:score-stale}
+\end{figure}
 
 
 \figref{fig:score-graph} shows a snapshot of a random subset of the network at any blockchain height \textit{h}. The miners represent random locations with an illustrated score, while the edges are calculated using Dijkstra's algorithm\cite{dijkstra}.
