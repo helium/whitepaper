@@ -625,6 +625,9 @@ Helium is built on the philosophy that all transactions should occur \emph{on-ch
 \paragraph{Allow Devices to Persist Data to the Blockchain}
 Because the Helium blockchain services a specific use, the \verb|DMN|, blocks must additionally be able store fingerprints of data sent from devices along with the transaction which pays a miner for their transport service.  We believe that this holistic \emph{tamper-proof} data trail will enable entirely new use cases where the authenticity and veracity of sensor data is critical.
 
+\paragraph{Devices and Miners belonging to the same OUI}
+Devices and Miners belonging to the same Organizationally Unique Identifier (OUI) do not need to pay data transport fees to themselves. This allows users building devices and network coverage to take advantage of their own deployments without having to needlessly transfer tokens back and forth with themselves.
+
 \subsubsection{Limitations of Existing Solutions}
 
 Now that we have discussed the requirements of transactions within Helium, we outline the existing solutions for micropayments on a blockchain and address their shortcommings as they apply to our network.
@@ -722,7 +725,7 @@ As can be seen, gateways near the ideal network density are cheap to add, but es
 
 Blocks submitted to the network by miners who have not asserted their location, and therefore not paid the staking fee, will be considered invalid and not considered by miners for inclusion in the chain.
 
-Miners who move physical location will need to assert a new location, and pay the new staking fee.
+Miners who move physical location will need to assert a new location, and pay the new staking fee. Miners who do not pay the staking fee can continue to operate their gateway as a WHIP-compatible wireless access point, but cannot participate in the mining process and any blocks submitted will be ignored by the network.
 
 \subsection{Primitives in Helium} \label{primitives}
 Having discussed the philosophy of our transaction system and presented our approach to facilitating zero-fee mictrotransactions on the Helium network, we now delineate the transaction primitives and their properties.
