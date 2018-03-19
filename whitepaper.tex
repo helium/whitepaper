@@ -510,7 +510,7 @@ After 10,000 iterations the network appears as represented in \figref{fig:score-
 
 The goal of this system is to ensure that the scoring algorithm considers that some miners may attempt to act dishonestly. However, because the calculated edge-weights (via Dijkstra's algorithm) and the target selection mechanism ensure that we only boost the score of a miner when it is being verified by other high scoring miners, we believe that the system will favor legitimate miners and deter dishonest ones.
 
-\textbf{Target Selection}. Due to the way scoring is structured, there is a possibility that honest miners may become stale as they might not get verified within recommended intervals. In order to overcome this limitation, we structure the target selection mechanism to give miners a reasonable chance to gain back trust and get verified by other miners. This is accomplished by biasing the probability of miners being selected as potential targets based on their individual scores.
+\textbf{Target Selection}. Due to the way scoring decays, there is a possibility that a given miners' score may become stale as that miner may not be verified within a reasonable interval. We therefore structure the target selection mechanism to give miners a statistically greater chance to increase their score by being selected as a target as their score decays. This is accomplished by biasing the probability of miners being selected as potential targets based on their individual scores.
 
 Let the set of miners be defined as:
 \begin{equation*} \label{set-of-miners}
@@ -527,11 +527,9 @@ We assign the target selection probability to each miner in the following way:
         P(m) = \frac{1-\phi_m}{n - \displaystyle\sum_{i=1}^{n} {\phi_{m_i}}}
 \end{equation*}
 
-The above equation ensures that the miner with the lowest score gets the highest probability of being selected as a potential target while the opposite holds for the miner with the highest scores.
+The above equation ensures that the miner with the lowest score is assigned the highest probability of being selected as a potential target while the opposite holds for the miner with the highest score.
 
-Furthermore, it also asserts that the probabilities are inversely proportional to the score of individual miner.
-
-This allows us to successfully target potentially low scoring miners and strengthen the fairness of the scoring system.
+Furthermore, it also asserts that the probabilities are inversely proportional to the score of an individual miner. This allows us to successfully target potentially low scoring miners and improve the overall balance of the scoring system.
 
 \textbf{Verifying the Proof}. Once $T_L$ has delivered $K_s$, or $\lambda$ has elapsed, the \emph{Proof-of-Coverage} is considered complete. When $C$ attempts to mine the next block, all receipts $K_s$ from $T_1$...$T_L$ are included in the candidate block, $B_C$, published to the blockchain network \secref{mining}. As all the steps originally completed by $C$ are deterministic in nature with verifiable and recreatable randomness, it is simple for a verifying miners, $V$, to recreate the original steps and verify that the proof is legitimate.
 
