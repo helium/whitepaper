@@ -101,7 +101,7 @@ Helium is built around the following key components:
 
     \item \textbf{Wireless Protocol}: we introduce a new open-source and standards-compliant wireless network protocol, called \emph{WHIP}, designed for low power devices over vast areas. This protocol is designed to run on existing commodity radio chips available from dozens of manufacturers with no proprietary technologies or modulation schemes required.
 
-    \item \textbf{Geolocation}: we outline a system for interpreting the physical \emph{geolocation} of a device using WHIP without the need for expensive and power-hungry satellite location hardware. Devices can make immutable, secure, and verifiable claims about their location at a given moment in time which is recorded in the blockchain.
+    \item \textbf{\emph{Proof-of-Location}}: we outline a system for interpreting the physical \emph{geolocation} of a device using WHIP without the need for expensive and power-hungry satellite location hardware. Devices can make immutable, secure, and verifiable claims about their location at a given moment in time which is recorded in the blockchain.
 \end{enumerate}
 
 \subsection{System Overview}
@@ -112,7 +112,7 @@ Helium is built around the following key components:
     \item Miners earn tokens by providing wireless network coverage via purpose-built hardware which provides a bridge between WHIP and routers, which are internet applications.
     \item Devices store their private keys in commodity key-storage hardware and their public keys in the blockchain.
     \item Miners join the network by asserting their satellite-derived location, a special type of transaction in the blockchain, and staking a token deposit.
-    \item Miners specify the price they are willing to accept for data transport and geolocation, and devices specify the price they are willing to pay. Miners are paid once they prove they have delivered data to the devices' specified internet endpoint.
+    \item Miners specify the price they are willing to accept for data transport and \emph{Proof-of-Location}, and devices specify the price they are willing to pay. Miners are paid once they prove they have delivered data to the devices' specified internet endpoint.
     \item Miners participate in the creation of new blocks in the blockchain, for which they are rewarded newly minted Helium. A miner's probability of mining the next block is approximately equal to the amount of wireless network coverage they provide.
     \item The blockchain employs \emph{Proof-of-Coverage} to guarantee that miners are correctly representing the amount of wireless network coverage they are creating.
 \end{itemize}
@@ -191,7 +191,7 @@ In addition to the blockchain network, Helium is a \emph{physical} wireless netw
 \begin{description}
     \item [Wireless Protocol] The wireless network uses a new open wireless protocol, called \emph{WHIP}. WHIP is a long-range, low-power, wireless network protocol suitable for use with commodity open-standards hardware. WHIP compatible hardware can communicate over many square miles in dense urban environments or hundreds of square miles in rural settings. WHIP compatible hardware can also last for several years using standard batteries. WHIP uses strong public key cryptography and authentication occurs using the Helium blockchain, with end-to-end encryption.
 
-    \item [Gateways] Gateways are physical network devices that provide wide-area wireless coverage and participate in the blockchain network. Gateways transmit data back and forth between routers on the internet and devices while generating \emph{Proofs-of-Coverage} for the blockchain network \secref{poc}. Gateways are manufactured using commodity open-standards components with no proprietary hardware. Gateways can cooperate and geolocate devices using the wireless network without any additional required hardware. Each Gateway can support thousands of connected devices, and provide coverage over many square miles. Miners operating gateways specify the price they are willing to accept for transport and geolocation services for devices.
+    \item [Gateways] Gateways are physical network devices that provide wide-area wireless coverage and participate in the blockchain network. Gateways transmit data back and forth between routers on the internet and devices while generating \emph{Proofs-of-Coverage} for the blockchain network \secref{poc}. Gateways are manufactured using commodity open-standards components with no proprietary hardware. Gateways can cooperate and geolocate devices using the wireless network without any additional required hardware. Each Gateway can support thousands of connected devices, and provide coverage over many square miles. Miners operating gateways specify the price they are willing to accept for transport and \emph{Proof-of-Location} services for devices.
 
     \item [Devices] Devices exist in the form of hardware products that contain a WHIP-compatible radio transceiver and communicate with gateways on the wireless network. WHIP is designed to facilitate low power data transmission and reception, so typically devices exist in the form of battery-powered sensors that can oeprate for several years using standard batteries (although mains-powered devices also work quite well). Devices can exist in a variety of forms, depending on the product or use case, and a variety of transmission and reception strategies can be employed to optimize for transmission/reception frequency or battery life. Device manufacturers are encouraged to use hardware-based key storage which can securely generate, store, and authenticate public/private key pairs without leaking the private key.
 \end{description}
@@ -260,34 +260,6 @@ Routers can implement a system called a \emph{Channel} which handles the authent
 Helium Systems Inc will also host a high-availability cloud router for anyone to use and also provides and maintains an open-source router that is available either as source code or a binary package for a variety of operating systems and distributions.
 
 The protocol specification required for implementing a router is defined in the WHIP Wireless Specification document that will be made available by the Decentralized Machine Network Alliance.
-
-\subsection{Geolocation}\label{geolocation}
-
-WHIP-compatible gateways include hardware and software to enable not only location of the gateway (via GPS/GNSS) but also hardware and software to triangulate the location of devices. There are a handful of techniques used by positioning systems without the use of GPS, which include Received Signal Strength Indication (RSSI), Time of Arrival (ToA), and Time Differential of Arrival (TDoA). We use TDoA to achieve the most accurate geolocation.
-
-The approximate flow for accomplishing geolocation is as follows:
-
-\begin{enumerate}
-        \item A device, $D$, broadcasts a packet $P$ containing arbitrary data via the wireless network
-        \item Several miners, $M_n$, hear $P$, and record a timestamp $T_n$ of their reception time of $P$
-        \item $T_n$ is determined based on the nanosecond time received via GPS and stamped using raw radio sample data received by the gateway radio frontend
-        \item $P$ and $T_n$ are delivered to the router $R$ belonging to $D$ by $M_n$
-        \item $R$ has now received several copies of $P$, each of which has a slightly varying value of $T_n$, and the location of each $M_n$ is known in the blockchain
-        \item $R$ can now solve for the location of $D$ using the location of $M_n$ and the nanosecond variances in $T_n$
-\end{enumerate}
-
-\begin{figure}[H]
-    \begin{center}
-          \includegraphics[width=\columnwidth]{tdoa.eps}
-          \caption{\emph{Geolocation via TDoA}}
-          \label{fig:tdoa}
-     \end{center}
-\end{figure}
-
-
-If a sufficient density of $M_n$ hear $P$, the location of $D$ can be derived down to a few meters. Because of the expense and power consumption of a typical GPS module, and the fact that they require a view of the sky, providing geolocation as a network service makes devices cheaper, more power efficient, and able to located accurately indoors. Additionally, because these data transmission events occur in the context of a blockchain, unforgeable cryptographic proof of location for a device can be obtained. Devices being able to prove they were in a specific place at a specific time has tremendous potential for a wide variety of machine applications.
-
-We refer the interested reader to\cite{tdoa} for a detailed description of TDoA techniques.
 
 \section{\emph{Proof-of-Coverage} \& \emph{Proof-of-Serialization}}\label{poc}
 
@@ -605,6 +577,43 @@ To verify the correct time, it is necessary for $M$ to repeat the time synchroni
 \end{figure}
 
 \textbf{Utilizing the Proven Time}. Once the correct time $T_t$ has been determined via \emph{Proof-of-Serialization}, it is used by $M$ and included during block construction as described in \secref{blockchain}. The randomness $\eta$ used to compute $O$ and thus obtain the \emph{Proof-of-Coverage} is tied to the previous block, which contains $T_t$. This allows us to prove, with relative certainty, that some piece of data $D$ was created between the time of the previous block $b_t$ and $T_t$. $D$ in this case is the \emph{Proof-of-Coverage}. Thus we know that $D$ must have been constructed between $b_t$ and $T_t$. This ensures that the \emph{Proof-of-Coverage} cannot be pre-computed and that that blocks in the blockchain must have a minimum spacing in time; the \emph{blocktime}. Blocks which do not have at least \emph{blocktime} distance in time from their parent block are considered invalid.
+
+\section{\emph{Proof-of-Location}} \label{geolocation}
+
+Using \emph{Proof-of-Coverage} and \emph{Proof-of-Serialization} we achieve cryptographic proof of a miners location and cryptographic time consensus among those miners; we can take advantage of these proofs to determine the physical \emph{geolocation} of WHIP-compatible devices and generate a new type of proof based on the devices geolocation. We call this \emph{Proof-of-Location}.
+
+\subsection{Motivation}
+
+
+
+
+
+
+WHIP-compatible gateways include hardware and software to enable not only location of the gateway (via GPS/GNSS) but also hardware and software to triangulate the location of devices. There are a handful of techniques used by positioning systems without the use of GPS, which include Received Signal Strength Indication (RSSI), Time of Arrival (ToA), and Time Differential of Arrival (TDoA). We use TDoA to achieve the most accurate geolocation.
+
+The approximate flow for accomplishing geolocation is as follows:
+
+\begin{enumerate}
+        \item A device, $D$, broadcasts a packet $P$ containing arbitrary data via the wireless network
+        \item Several miners, $M_n$, hear $P$, and record a timestamp $T_n$ of their reception time of $P$
+        \item $T_n$ is determined based on the nanosecond time received via GPS and stamped using raw radio sample data received by the gateway radio frontend
+        \item $P$ and $T_n$ are delivered to the router $R$ belonging to $D$ by $M_n$
+        \item $R$ has now received several copies of $P$, each of which has a slightly varying value of $T_n$, and the location of each $M_n$ is known in the blockchain
+        \item $R$ can now solve for the location of $D$ using the location of $M_n$ and the nanosecond variances in $T_n$
+\end{enumerate}
+
+\begin{figure}[H]
+    \begin{center}
+          \includegraphics[width=\columnwidth]{tdoa.eps}
+          \caption{\emph{Geolocation via TDoA}}
+          \label{fig:tdoa}
+     \end{center}
+\end{figure}
+
+
+If a sufficient density of $M_n$ hear $P$, the location of $D$ can be derived down to a few meters. Because of the expense and power consumption of a typical GPS module, and the fact that they require a view of the sky, providing geolocation as a network service makes devices cheaper, more power efficient, and able to located accurately indoors. Additionally, because these data transmission events occur in the context of a blockchain, unforgeable cryptographic proof of location for a device can be obtained. Devices being able to prove they were in a specific place at a specific time has tremendous potential for a wide variety of machine applications.
+
+We refer the interested reader to\cite{tdoa} for a detailed description of TDoA techniques.
 
 \section{Transactions}\label{transactions}
 
