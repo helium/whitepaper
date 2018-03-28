@@ -459,7 +459,6 @@ This scoring function yields the below graph, which shows the variation of the s
     \label{fig:score-stale}
 \end{figure}
 
-
 \figref{fig:score-graph} shows a snapshot of a random subset of the network at any blockchain height \textit{h}. The miners represent random locations with an illustrated score, while the edges are calculated using Dijkstra's algorithm\cite{dijkstra}.
 
 \begin{figure}[ht]
@@ -588,28 +587,28 @@ Location tracking is one of the most valuable use cases for low power devices. I
 
 Today, Global Navigation Satellite Systems (GNSS) are used by the majority of devices which require geolocation services, with GPS being the most popular implementation. GPS systems use a technique called \emph{Time of Arrival (TOA)} to determine the location of a receiver in relation to 20 or so satellites orbiting the earth. GPS satellites synchronize their time using a high precision on-board clock and regular synchronization with control servers on the ground. GPS receivers receive precisely timestamped data from a number of satellites overhead and use a technique called \emph{trilateration} to provide a precise location on earth.
 
-GPS has matured in to an extrordinarily reliable service used in an extremely wide range of applications for providing both location and time services. However, there are significant drawbacks to GPS particularly in the earlm of low power devices that Helium is designed to service. It can take around 2 minutes for a GPS receiver to achiehve \emph{lock} with sufficient satellites, which translates to drastically reduced battery life. As an example, a device transmitting its location aronud 25 times a day may only last a month on a AA battery compared with several years of life on the same battery without GPS. Using GPS indoors is generally impossible, as the GPS receiver typically needs line of sight with the sky in order to see the 3-4 satellites required to calculate an accurate location. GPS data is also delivered unencrypted, which leaves the system extremely vulnerable to spoofing, jamming, and other attack vectors.
+GPS has matured in to an extrordinarily reliable service used in a wide range of applications for providing both location and time services. However, there are significant drawbacks to GPS particularly in the realm of low power devices that Helium is designed to facilitate. It can take around 2 minutes for a GPS receiver to achiehve \emph{lock} with sufficient satellites, which translates to drastically reduced battery life. As an example, a device transmitting its location aronud 25 times a day may only last a month on a AA battery compared with several years of life on the same battery without GPS. Using GPS indoors is generally impossible, as the GPS receiver typically needs line of sight with the sky in order to see the 3-4 satellites required to calculate an accurate location. GPS data is also delivered unencrypted, which leaves the system extremely vulnerable to spoofing, jamming, and other attack vectors.
 
-We are interested in low power implementations of location services that, in conjunction with an immutable distributed ledger, can be used to verify location. Given the above factors, we immediately conclude that GPS is an unacceptable mechanism for these requirements.
+We are interested in low power implementations of location services that, in conjunction with an immutable distributed ledger, can be used to verify location and time. Given the above factors, we immediately conclude that GPS is an unacceptable mechanism for these requirements.
 
-This section outlines a new geolocation implementation that what we describes as \emph{Proof-of-Location}: a cryptographically provable immutable record of a devices location and time.
+This section outlines a new geolocation implementation that we describe as \emph{Proof-of-Location}: a cryptographically provable immutable record of a devices location and time.
 
 \subsection{Constructing \emph{Proof-of-Location}}
 
+Our goal is to verify the physical geolocation of a given device, $D$, without using GNSS hardware. To do this, we rely on the fact that we have already determined and proven the physical geolocation and cryptographic time consensus of a given miner, $M$, using the \emph{Proof-of-Coverage} and \emph{Proof-of-Serialization} protocols described in \secref{poc}. 
 
+\textbf{Timestamping RF data to derive location}. There are a handful of techniques used by positioning systems without the use of GNSS, which include Received Signal Strength Indication (RSSI), Time of Arrival (ToA), and Time Differential of Arrival (TDoA). These techniques use radio frequency transmissions combined with algorithms 
 
+Our conclusion is that TDoA is the most accurate but challenging technique to implement (\cite{}, \cite{}, \cite{}, \cite{}). TDoA, in simple terms, relies on the variance between precisely synchronized and recorded timing information between a transmitter and several receivers. As such it is critical to accurately record time, \emph{timestamping}, between devices, the RF packets they emit, and miners on the network.
 
-WHIP-compatible gateways include hardware and software to enable not only location of the gateway (via GPS/GNSS) but also hardware and software to triangulate the location of devices. There are a handful of techniques used by positioning systems without the use of GPS, which include Received Signal Strength Indication (RSSI), Time of Arrival (ToA), and Time Differential of Arrival (TDoA). We use TDoA to achieve the most accurate geolocation.
-
-The approximate flow for accomplishing geolocation is as follows:
+An example timestamping flow is as follows:
 
 \begin{enumerate}
         \item A device, $D$, broadcasts a packet $P$ containing arbitrary data via the wireless network
         \item Several miners, $M_n$, hear $P$, and record a timestamp $T_n$ of their reception time of $P$
         \item $T_n$ is determined based on the nanosecond time received via GPS and stamped using raw radio sample data received by the gateway radio frontend
-        \item $P$ and $T_n$ are delivered to the router $R$ belonging to $D$ by $M_n$
-        \item $R$ has now received several copies of $P$, each of which has a slightly varying value of $T_n$, and the location of each $M_n$ is known in the blockchain
-        \item $R$ can now solve for the location of $D$ using the location of $M_n$ and the nanosecond variances in $T_n$
+        \item A signed transaction including $P$ and $T_n$ are delivered to the router $R$ belonging to $D$ by $M_n$
+        \item $R$ has now received several copies of $P$, each of which has a slightly varying value of $T_n$
 \end{enumerate}
 
 \begin{figure}[H]
@@ -620,10 +619,19 @@ The approximate flow for accomplishing geolocation is as follows:
      \end{center}
 \end{figure}
 
+Typically it is challenging to accurately record $T_n$, as any nanosecond-level variance in the timestamp can lead to significant variance in the resulting location solution. To achieve this level of precision it is necessary to use extremely high-bandwidth raw \emph{in-phase and quadrature (I/Q) data} from the radio hardware and a fast enough processor to sample this data, identify an appropriate packet, and record the timestamp. Typically a \emph{Field Programmable Gate Arrays (FPGA)} is used as the processor for this data, however these are fairly expensive, power hungry, and emit significant heat. Instead, the reference Helium Gateway mining hardware uses a novel technique using commodity low-cost components to process I/Q data and achieve timestamping at this level of precision. Further information on the techniques, components and schematics used will be released as open source software at network launch.
 
-If a sufficient density of $M_n$ hear $P$, the location of $D$ can be derived down to a few meters. Because of the expense and power consumption of a typical GPS module, and the fact that they require a view of the sky, providing geolocation as a network service makes devices cheaper, more power efficient, and able to located accurately indoors. Additionally, because these data transmission events occur in the context of a blockchain, unforgeable cryptographic proof of location for a device can be obtained. Devices being able to prove they were in a specific place at a specific time has tremendous potential for a wide variety of machine applications.
+\textbf{Using timestamps to derive location}. Now that the devices router, $R$, is in posession of a variety of signed messages which include the precise timestamps $T_n$ it is possible to \emph{solve} for the location of the device $D$. A variety of TDoA algorithms exist such as \todo{\cite{}, \cite{} and \cite{}}. We choose to implement the method described by \emph{Kim} and refer the interested reader to \cite{} for greater detail on the algorithm and implementation. If a sufficient density of $M_n$ and therefore $T_n$ are recoreded for a given packet, the location of $D$ can be derived down to a few meters depending on a variety of factors.
 
-We refer the interested reader to\cite{tdoa} for a detailed description of TDoA techniques.
+\textbf{Verifying cryptographic \emph{Proof-of-Location}}. 
+
+
+
+ Because of the expense and power consumption of a typical GPS module, and the fact that they require a view of the sky, providing geolocation as a network service makes devices cheaper, more power efficient, and able to located accurately indoors. Additionally, because these data transmission events occur in the context of a blockchain, unforgeable cryptographic proof of location for a device can be obtained. Devices being able to prove they were in a specific place at a specific time has tremendous potential for a wide variety of machine applications.
+
+
+
+
 
 \section{Transactions}\label{transactions}
 
