@@ -597,16 +597,16 @@ This section outlines a new geolocation implementation that we describe as \emph
 
 Our goal is to verify the physical geolocation of a given device, $D$, without using GNSS hardware. To do this, we rely on the fact that we have already determined and proven the physical geolocation and cryptographic time consensus of a given miner, $M$, using the \emph{Proof-of-Coverage} and \emph{Proof-of-Serialization} protocols described in \secref{poc}. 
 
-\textbf{Timestamping RF data to derive location}. There are a handful of techniques used by positioning systems without the use of GNSS, which include Received Signal Strength Indication (RSSI), Time of Arrival (ToA), and Time Differential of Arrival (TDoA). These techniques use radio frequency transmissions combined with algorithms 
+\textbf{Precise timestamping of RF data}. There are a handful of techniques used by positioning systems without the use of GNSS, which include Received Signal Strength Indication (RSSI), Time of Arrival (ToA), and Time Differential of Arrival (TDoA). These techniques use radio frequency transmissions, usually recieved by one or more receivers, combined with various algorithms based on characterstics of those transmissions.
 
-Our conclusion is that TDoA is the most accurate but challenging technique to implement (\cite{}, \cite{}, \cite{}, \cite{}). TDoA, in simple terms, relies on the variance between precisely synchronized and recorded timing information between a transmitter and several receivers. As such it is critical to accurately record time, \emph{timestamping}, between devices, the RF packets they emit, and miners on the network.
+Our conclusion is that TDoA is the most accurate but challenging technique to implement \todo{(\cite{}, \cite{}, \cite{}, \cite{})}. TDoA, in simple terms, relies on the variance between precisely synchronized and recorded timing information between a transmitter and several receivers. As such it is critical to accurately \emph{timestamp} RF packets devices emit, and synchronize the clocks of miners on the network.
 
 An example timestamping flow is as follows:
 
 \begin{enumerate}
         \item A device, $D$, broadcasts a packet $P$ containing arbitrary data via the wireless network
         \item Several miners, $M_n$, hear $P$, and record a timestamp $T_n$ of their reception time of $P$
-        \item $T_n$ is determined based on the nanosecond time received via GPS and stamped using raw radio sample data received by the gateway radio frontend
+        \item $T_n$ is created based on the nanosecond time received via GNSS and stamped using raw radio sample data received by the gateway radio frontend
         \item A signed transaction including $P$ and $T_n$ are delivered to the router $R$ belonging to $D$ by $M_n$
         \item $R$ has now received several copies of $P$, each of which has a slightly varying value of $T_n$
 \end{enumerate}
@@ -619,19 +619,11 @@ An example timestamping flow is as follows:
      \end{center}
 \end{figure}
 
-Typically it is challenging to accurately record $T_n$, as any nanosecond-level variance in the timestamp can lead to significant variance in the resulting location solution. To achieve this level of precision it is necessary to use extremely high-bandwidth raw \emph{in-phase and quadrature (I/Q) data} from the radio hardware and a fast enough processor to sample this data, identify an appropriate packet, and record the timestamp. Typically a \emph{Field Programmable Gate Arrays (FPGA)} is used as the processor for this data, however these are fairly expensive, power hungry, and emit significant heat. Instead, the reference Helium Gateway mining hardware uses a novel technique using commodity low-cost components to process I/Q data and achieve timestamping at this level of precision. Further information on the techniques, components and schematics used will be released as open source software at network launch.
+Typically it is challenging to accurately record $T_n$, as any nanosecond-level variance in the timestamp can lead to significant variance in the resulting location solution. To achieve this level of precision it is necessary to use extremely high-bandwidth raw \emph{in-phase and quadrature (I/Q) data} from the miners radio hardware and a fast enough processor to sample this data, identify an appropriate packet, and record the timestamp. Typically a \emph{Field Programmable Gate Arrays (FPGA)} is used as the processor for this data, however these are fairly expensive, power hungry, and emit significant heat. Instead, the reference Helium Gateway mining hardware uses a novel technique using commodity low-cost components to process I/Q data and achieve timestamping at this level of precision. Further information on the techniques, components and schematics used will be released as open source software at network launch.
 
-\textbf{Using timestamps to derive location}. Now that the devices router, $R$, is in posession of a variety of signed messages which include the precise timestamps $T_n$ it is possible to \emph{solve} for the location of the device $D$. A variety of TDoA algorithms exist such as \todo{\cite{}, \cite{} and \cite{}}. We choose to implement the method described by \emph{Kim} and refer the interested reader to \cite{} for greater detail on the algorithm and implementation. If a sufficient density of $M_n$ and therefore $T_n$ are recoreded for a given packet, the location of $D$ can be derived down to a few meters depending on a variety of factors.
+\textbf{Using timestamps to derive location}. Now that the devices router, $R$, is in posession of a variety of signed messages which include the precise timestamps $T_n$ it is possible to \emph{solve} for the location of the device $D$. A variety of TDoA algorithms exist such as \todo{\cite{}, \cite{} and \cite{}}. We choose to implement the method described by \emph{Kim} and refer the interested reader to \todo{\cite{}} for greater detail on the algorithm and implementation. If a sufficient density of $M_n$ and therefore $T_n$ are recoreded for a given packet, the location of $D$ can be derived down to a few meters depending on a variety of factors.
 
-\textbf{Verifying cryptographic \emph{Proof-of-Location}}. 
-
-
-
- Because of the expense and power consumption of a typical GPS module, and the fact that they require a view of the sky, providing geolocation as a network service makes devices cheaper, more power efficient, and able to located accurately indoors. Additionally, because these data transmission events occur in the context of a blockchain, unforgeable cryptographic proof of location for a device can be obtained. Devices being able to prove they were in a specific place at a specific time has tremendous potential for a wide variety of machine applications.
-
-
-
-
+\textbf{Verifying cryptographic \emph{Proof-of-Location}}. \todo{BLAH BLAH} Because of the expense and power consumption of a typical GPS module, and the fact that they require a view of the sky, providing geolocation as a network service makes devices cheaper, more power efficient, and able to located accurately indoors. Additionally, because these data transmission events occur in the context of a blockchain, unforgeable cryptographic proof of location for a device can be obtained. Devices being able to prove they were in a specific place at a specific time has tremendous potential for a wide variety of machine applications.
 
 \section{Transactions}\label{transactions}
 
@@ -833,23 +825,39 @@ Having discussed the philosophy of our transaction system and presented our appr
 
 \end{description}
 
-\section{Consensus Protocol}\label{consensus}
+\section{Helium Consensus Protocol}\label{consensus}
 
-In this section, we illustrate the consensus protocol used in Helium. Instead of an extremely computationally expensive and power hungry \emph{Proof-of-Work}, Helium miners generate \emph{Proofs-of-Coverage} which allow them to partipciate in network consensus.
+Instead of an extremely computationally expensive and power hungry \emph{Proof-of-Work}, Helium miners generate \emph{Proofs-of-Coverage} \secref{poc} which allow them to partipciate in network consensus. In this section we present how we can use these useful proofs to create permisionless network consensus.
 
 \subsection{Motivation}
 
-Many current generation blockchains rely on a computationally difficult \emph{Proof-of-Work} to protect the network against sybil attacks. The fact that the \emph{Proof-of-Work} is computationally expensive to create, but cheap to verify means that in order to propose a new valid block to the network there is evidence that a significant amount of computation has been expended. Due to the fact that computation is limited by hardware cost, power cost, physical space and computational efficiency of modern technology, sybil attacks become impossible. However, this approach, while fundamental to the mainstream adoption of blockchain technology, has several downsides. Chief among the downsides is the power consumption; it is estimated that the Bitcoin network is consuming more power than many small countries. Bitcoin's PoW is so wasteful it is now on the list of the top uses of electricity in the world and whenever the value of Bitcoin goes up, so do the resources devoted to mining it.
+Many current generation blockchains rely on a computationally difficult \emph{Proof-of-Work} to protect the network against sybil attacks, also known as \emph{Nakamoto Consensus}. The fact that the \emph{Proof-of-Work} is computationally expensive to create, but cheap to verify means that in order to propose a new valid block to the network there is evidence that a significant amount of computation has been expended. Due to the fact that computation is limited by hardware cost, power cost, physical space and computational efficiency of modern technology, sybil attacks become impossible. However, this approach, while fundamental to the mainstream adoption of blockchain technology, has several downsides. Chief among the downsides is the power consumption; it is estimated that the Bitcoin network is consuming more power than many small countries. Bitcoin's PoW is so wasteful it is now on the list of the top uses of electricity in the world and whenever the value of Bitcoin goes up, so do the resources devoted to mining it.
 
 Related to the power problem is the mining pool problem. Many blockchains have mining pools where users band together to, in parallel, mine a single block; listing the pool's address as the party to get paid. The pool then shares the block reward with the members of the pool. This ends up defeating many of the advantages of decentralization as both Bitcoin and Ethereum have come to be dominated by less than 10 mining pools each. These large pools effectively prevent independent parties from mining blocks on their own. This means that the consensus protocol for these blockchains is effectively controlled by a very small number of mining pools and risks becoming further centralized.
 
-More recently there has been increased momentum around making blockchain consensus protocols less wasteful and more useful to the network. Filecoin \cite{filecoin} has a Proof-of-Spacetime and Ethereum \cite{ethereum} is moving towards a Proof-of-Stake approach. Helium has designed a unique consensus protocol around \emph{Proof-of-Coverage} to capture the useful but still difficult work of verifying the network of Helium miner as a replacement for \emph{Proof-of-Work}. In fact this proof is so valuable and fundamental to the network that we attempt to capture valid, but not winning, proofs in the main chain by the use of uncle blocks \secref{blockchain}.
+More recently there has been increased momentum around making blockchain consensus protocols less wasteful and more useful to the network. Filecoin \cite{filecoin} has a Proof-of-Spacetime and Ethereum \cite{ethereum} is moving towards a Proof-of-Stake approach.
 
-In addition, because each proof is unique to the miner producing it, pooling can not occur. This dramatically equalizes the chances that any particular miner can win a block and reduces the ability for any single entity to exert undue influence over the network or its consensus.
+For Helium, we desire a consensus protocol with the following attributes:
 
-\subsection{Helium Consensus}
+\begin{itemize}
+  \item \textbf{Extremely decentralized in nature}: network consensus should be designed such that there is no incentive available for taking advantage of macro-economic factors, such as cheaper access to electricity in certain geographies, and that simply buying more hardware in the same location is either ineffective or cost prohibitive. Additionally, it should be impossible for mining pools to form and for groups to collaborate in mining blocks. 
+  \item \textbf{Based on useful work}: achieving network consensus should be \emph{useful} and \emph{reusable} to the network. Work performed in Nakamoto Consensus-based systems is only useful for the particular block being mined and is not otherwise useful or resuable on the network. An ideal consensus system would be both useful and reusable to the network.
+  \item \textbf{High confirmed transaction rate}: our ideal consensus protocol would be able to process a very high number of transactions per second, and once a transaction is seen in a block it would be considered confirmed. Many existing blockchains require a lengthy \emph{settlement time} while the network achieves consensus which is not ideal in a system like Helium which may experience a very high number of transactions and where waiting for a transaction to settle is not tenable.
+  \item \textbf{Transactions are censor-resistant}: ideally miners would not be able to censor or otherwise pick and choose transactions prior to mining them. This would not only nullify any attempts to nefariously censor transactions, but would allow for otherwise unattractive transactions (such as zero-fee transactions) to be included in the blockchain.
+\end{itemize}
 
-We propose a consensus protocol where the probability that a miner submits a winning block to the network is roughly proportional to the number of \emph{other} miners that were verified in the \emph{Proof-of-Coverage}. Because the \emph{Proof-of-Coverage} is generated in an unpredictable way, mining power is fairly equally distributed among the network. Miners offer wireless network coverage and verify others as proof to participate in the consensus.
+We propose a unique consensus protocol around \emph{Proof-of-Coverage} to capture the useful work of verifying the network as a replacement for \emph{Proof-of-Work}, combined with a variant of the \emph{HoneyBadgerBFT (HBFT)} \cite{honeybadger} asynchronous byzantine fault tolerant protocol. 
+
+We describe this consensus protocol as the \emph{Helium Consensus Protocol (HCP)}.
+
+\subsection{HCP}
+
+
+
+
+
+
+\todo{We propose a consensus protocol where the probability that a miner submits a winning block to the network is roughly proportional to the number of \emph{other} miners that were verified in the \emph{Proof-of-Coverage}. Because the \emph{Proof-of-Coverage} is generated in an unpredictable way, mining power is fairly equally distributed among the network. Miners offer wireless network coverage and verify others as proof to participate in the consensus.
 
 Each miner has a score assigned to it by the blockchain, a value between 0 and 1. When miners join the network a default score $\phi$ is assigned. This score changes over time in response to \emph{Proof-of-Coverage} challenges. A miner that successfully answers a challenge is granted a boost to its score, as described in \secref{scores}. Miners with a higher score have a larger chance of submitting the winning block and miners with a lower score have a higher chance of being challenged. Thus the Helium consensus protocol rewards good behavior on the network and punishes bad behavior.
 
@@ -867,7 +875,7 @@ If a miner mines a block on top of a block that it also mined  a cumulative pena
 
 The block with the highest score, $B_S$, seen by miners on the network during the interval $\lambda$ is added to the head of their chain.
 
-The criteria on which blocks are validated and scored must be agreed upon by all participants in the network. If there is disagreement around the consensus rules, the blockchain will fork. Because Helium miners have a reputation attached by way of their score, a simple 51\% attack is insufficient to derail the consensus algorithm. Additionally the inclusion of uncle blocks, according to the GHOST protocol \cite{ghost}, further increases the difficulty of a malicious consensus fork. Uncle blocks on the Helium blockchain are only eligible for inclusion if the uncle block and the block referencing it share a common ancestor within the last 7 generations. This means that after 7 generations the chain fork can no longer obtain a boost from including uncle blocks from the honest chain.
+The criteria on which blocks are validated and scored must be agreed upon by all participants in the network. If there is disagreement around the consensus rules, the blockchain will fork. Because Helium miners have a reputation attached by way of their score, a simple 51\% attack is insufficient to derail the consensus algorithm. Additionally the inclusion of uncle blocks, according to the GHOST protocol \cite{ghost}, further increases the difficulty of a malicious consensus fork. Uncle blocks on the Helium blockchain are only eligible for inclusion if the uncle block and the block referencing it share a common ancestor within the last 7 generations. This means that after 7 generations the chain fork can no longer obtain a boost from including uncle blocks from the honest chain.}
 
 \section{Network Protocol}
 
@@ -1463,6 +1471,10 @@ We would also like to acknowledge many of the prior works and inventions that ha
 \bibitem{state-channels}
     Jeff Coleman.
     \emph{State Channels}, 2015
+
+\bibitem{honeybadger}
+    Andrew Miller and Yu Xia and Kyle Croman and Elaine Shi and Dawn Song.
+    \emph{The Honey Badger of BFT Protocols}, 2016
 
 \end{thebibliography}
 
