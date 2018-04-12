@@ -148,7 +148,7 @@ There are three types of participants in the network: Device, Miner, or a Router
 
 \subsection{Blockchain} \label{blockchain}
 
-The Helium blockchain is a distributed ledger designed to provide a cost-effective way to run application logic core to the operation of a \verb|DMN|, store immutable device data fingerprints, and furnish a transaction system. The Helium blockchain is an immutable append-only list of transactions which achieves consensus by verifying \emph{Proofs-of-Coverage} \secref{poc}. Users internal and external to the \verb|DMN| have access to the blockchain, which is a new protocol built from scratch specifically for the \verb|DMN|.
+The Helium blockchain is a distributed ledger designed to provide a cost-effective way to run application logic core to the operation of a \verb|DMN|, store immutable device data fingerprints, and furnish a transaction system. The Helium blockchain is an immutable append-only list of transactions which achieves consensus using the \emph{Helium Consensus Protocol} \secref{consensus}. Users internal and external to the \verb|DMN| have access to the blockchain, which is a new protocol built from scratch specifically for the \verb|DMN|.
 
 $B$ consists of blocks $b_n$, which contain a header and a list of transactions. There are several kinds of transactions, outlined in \secref{transactions}. 
 
@@ -579,11 +579,11 @@ Location tracking is one of the most valuable use cases for low power devices. I
 
 Today, Global Navigation Satellite Systems (GNSS) are used by the majority of devices which require geolocation services, with GPS being the most popular implementation. GPS systems use a technique called \emph{Time of Arrival (TOA)} to determine the location of a receiver in relation to 20 or so satellites orbiting the earth. GPS satellites synchronize their time using a high precision on-board clock and regular synchronization with control servers on the ground. GPS receivers receive precisely timestamped data from a number of satellites overhead and use a technique called \emph{trilateration} to provide a precise location on earth.
 
-GPS has matured in to an extrordinarily reliable service used in a wide range of applications for providing both location and time services. However, there are significant drawbacks to GPS particularly in the realm of low power devices that Helium is designed to facilitate. It can take around 2 minutes for a GPS receiver to achiehve \emph{lock} with sufficient satellites, which translates to drastically reduced battery life. As an example, a device transmitting its location aronud 25 times a day may only last a month on a AA battery compared with several years of life on the same battery without GPS. Using GPS indoors is generally impossible, as the GPS receiver typically needs line of sight with the sky in order to see the 3-4 satellites required to calculate an accurate location. GPS data is also delivered unencrypted, which leaves the system extremely vulnerable to spoofing, jamming, and other attack vectors.
+GPS has matured in to an extrordinarily reliable service used in a wide range of applications for providing both location and time services. However, there are significant drawbacks to GPS particularly in the realm of low power devices that Helium is designed to facilitate. It can take around 2 minutes for a GPS receiver to achiehve \emph{lock} with sufficient satellites, which translates to drastically reduced battery life. As an example, a device transmitting its location around 25 times a day may only last a month on a AA battery compared with several years of life on the same battery without GPS. Using GPS indoors is generally impossible, as the GPS receiver typically needs line of sight with the sky in order to see the 3-4 satellites required to calculate an accurate location. GPS data is also delivered unencrypted, which leaves the system extremely vulnerable to spoofing, jamming, and other attack vectors.
 
-We are interested in low power implementations of location services that, in conjunction with an immutable distributed ledger, can be used to verify location and time. Given the above factors, we immediately conclude that GPS is an unacceptable mechanism for these requirements.
+We are interested in low power implementations of location services that, in conjunction with an immutable distributed ledger, can be used to verify location and time. Given the above factors, we conclude that GPS is an unacceptable mechanism for these requirements.
 
-This section outlines a new geolocation implementation that we describe as \emph{Proof-of-Location}: a cryptographically provable immutable record of a devices location and time.
+This section outlines a new geolocation implementation that we describe as \emph{Proof-of-Location}: a low power, cryptographically provable immutable record of a devices location and time.
 
 \subsection{Constructing \emph{Proof-of-Location}}
 
@@ -611,11 +611,11 @@ An example timestamping flow is as follows:
      \end{center}
 \end{figure}
 
-Typically it is challenging to accurately record $T_n$, as any nanosecond-level variance in the timestamp can lead to significant variance in the resulting location solution. To achieve this level of precision it is necessary to use extremely high-bandwidth raw \emph{in-phase and quadrature (I/Q) data} from the miners radio hardware and a fast enough processor to sample this data, identify an appropriate packet, and record the timestamp. Typically a \emph{Field Programmable Gate Arrays (FPGA)} is used as the processor for this data, however these are fairly expensive, power hungry, and emit significant heat. Instead, the reference Helium Gateway mining hardware uses a novel technique using commodity low-cost components to process I/Q data and achieve timestamping at this level of precision. Further information on the techniques, components and schematics used will be released as open source software at network launch.
+Typically it is challenging to accurately record $T_n$, as any nanosecond-level variance in the timestamp can lead to significant variance in the resulting location solution. To achieve this level of precision it is necessary to use extremely high-bandwidth raw \emph{in-phase and quadrature (I/Q)} data from the miners radio hardware and a fast enough processor to sample this data, identify an appropriate packet, and record the timestamp. Typically a \emph{Field Programmable Gate Arrays (FPGA)} is used as the processor for this data, however these are fairly expensive, power hungry, and emit significant heat. Instead, the reference Helium Gateway mining hardware uses a novel technique using commodity low-cost components to process I/Q data and achieve timestamping at this level of precision. As a comparative example, an existing low-cost LoRaWAN \cite{lorawan} access point is only capable of providing timestamp data accurate within several milliseconds of precision - as radio waves travel at the speed of light, each millisecond equates to approximately 300,000 meters of physical distance which we deem practically useless for any accurate geolocation. Further information on the techniques, components and schematics used in the reference Helium Gateway will be released as open source software at network launch. 
 
-\textbf{Using timestamps to derive location}. Now that the devices router, $R$, is in posession of a variety of signed messages which include the precise timestamps $T_n$ it is possible to \emph{solve} for the location of the device $D$. A variety of TDoA algorithms exist such as \todo{\cite{}, \cite{} and \cite{}}. We choose to implement the method described by \emph{Kim} and refer the interested reader to \todo{\cite{}} for greater detail on the algorithm and implementation. If a sufficient density of $M_n$ and therefore $T_n$ are recoreded for a given packet, the location of $D$ can be derived down to a few meters depending on a variety of factors.
+\textbf{Using timestamps to derive location}. Now that the devices router, $R$, is in posession of a variety of signed messages which include the precise timestamps $T_n$ it is possible to \emph{solve} for the location of the device $D$. A variety of TDoA algorithms exist such as \todo{\cite{}, \cite{} and \cite{}}. We choose to implement the method described by \emph{Kim} and refer the interested reader to \todo{\cite{}} for greater detail on the algorithm and implementation. If a sufficient density of $M_n$ and therefore $T_n$ are recorded for a given packet, the location of $D$ can be derived down to a few meters depending on a variety of factors.
 
-\textbf{Verifying cryptographic \emph{Proof-of-Location}}. \todo{BLAH BLAH} Because of the expense and power consumption of a typical GPS module, and the fact that they require a view of the sky, providing geolocation as a network service makes devices cheaper, more power efficient, and able to located accurately indoors. Additionally, because these data transmission events occur in the context of a blockchain, unforgeable cryptographic proof of location for a device can be obtained. Devices being able to prove they were in a specific place at a specific time has tremendous potential for a wide variety of machine applications.
+\textbf{Verifying cryptographic \emph{Proof-of-Location}}. \todo{BLAH BLAH Because of the expense and power consumption of a typical GPS module, and the fact that they require a view of the sky, providing geolocation as a network service makes devices cheaper, more power efficient, and able to located accurately indoors. Additionally, because these data transmission events occur in the context of a blockchain, unforgeable cryptographic proof of location for a device can be obtained. Devices being able to prove they were in a specific place at a specific time has tremendous potential for a wide variety of machine applications.}
 
 \section{Transactions}\label{transactions}
 
@@ -644,7 +644,7 @@ Now that we have discussed the requirements of transactions within Helium, we ou
 This first option is suitable only for larger transactions as the service fee is smaller than the payment. This method does not work well for very small transactions as whoever pays the transaction fee ends up potentially paying more for the transaction fees than the value being exchanged. This is a similar problem to buying small-value items using credit cards today. The vendor pays a minimum fee on each credit card transaction, and under a certain charge they lose money on the transaction. These heavyweight transactions are clearly not suitable for use as a micro transaction system within Helium.
 
 \paragraph{Zero-fee Transactions}
-While highly desirable from a device perspective, a true zero-fee blockchain would be frought with spam transactions. It would be trivial to write a script to pollute the blockchain with transactions meant only to waste space on the blockchain and increase congestion on the network. Some ostensibly zero-fee blockchain implementations solve this issue in clever ways, such as offloading the work of processing and verifying transactions to the transactors themselves \cite{iota}. However, these implementations have their own issues, for example IOTA has not yet proved it is capable of operating this type of system without the need for a centralized coordinator.
+While highly desirable from a device perspective, a true zero-fee blockchain would be frought with spam transactions. It would be trivial to write a script to pollute the blockchain with transactions meant only to waste space on the blockchain and increase congestion on the network. Some ostensibly zero-fee blockchain implementations solve this issue in clever ways, such as offloading the work of processing and verifying transactions to the transactors themselves. However, these implementations have their own issues, for example IOTA \cite{iota} has not yet proved it is capable of operating this type of system without the need for a centralized coordinator.
 
 \paragraph{State Channels}
 State channels \cite{state-channels} allow two parties to exchange value, usually in small increments at a time, with very limited risk. If one party thinks the other is acting dishonestly, they can publish the final transaction in the state channel to the blockchain and close the channel. At most one payment is usually at risk. However, there are several downsides: the payer has to lock up significant funds for the lifetime of the state channel, meaning they may be unable to open state channels with other parties or pay other dues; transactions in the state channel do not appear on the main chain at all; and these implementations are relatively complex to execute well (note that neither Lightning \cite{lightning} nor Raiden \cite{raiden} have become widely used yet).
@@ -652,63 +652,9 @@ State channels \cite{state-channels} allow two parties to exchange value, usuall
 \paragraph{Payment in Arrear}
 Payment in arrear, after the services have been rendered, is an extremely risky method in a decentralized pseudo-anonymous system. There is no mechanism to gain certainty around the intent or honesty of the entities transacting, nor do you know if the entities control the requisite funds when the debt comes due. This model only works when the parties involved trust each other, or have some other recourse to recover funds.
 
-\subsubsection{A Proposed Solution Based on Staking \& Chits}
+\subsubsection{A proposed solution based on \emph{HoneyBadgerBFT}}
 
-In order to satisfy our requirement of on-blockchain micro transactions with no fees, we propose a system that takes inspiration from staking and state channels.
-
-In order for devices to issue zero fee payments to miners, they must first stake a \emph{deposit} of tokens using the \emph{create\_deposit} transaction \secref{primitives}. This transaction has a fee. Once the initial deposit has been created, the network user can proceed to issue \emph{chits} against their deposit until it is exhaused. Chits are a type of transaction; a promissory note that payment will be delivered in the future, and enough information to trust a favorable outcome. These chits are returned in response to a gateway offering a packet for delivery. Chits are linked to each other; the blockchain needs to have seen the previous chits before subsequent ones will be accepted. Each chit references the deposit, the sequence number (nonce), the amount to pay and any additional information about the packet.
-
-Because the miner concerned wants to be paid for transport, it will add the chit to its mempool, along with any previous chits that it depends on. This means that several miners are all incentivized to include these chits in their current blockchain. The entity issuing \emph{chits} can use the final \emph{chit} in the transaction chain to incentivize a miner to include all the previous (or missing) chits in a block. If previous chits are not included in the chain, nobody gets paid.
-
-At first glance this is similar to how state channels work, but with a couple of significant differences. State channels are a one to one construct, while chits can be one to many. Critically, this method keeps the record of all included transactions on-chain. The crucial benefit to this design is that all transaction fees for these payments can be eliminated. The first staking transaction can be sent along with the first chit, so the gateway is incentivized to add it to their block. If the first miner doesn't include it, the second \emph{chit} can be accompanied with the staking transaction and the first chit when communicating with the next miner. Eventually the advantage of including the transactions outweighs the disadvantages.
-
-It is important to note that nobody gets paid until everybody gets paid. Chits should not be issued after the \emph{ExpiryHeight}. If the deposit is not distributed $n$ blocks after the ExpiryHeight, the deposit is disbursed as much as possible and any remaining balance is destroyed. This provides an incentive for everyone involved to settle the balance.
-
-\subsubsection{Example Deposit Lifecycle}
-
-In this section, we will walk through an example lifecycle of a router staking a deposit, miners performing work on behalf of the router, and being compensated by the router through chits against the deposit. See \secref{cycle:router} for a more detailed set of protocols related to the router deposit and data lifecycle.
-
-\begin{enumerate}
-
-\item A router $R$ creates a deposit $S$ of 500 tokens, expiring at block height $current\_height$ + $\lambda$, by publishing a \verb|create_deposit| transaction and paying a nominal transaction fee
-\item A miner $M_1$ hears a packet $P_1$ broadcast by device $D$
-\item $M_1$ uses the address of $D$, attached to $P_1$, to identify $R$ as the owner of $D$
-\item $M_1$ sends the signature $K(P_1)$ of $P_1$ and an offer of 1 token for transport to $R$
-\item $R$ receives $K(P_1)$ and the payment offer and determines if it accepts the packet for the offered price
-\item Assuming $R$ accepts the packet at the offered price, it constructs a \textbf{chit} transaction $C_1$ with nonce 1, with a value of 1 token, payable to $M_1$, against $S$ and sends it to $M_1$
-\item Having received $C_1$, $M_1$ verifies the correctness of $C_1$ by inspecting $S$ on the blockchain and sends $P$ to $R$
-\item $M_1$ adds $C_1$ to its mempool and gossips it to the peer-to-peer internet network
-\item Meanwhile, $D$ has physically moved and broadcasts its next packet $P_2$. A different miner $M_2$ now hears $P_2$
-\item Just as before, $M_2$ sends $K(P_2)$ to $R$ along with an offer of 0.9 tokens for transport
-\item $R$ responds with a chit $C_2$, but since $C_1$ has not been included in a block yet, and chits must be included in nonce order, $R$ also sends $C_1$
-\item $M_2$ adds $C_1$ and $C_2$ to its mempool and gossips both chit transactions to the peer-to-peer network
-\item $M_1$, being invested in deposit $S$, hears about the new chit $C_2$ over the peer-to-peer network and adds it to its mempool
-\item $R$ continues issuing chits $C_n$ against $S$ until either:
-  \begin{enumerate}
-  \item The value of $S$ is depleted, at which point $R$ can create a new deposit
-  \item $S$ expires at the previously specified block height and the remaining balance is burned
-  \end{enumerate}
-\item Once $S$ is closed either through depletion or expiration, all gateways owning chits against $S$ receive their payment
-\end{enumerate}
-
-\subsubsection{Problems \& Solutions}
-
-In this section we address potential problems that could arise with the deposit \& chit approach and present solutions to these problems.
-
-\paragraph{Degenerate Miner} A miner, after being issued a chit for the service it has agreed to perform, could neglect to follow through and perform the service. If a miner fails to send the agreed packet to the router after the router issues a chit, the router can re-request it (for some period of time). The threat of losing future business from a router and the relatively low overhead of completing the transfer of the packet acts to disincentivize miners from acting in bad faith. This is consistent with state channel implementations where the task is subdivided such that the scope of potential loss is below a meaningful threshold.
-
-\paragraph{Chit Bomb} A malicious actor could stake a deposit and then proceed to issue a near limitless amount of miniscule chits against that deposit without incurring transaction fees. This could flood mempools and pollute the blockchain with spam transactions. Assuming we trust our network of miners \secref{scores}, this could never happen. Miners are the only entity on the network capable of creating new blocks for the blockchain, and chits can only be issued to miners in payment for their services. Because we assume all miners to be rational actors, we anticipate they will only include transactions that benefit themselves. These are either transactions with fees attached, or chits that they have a direct investment in, either because they will get paid, or because the transaction is attached to a stake in which they have chits. Therefore, we expect miners to ignore any spam chits that were not issued in exchange for a service provided.
-
-\paragraph{Final Transaction}
-In theory, it is possible for the chit issuer to spend all the staked tokens and not have anything left to incentivize a miner to include the final transaction. All the miners involved in the chain of chits have an incentive to get the transaction included in a block, and because there is a fair chance of any individual miner winning a block, this should eventually clear.
-
-\subsection{Light Clients \& Full Nodes} \label{full-nodes}
-
-Until now, we have discussed how to deal with microtransactions in a cost-effective way, however we have not yet addressed how to deal with the inevitable continuously increasing size of the blockchain. One requirement for Helium is that all transactions occur on-chain. This means that the size of the full blockchain will eventually grow quite large. This is compounded by the fact that all miners on the network are gateway devices, relatively limited in computation power and storage space.
-
-We solve this constraint by allowing mining nodes to operate as \emph{light clients} on the blockchain, pruning old blocks and transactions as needed and keeping only the latest ledger values. They will communicate over the peer-to-peer network with \emph{full nodes} which maintain a complete history of the blockchain to verify transactions.
-
-This raises a question: who is responsible for operating full nodes, and what is their incentive to do so? Routers are software-only applications with access to scalable, cloud-based storage and will be required to operate full nodes in order to fulfill their purpose. Helium Systems Inc will operate a set of hosted routers that will make it easy for developers to launch products without needing to deploy their own router. However, many enterprise developers, who are required to maintain a higher standard of privacy, will want to host their own router. Together, these routers will form a network of full nodes capable of supporting resource constrained gateways and wallets operating light clients.
+\todo{NEED TO WRITE SOMETHING HERE}
 
 \subsection{Fees} \label{fees}
 
@@ -784,38 +730,15 @@ Having discussed the philosophy of our transaction system and presented our appr
   \end{tabularx}
 \end{table}
 
-\item [create\_deposit] Creates a staked deposit which can later be fractionally issued and redeemed in the form of \emph{chits} \secref{chit} without incurring transaction fees. Any unused portion of the deposit will be burned after some time.
-
-\begin{table}[H]
-  \centering
-  \begin{tabularx}{\columnwidth}{l X}
-      \toprule
-      Property & Description \\ \midrule
-      address & the address of the account creating the deposit \\
-      value & an integer-based representation of the deposit amount \\
-      public\_key & an ephemeral public key used for signing chits for this deposit \\
-      expiry\_height & the block height at which this stake expires \\
-      signature & the signature of the depositor
-  \end{tabularx}
-\end{table}
-
-\item [chit] \label{chit} Issues a chit against a previously staked deposit in payment for transport or other services. N.B. this payment transaction does not require a fee, while \emph{payment} \secref{payment} does.
-
-\begin{table}[H]
-  \centering
-  \begin{tabularx}{\columnwidth}{l X}
-      \toprule
-      Property & Description \\ \midrule
-      public\_key & the public key used to create the deposit \\
-      value & an integer-based representaion of the value of the chit \\
-      nonce & a monotoically increasing integer \\
-      packet\_reference & a hash of the packet being paid for \\
-      payee\_address & the address of the recipient \\
-      signature & the signature of the depositor
-  \end{tabularx}
-\end{table}
-
 \end{description}
+
+\subsection{Light Clients \& Full Nodes} \label{full-nodes}
+
+Until now, we have discussed how to deal with microtransactions in a cost-effective way, however we have not yet addressed how to deal with the inevitable continuously increasing size of the blockchain. One requirement for Helium is that all transactions occur on-chain. This means that the size of the full blockchain will eventually grow quite large. This is compounded by the fact that all miners on the network are gateway devices, relatively limited in computation power and storage space.
+
+We solve this constraint by allowing mining nodes to operate as \emph{light clients} on the blockchain, pruning old blocks and transactions as needed and keeping only the latest ledger values. They will communicate over the peer-to-peer network with \emph{full nodes} which maintain a complete history of the blockchain to verify transactions.
+
+This raises a question: who is responsible for operating full nodes, and what is their incentive to do so? Routers are software-only applications with access to scalable, cloud-based storage and will be required to operate full nodes in order to fulfill their purpose. Helium Systems Inc will operate a set of hosted routers that will make it easy for developers to launch products without needing to deploy their own router. However, many enterprise developers, who are required to maintain a higher standard of privacy, will want to host their own router. Together, these routers will form a network of full nodes capable of supporting resource constrained gateways and wallets operating light clients.
 
 \section{Helium Consensus Protocol}\label{consensus}
 
@@ -846,7 +769,7 @@ The remainder of this section lays out our construction of a consensus protocol 
 
 We propose a unique consensus protocol around \emph{Proof-of-Coverage} to capture the useful work of verifying the network as a replacement for \emph{Proof-of-Work}, combined with a variant of the \emph{HoneyBadgerBFT (HBFT)} \cite{honeybadger} asynchronous byzantine fault tolerant protocol.
 
-\textbf{HBFT}. HBFT is an asynchronous atomic broadcast protocol to achieve optimal asymptotic efficiency, initially presented by Miller et al in 2016. In HBFT, the setting assumes a network of $N$ designated nodes with distinct well-known identities ($P_0$ through $P$\textsubscript{N−1}). In our HCP instantiation this network of nodes is known as the consensus group $C$. The consensus group receive transactions as input, and their goal is to reach common agreement on an ordering of these transactions and form them in to blocks to be added to the blockchain.
+\textbf{HBFT}. HBFT is an asynchronous atomic broadcast protocol designed to achieve optimal asymptotic efficiency, initially presented by Miller et al in 2016. In HBFT, the setting assumes a network of $N$ designated nodes with distinct well-known identities ($P_0$ through $P$\textsubscript{N−1}). In our HCP instantiation this network of nodes is known as the consensus group $C$. The consensus group receive transactions as input, and their goal is to reach common agreement on an ordering of these transactions and form them in to blocks to be added to the blockchain.
 
 The protocol proceeds in epochs, where after each epoch, a new batch of transactions is appended to the blockchain. At the beginning of each epoch, the group choose a subset of the transactions in their buffer, and provide them as input to an instance of a randomized agreement protocol. At the end of the agreement protocol, the final set of transactions for this epoch is chosen.
 
