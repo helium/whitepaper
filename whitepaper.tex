@@ -623,7 +623,7 @@ Transactions in the Helium blockchain provide functionality that enables address
 
 \subsection{Microtransactions} \label{microtransactions}
 
-In this section we discuss Helium's need for microtransactions, the limitations of existing solutions, and propose a solution based on staking and burning.
+In this section we discuss Helium's need for microtransactions, the limitations of existing solutions, and propose a solution based on the characteristics of our consensus protocol \secref{consensus}.
 
 \subsubsection{Helium's Need for Microtransactions}
 
@@ -652,17 +652,27 @@ State channels \cite{state-channels} allow two parties to exchange value, usuall
 \paragraph{Payment in Arrear}
 Payment in arrear, after the services have been rendered, is an extremely risky method in a decentralized pseudo-anonymous system. There is no mechanism to gain certainty around the intent or honesty of the entities transacting, nor do you know if the entities control the requisite funds when the debt comes due. This model only works when the parties involved trust each other, or have some other recourse to recover funds.
 
-\subsubsection{A proposed solution based on \emph{HoneyBadgerBFT}}
+\subsubsection{A proposed solution enabled by the \emph{Helium Consensus Protocol}}
 
-\todo{NEED TO WRITE SOMETHING HERE}
+\todo{NEED TO WRITE SOMETHING HERE ABOUT HOW ZEROISH-FEE TRANSACTIONS FROM DEVICES COULD WORK}
 
-\subsection{Fees} \label{fees}
+\subsection{Transport Fees}
 
-Transaction fees are an essential part of most blockchain implementations. They incentivize miners to include a transaction in their draft block and ensure that spam transactions do not pollute the blockchain and network. We've discussed how the \emph{chit} transaction \secref{chit} is able to eliminate fees in the prior section on Microtransactions \secref{microtransactions}. However, all other transactions on the \verb|DMN| require transaction fees.
+\todo{NEED TO WRITE SOMETHING HERE ABOUT HOW ZEROISH-FEE TRANSACTIONS FROM DEVICES COULD WORK?}
 
-To determine the appropriate fee for a new transaction, the transactor will take the median of the past $\delta$ packet transport fees, within some margin of error. Until $\delta$ packet transports have been completed, the fee will be fixed at a constant value $\alpha$. By anchoring the transaction fee to the current fees being charged for transport on the network, we root them in reality. Helium's primary purpose is to facilitate a network of wireless ineternet coverage. In order to accomplish this in the long term, all of the economics of the system must align to make it practical for the primary users to transact on the network. If one set of fees were to outstrip the other, the network would quickly lose its utility for the key user segment.
+Devices using the Helium network to send and receive data to and from the internet must pay miners what is known as a \emph{transport fee}. This fee compensates the miner for delivering data packets between the device and the internet, and is unrelated to the \emph{transaction fee} that miners earn for mining transactions as part of blocks that are recorded to the blockchain.
 
-To enable miners and other light clients to determine an appropriate fee, full nodes \secref{full-nodes} will expose a fee suggestion API. This way resource constrained entities that do not maintain a complete copy of the blockchain will not need to compute the fee from the most recent transactions. When submitting a block, peer miners will verify the correctness of the block and ensure that no fee has deviated beyond the acceptable threshold of $\delta$.
+Miners set the price they are willing to accept to transport data to and from the internet on a per-byte basis. 
+
+Devices pay miners the transport fee on transmission or reception of the data. This means that the miner will receive payment the transport fee transaction prior to the transaction being mined in a block and recorded into the blockchain. This entails some risk for the miner, as they must believe that the transport payment is not malicious or fraudulent prior to it being confirmed in the blockchain. However, given how low it is expected the per-byte transport amount to be, this risk seems tolerable. A miner can \emph{blacklist} a device or organization if they continually abuse the system.
+
+\subsection{Transaction Fees} \label{fees}
+
+Transaction fees are an essential part of most blockchain implementations. They incentivize miners to include a transaction in their draft block and ensure that spam transactions do not pollute the blockchain and network.
+
+To determine the appropriate fee for a new transaction, the transactor will take the median of the past $\delta$ packet transport fees, within some margin of error. Until $\delta$ packet transports have occured on the network, the fee will be fixed at a constant value $\alpha$. By anchoring the transaction fee to the current fees being charged for transport on the network, we root them in reality. Helium's primary purpose is to facilitate a network of wireless ineternet coverage. In order to accomplish this in the long term, all of the economics of the system must align to make it practical for the primary users to transact on the network. If one set of fees were to outstrip the other, the network would quickly lose its utility for the key user segment.
+
+To enable miners and other light clients to determine an appropriate fee, full nodes \secref{full-nodes} will expose a fee suggestion API. This way resource constrained entities that do not maintain a complete copy of the blockchain will not need to compute the fee from the most recent transactions. During the block submission process, miners in the consensus group \secref{consensus} will verify the correctness of the block and ensure that no fee has deviated beyond the acceptable threshold of $\delta$.
 
 \subsection{Staking} \label{staking}
 
