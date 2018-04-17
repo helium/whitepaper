@@ -618,11 +618,11 @@ Typically it is challenging to accurately record $T_n$, as any nanosecond-level 
 
 \textbf{Verifying \emph{Proof-of-Location}}. Once $R$ has computed a location of $D$, it may become necessary to verify that the reported location of $D$ was at accurate at that given moment in time. As the \emph{Proof-of-Location} is deterministic and derived from information publicly available in the blockchain it is possible to reconstruct every step involved:
 
-\begin{enumerate}
+\begin{itemize}
   \item From the signatures contained within the timestamped packets, $T_n$, every miner involved in providing timestamps can be verified
   \item By inspecting the \verb|assert_location| \secref{staking} transaction, the claimed GPS location of those miners can be determined
   \item The \emph{Proofs-of-Coverage} and scores \secref{poc} for each miner can be retrieved from the blockchain and inspected
-\end{enumerate}
+\end{itemize}
 
 By auditing the above steps the router operator can cryptographically prove (or disprove) the location of each of the miners involved in providing the components for \emph{Proof-of-Location} for a given device $D$. 
 
@@ -632,11 +632,7 @@ The accuracy of the proof will depend heavily on the number of $M_n$ involved an
 
 Transactions in the Helium blockchain provide functionality that enables address-to-address transfers of Helium tokens, similar to many existing blockchain networks, but also provide a set of primitives that enable core functionality that is critical to the operation of a \verb|DMN|. In this section we address the philosophy behind our transaction system, the primitives, and the way fees on the network work. We will first address Helium's need for microtransactions and propose a new solution.
 
-\subsection{Microtransactions} \label{microtransactions}
-
-In this section we discuss Helium's need for microtransactions, the limitations of existing solutions, and propose a solution based on the characteristics of our consensus protocol \secref{consensus}.
-
-\subsubsection{Helium's Need for Microtransactions}
+\subsection{Helium's Need for Microtransactions}
 
 \paragraph{Devices Pay Per Packet}
 The goal of Helium is to provide internet data transport fees (the fees paid by devices to miners) that are an order of magnitude less than anything currently available for this type of service. This transport fee would need to be metered per-packet in order to allow for maximum flexibility --- this way, a device could transact with any miner, even just to send or receive a single packet without having previously established a relationship with that miner.
@@ -647,7 +643,7 @@ Helium is built on the philosophy that all transactions should occur \emph{on-ch
 \paragraph{Allow Devices to Persist Data to the Blockchain}
 Because the Helium blockchain services a specific use, the \verb|DMN|, blocks must additionally be able store fingerprints of data sent from devices along with the transaction which pays a miner for their transport service.  We believe that this holistic \emph{tamper-proof} data trail will enable entirely new use cases where the authenticity and veracity of sensor data is critical.
 
-\subsubsection{Limitations of Existing Solutions}
+\subsection{Limitations of Existing Solutions}
 
 Now that we have discussed the requirements of transactions within Helium, we outline the existing solutions for micropayments on a blockchain and address their shortcommings as they apply to our network.
 
@@ -663,21 +659,19 @@ State channels \cite{state-channels} allow two parties to exchange value, usuall
 \paragraph{Payment in Arrear}
 Payment in arrear, after the services have been rendered, is an extremely risky method in a decentralized pseudo-anonymous system. There is no mechanism to gain certainty around the intent or honesty of the entities transacting, nor do you know if the entities control the requisite funds when the debt comes due. This model only works when the parties involved trust each other, or have some other recourse to recover funds.
 
-\subsubsection{A proposed solution enabled by the \emph{Helium Consensus Protocol}}
+\subsection{Types of Fees in Helium}
 
-\todo{NEED TO WRITE SOMETHING HERE ABOUT HOW ZEROISH-FEE TRANSACTIONS FROM DEVICES COULD WORK}
+In this section we outline the types of fees needed on the Helium network, and propose solutions which take advantage of the unique characteristics of the Helium Consensus Protocol \secref{consensus}.
 
-\subsection{Transport Fees}
+\subsubsection{Transport Fees}
 
-\todo{NEED TO WRITE SOMETHING HERE ABOUT HOW ZEROISH-FEE TRANSACTIONS FROM DEVICES COULD WORK?}
-
-Devices using the Helium network to send and receive data to and from the internet must pay miners what is known as a \emph{transport fee}. This fee compensates the miner for delivering data packets between the device and the internet, and is unrelated to the \emph{transaction fee} that miners earn for mining transactions as part of blocks that are recorded to the blockchain.
+Devices using the Helium network to send and receive data to and from the internet must pay miners what is known as a \emph{transport fee}. This fee compensates the miner for delivering data packets between the device and the intended router on the internet, and is unrelated to the \emph{transaction fee} that miners earn for mining transactions as part of blocks that are recorded to the blockchain. The fee is negotiated between the router to which the device belongs, and the miner, as devices are not directly connected to the blockchain. This process is described in more detail in \secref{proto:device.data.send}.
 
 Miners set the price they are willing to accept to transport data to and from the internet on a per-byte basis. 
 
-Devices pay miners the transport fee on transmission or reception of the data. This means that the miner will receive payment the transport fee transaction prior to the transaction being mined in a block and recorded into the blockchain. This entails some risk for the miner, as they must believe that the transport payment is not malicious or fraudulent prior to it being confirmed in the blockchain. However, given how low it is expected the per-byte transport amount to be, this risk seems tolerable. A miner can \emph{blacklist} a device or organization if they continually abuse the system.
+A devices router pays miners the transport fee on transmission or reception of the data. This means that the miner will receive the transport fee prior to the transaction being mined in a block and recorded into the blockchain. This entails some risk for the miner, as they must believe that the transport payment is not malicious or fraudulent prior to it being confirmed in the blockchain. However, given how low the per-byte transport amount is likely to be, this risk seems tolerable. A miner can \emph{blacklist} a device or organization address if they continually abuse the system.
 
-\subsection{Transaction Fees} \label{fees}
+\subsubsection{Transaction Fees} \label{fees}
 
 Transaction fees are an essential part of most blockchain implementations. They incentivize miners to include a transaction in their draft block and ensure that spam transactions do not pollute the blockchain and network.
 
@@ -687,7 +681,7 @@ To enable miners and other light clients to determine an appropriate fee, full n
 
 Due to the censorship-resilience built in to the \emph{Helium Consensus Protocol} \secref{consensus}, there is no incentive to include larger transaction fees. Unlike Bitcoin, where miners cherry-pick the transactions with the largest fees from their mempool to include in their blocks, Helium miners cannot see the contents of the transactions without collaborating with other members of the consensus group to decrypt them. Transactions with incorrect fees (either too high or low) will be rejected prior to the block being appended to the blockchain according to the consensus rules.
 
-\subsection{Staking} \label{staking}
+\subsubsection{Staking Fees} \label{staking}
 
 The \emph{assert\_location} transaction, mentioned below \secref{primitives}, has a special type of fee calculation; a \emph{dynamic} fee. Because the Helium network reaches maximum \emph{usefulness} at a specific density of gateways, we want the fees to incentivize the network density to be as close to that ideal as possible. To that end, the transaction fee for asserting a location can be thought of as the y coordinate on a curve with the formula \[\mathit{y = \left(x - D\right)^4 + F}\] where $D$ is the ideal gateway density and $F$ is the unit fee for a location transaction. A sample graph of this function where $D$ = 3 and $F$ = 1 follows:
 
@@ -738,7 +732,7 @@ Having discussed the philosophy of our transaction system and presented our appr
   \end{tabularx}
 \end{table}
 
-\item [payment] \label{payment} Moves tokens from one account, the \emph{payer}, to another account, the \emph{payee}. N.B. this payment transaction requires a fee, while \emph{chit} \secref{chit} does not.
+\item [payment] \label{payment} Moves tokens from one account, the \emph{payer}, to another account, the \emph{payee} including the requisite fee.
 
 \begin{table}[H]
   \centering
@@ -819,6 +813,8 @@ We refer the interested reader to \cite{honeybadger} for a detailed breakdown an
 \section{Network Protocol}
 
 In this section, we provide a more formal overview of the Helium \verb|DMN| and the functions that Devices, Miners, and Routers play in the system.
+
+\todo{REMOVE AND FIX ALL THE CHIT AND MINING RELATED PROTOCOL STUFF HERE!}
 
 \subsubsection{Device Cycle}
 
@@ -1088,7 +1084,7 @@ We provide a brief overview of the mining cycle and the functions available to m
 
   \item [Deliver] A miner delivers data from a device to a router on the internet.
 
-    Once a miner has received a packet from an end device, along with the precise timestamp it was received, it looks up the routers for the organization owning that device and offers the packet to one of those routers, for a fee. The router can accept the fee and return a \emph{chit}, or make a counteroffer. The router can also reject the offer if it already has a copy of the packet or it is unwilling to pay the offered price. A router may pay for several copies of the packet if it wishes to solve for the position of the end device. See the corresponding Router Receive Data \protoref{proto:router.offer.recv}.
+    Once a miner has received a packet from an end device, along with the precise timestamp it was received, it looks up the routers for the organization owning that device and offers the packet to one of those routers, for a fee. The router can accept the fee, or make a counteroffer. The router can also reject the offer if it already has a copy of the packet or it is unwilling to pay the offered price. A router may pay for several copies of the packet if it wishes to solve for the position of the end device. See the corresponding Router Receive Data \protoref{proto:router.offer.recv}.
 
     \begin{protocol}{Miner Deliver Device Data}{proto:miner.data.deliver}
       \SetKwProg{Recv}{\BlankLine Receive}{}{}
@@ -1132,7 +1128,7 @@ We provide a brief overview of the mining cycle and the functions available to m
 
   \item [Receive Data] A miner receives data from a router on the internet for delivery to a device.
 
-    In response to an uplink packet offer, the router can also respond with a downlink packet, with an attached \emph{chit} to have the gateway deliver a downlink packet to the end device. The end device listens for a downlink packet after transmitting.
+    In response to an uplink packet offer, the router can also respond with a downlink packet, to have the gateway deliver a downlink packet to the end device. The end device listens for a downlink packet after transmitting.
 
     \begin{protocol}{Miner Receive Router Data}{proto:miner.data.receive}
       \SetKwProg{Recv}{\BlankLine Receive}{}{}
@@ -1280,7 +1276,7 @@ We provide a brief overview of the routing cycle and the functions available to 
 
     \item [Send Data] On receipt of an offer or data a router can send data to the device.
 
-      Regardless of the accept/decline of the actual packet, the router can leverage the fact that it knows the gateway is in-range of the end-device to send a message down to it. Along with the packet to send, the router includes a \emph{chit} to pay for the transmission.
+      Regardless of the accept/decline of the actual packet, the router can leverage the fact that it knows the gateway is in-range of the end-device to send a message down to it. Along with the packet to send, the router includes a \emph{transport fee} to pay for the transmission.
 
     \begin{protocol}{Router Send Data }{proto:router.data.send}
       \SetKwProg{Send}{\BlankLine Send}{}{}
