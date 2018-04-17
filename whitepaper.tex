@@ -79,10 +79,11 @@ Helium is a \emph{decentralized machine network} that enables devices anywhere i
 Helium's secure and open-source primitives enable developers to build low-power, internet-connected devices quickly and cost-effectively. Helium has a wide variety of applications across industries and is the first decentralized machine network of its kind.
 \end{abstract}
 
-%\newpage
+\section*{Preface}
 
-%\tableofcontents
-%\newpage
+This whitepaper represents continuous work in progress. We will endeavor to keep this document current with the latest development progress. As a result of the on-going and iterative nature of our development process, the resulting code is likely to differ from what is represented in this paper.
+
+We invite the interested reader to peruse the Helium GitHub repo at \url{https://github.com/helium} as we continue to open-source various components of the system over time.
 
 \section{Introduction}
 
@@ -591,16 +592,16 @@ Our goal is to verify the physical geolocation of a given device, $D$, without u
 
 \textbf{Precise timestamping of RF data}. There are a handful of techniques used by positioning systems without the use of GNSS, which include Received Signal Strength Indication (RSSI), Time of Arrival (ToA), and Time Differential of Arrival (TDoA). These techniques use radio frequency transmissions, usually recieved by one or more receivers, combined with various algorithms based on characterstics of those transmissions.
 
-Our conclusion is that TDoA is the most accurate but challenging technique to implement \todo{(\cite{}, \cite{}, \cite{}, \cite{})}. TDoA, in simple terms, relies on the variance between precisely synchronized and recorded timing information between a transmitter and several receivers. As such it is critical to accurately \emph{timestamp} RF packets devices emit, and synchronize the clocks of miners on the network.
+Our conclusion is that TDoA is the most accurate but challenging technique to implement \cite{tdoavsrssi}, \cite{tdoavstoa}, \cite{wifipositioning}, \cite{locationestimation}. TDoA, in simple terms, relies on the variance between precisely synchronized and recorded timing information between a transmitter and several receivers. As such it is critical to accurately \emph{timestamp} RF packets devices emit, and synchronize the clocks of miners on the network.
 
 An example timestamping flow is as follows:
 
 \begin{enumerate}
-        \item A device, $D$, broadcasts a packet $P$ containing arbitrary data via the wireless network
-        \item Several miners, $M_n$, hear $P$, and record a timestamp $T_n$ of their reception time of $P$
-        \item $T_n$ is created based on the nanosecond time received via GNSS and stamped using raw radio sample data received by the gateway radio frontend
-        \item A signed transaction including $P$ and $T_n$ are delivered to the router $R$ belonging to $D$ by $M_n$
-        \item $R$ has now received several copies of $P$, each of which has a slightly varying value of $T_n$
+  \item A device, $D$, broadcasts a packet $P$ containing arbitrary data via the wireless network
+  \item Several miners, $M_n$, hear $P$, and record a timestamp $T_n$ of their reception time of $P$
+  \item $T_n$ is created based on the nanosecond time received via GNSS and stamped using raw radio sample data received by the gateway radio frontend
+  \item A signed transaction including $P$ and $T_n$ are delivered to the router $R$ belonging to $D$ by $M_n$
+  \item $R$ has now received several copies of $P$, each of which has a slightly varying value of $T_n$
 \end{enumerate}
 
 \begin{figure}[H]
@@ -613,9 +614,19 @@ An example timestamping flow is as follows:
 
 Typically it is challenging to accurately record $T_n$, as any nanosecond-level variance in the timestamp can lead to significant variance in the resulting location solution. To achieve this level of precision it is necessary to use extremely high-bandwidth raw \emph{in-phase and quadrature (I/Q)} data from the miners radio hardware and a fast enough processor to sample this data, identify an appropriate packet, and record the timestamp. Typically a \emph{Field Programmable Gate Arrays (FPGA)} is used as the processor for this data, however these are fairly expensive, power hungry, and emit significant heat. Instead, the reference Helium Gateway mining hardware uses a novel technique using commodity low-cost components to process I/Q data and achieve timestamping at this level of precision. As a comparative example, an existing low-cost LoRaWAN \cite{lorawan} access point is only capable of providing timestamp data accurate within several milliseconds of precision - as radio waves travel at the speed of light, each millisecond equates to approximately 300,000 meters of physical distance which we deem practically useless for any accurate geolocation. Further information on the techniques, components and schematics used in the reference Helium Gateway will be released as open source software at network launch. 
 
-\textbf{Using timestamps to derive location}. Now that the devices router, $R$, is in posession of a variety of signed messages which include the precise timestamps $T_n$ it is possible to \emph{solve} for the location of the device $D$. A variety of TDoA algorithms exist such as \todo{\cite{}, \cite{} and \cite{}}. We choose to implement the method described by \emph{Kim} and refer the interested reader to \todo{\cite{}} for greater detail on the algorithm and implementation. If a sufficient density of $M_n$ and therefore $T_n$ are recorded for a given packet, the location of $D$ can be derived down to a few meters depending on a variety of factors.
+\textbf{Using timestamps to derive location}. Now that the devices router, $R$, is in posession of a variety of signed messages which include the precise timestamps $T_n$ it is possible to \emph{solve} for the location of the device $D$. A variety of TDoA algorithms exist such as \cite{recurrent-tdoa}, \cite{acoustic-tdoa}, \cite{efficient-tdoa} and \cite{async-tdoa}. If a sufficient density of $M_n$ and therefore $T_n$ are recorded for a given packet, the location of $D$ can be derived down to a few meters depending on a variety of factors.
 
-\textbf{Verifying cryptographic \emph{Proof-of-Location}}. \todo{BLAH BLAH Because of the expense and power consumption of a typical GPS module, and the fact that they require a view of the sky, providing geolocation as a network service makes devices cheaper, more power efficient, and able to located accurately indoors. Additionally, because these data transmission events occur in the context of a blockchain, unforgeable cryptographic proof of location for a device can be obtained. Devices being able to prove they were in a specific place at a specific time has tremendous potential for a wide variety of machine applications.}
+\textbf{Verifying \emph{Proof-of-Location}}. Once $R$ has computed a location of $D$, it may become necessary to verify that the reported location of $D$ was at accurate at that given moment in time. As the \emph{Proof-of-Location} is deterministic and derived from information publicly available in the blockchain it is possible to reconstruct every step involved:
+
+\begin{enumerate}
+  \item From the signatures contained within the timestamped packets, $T_n$, every miner involved in providing timestamps can be verified
+  \item By inspecting the \verb|assert_location| \secref{staking} transaction, the claimed GPS location of those miners can be determined
+  \item The \emph{Proofs-of-Coverage} and scores \secref{poc} for each miner can be retrieved from the blockchain and inspected
+\end{enumerate}
+
+By auditing the above steps the router operator can cryptographically prove (or disprove) the location of each of the miners involved in providing the components for \emph{Proof-of-Location} for a given device $D$. 
+
+The accuracy of the proof will depend heavily on the number of $M_n$ involved and therefore $T_n$ received. Additional RF factors such as reflections and multipath can significantly affect the accuracy of the location calculation.
 
 \section{Transactions}\label{transactions}
 
@@ -673,6 +684,8 @@ Transaction fees are an essential part of most blockchain implementations. They 
 To determine the appropriate fee for a new transaction, the transactor will take the median of the past $\delta$ packet transport fees, within some margin of error. Until $\delta$ packet transports have occured on the network, the fee will be fixed at a constant value $\alpha$. By anchoring the transaction fee to the current fees being charged for transport on the network, we root them in reality. Helium's primary purpose is to facilitate a network of wireless ineternet coverage. In order to accomplish this in the long term, all of the economics of the system must align to make it practical for the primary users to transact on the network. If one set of fees were to outstrip the other, the network would quickly lose its utility for the key user segment.
 
 To enable miners and other light clients to determine an appropriate fee, full nodes \secref{full-nodes} will expose a fee suggestion API. This way resource constrained entities that do not maintain a complete copy of the blockchain will not need to compute the fee from the most recent transactions. During the block submission process, miners in the consensus group \secref{consensus} will verify the correctness of the block and ensure that no fee has deviated beyond the acceptable threshold of $\delta$.
+
+Due to the censorship-resilience built in to the \emph{Helium Consensus Protocol} \secref{consensus}, there is no incentive to include larger transaction fees. Unlike Bitcoin, where miners cherry-pick the transactions with the largest fees from their mempool to include in their blocks, Helium miners cannot see the contents of the transactions without collaborating with other members of the consensus group to decrypt them. Transactions with incorrect fees (either too high or low) will be rejected prior to the block being appended to the blockchain according to the consensus rules.
 
 \subsection{Staking} \label{staking}
 
@@ -789,9 +802,9 @@ HBFT relies on a \emph{threshold encryption} scheme that requires transactions b
 
 By using \emph{Proof-of-Coverage} to elect the members of $C$ we are essentially substituting for well-known identities in the HBFT protocol. As we desire a \emph{permisionless} network, we can use \emph{Proofs-of-Coverage} to determine whether miners are acting honestly and reward the \emph{most honest} miners at a given epoch by electing them to the HBFT consensus group.
 
-\textbf{The consensus group}. Once the consensus group $C$ has been elected for a given $\Delta_c$ epoch, a key generation phase occurs using a threshold encryption scheme \verb|TPKE|. \verb|TPKE| is a cryptographic primitive that allows any party to encrypt a transaction to a master public key \verb|PK|, such that $C$ must work together to decrypt it. Once $f + 1$\footnote{$f$ is a protocol parameter equal to the number of tolerable byzantine faults} correct members of $C$ compute and reveal decryption shares, $\sigma_i$, the transaction can be recovered. Once \verb|PK| is generated via the \verb|TPKE.Setup| function, a block containing \verb|PK| is immediately submitted to the blockchain. Each member $N_m$ in $C$ receives a \emph{secret key share}, \verb|SK|\textsubscript{i}, of \verb|PK|. 
+\textbf{The consensus group}. During $\Delta_c$, the currently elected consensus group is responsible for creating blocks and appending them to the blockchain. All new transactions on the network are submitted to the current members of the consensus group. New blocks are created by $C$ at a fixed interval $\Delta_b$ and recorded to the blockchain. A token block reward is split among the members of $C$ for every block submitted, along with the sum of all fees contained within valid transactions. In the unusual case that there are no transactions during $\Delta_b$, am empty block is appended to the blockchain.
 
-New blocks are created by $C$ at a fixed interval $\Delta_b$ and recorded to the blockchain. A token block reward is split among the members of $C$ for every block submitted, along with the sum of all fees contained within valid transactions. 
+\textbf{The mining process}. Once the consensus group $C$ has been elected for a given $\Delta_c$ epoch, a key generation phase occurs using a threshold encryption scheme \verb|TPKE|. \verb|TPKE| is a cryptographic primitive that allows any party to encrypt a transaction to a master public key \verb|PK|, such that $C$ must work together to decrypt it. Once $f + 1$\footnote{$f$ is a protocol parameter equal to the number of tolerable byzantine faults} correct members of $C$ compute and reveal decryption shares, $\sigma_i$, the transaction can be recovered. Once \verb|PK| is generated via the \verb|TPKE.Setup| function, a block containing \verb|PK| is immediately submitted to the blockchain. Each member $N_m$ in $C$ receives a \emph{secret key share}, \verb|SK|\textsubscript{i}, of \verb|PK|. 
 
 Miners on the network encrypt new transactions $t$ using the \verb|TPKE.Enc(PK|, $t$) $\rightarrow e$ function and submit them to $C$ to be included in the next block. As members of $C$ receive $e$ they run the \verb|TPKE.DecShare(SK|\textsubscript{i}, $e$) $\rightarrow \sigma_i$ function to produce their decryption share. Members broadcast their $\sigma_i$ to the other members of $C$, and once $f + 1$ members have seen $\sigma_i$ shares they can proceed to the \verb|TPKE.Dec| function using \verb|PK|, $e$ and the $\sigma_i$ shares and attempt to decrypt the transaction. Each member of $C$ appends decrypted transactions to their own instantiation of the next block kept in a local buffer. Double-spend and other malformed transactions are removed from these blocks based on the consensus protocol.
 
@@ -1346,6 +1359,10 @@ We would also like to acknowledge many of the prior works and inventions that ha
     LoRa Alliance.
     \emph{LoRa Alliance - Wide Area Networks for IoT}, 2013
 
+\bibitem{lorawan}
+    LoRa Alliance.
+    \emph{LoRaWAN - LoRa Alliance Technology}, 2014
+
 \bibitem{rpma}
     Ingenu.
     \emph{RPMA Technology}
@@ -1377,6 +1394,38 @@ We would also like to acknowledge many of the prior works and inventions that ha
 \bibitem{tdoa}
     Regina Kaune, Julian Horst, Wolfgang Koch.
     \emph{Accuracy Analysis for TDOA Localization in Sensor Networks}, 2011
+
+\bibitem{tdoavsrssi}
+    Guofang Dong, Bin Yang.
+    \emph{TDOA-Based and RSSI-Based Underground Wireless Positioning Methods and Performance Analysis}
+
+\bibitem{tdoavstoa}
+    Mohamed Laaraiedh, Lei Yu, Stephane Avrillon.
+    \emph{Comparison of Hybrid Localization Schemes using RSSI, TOA, and TDOA}, 2011
+
+\bibitem{wifipositioning}
+    Mohamad Yassin, Elias Rachid, Rony Nasrallah.
+    \emph{Performance Comparison of Positioning Techniques in Wi-Fi Networks}, 2014
+
+\bibitem{locationestimation}
+    Muhammad Farooq-i-Azam, Muhammad Naeem Ayyaz.
+    \emph{Location and Position Estimation in Wireless Sensor Networks}, 2016
+
+\bibitem{efficient-tdoa}
+    Sangdeok Kim, Jong-Wha Chong.
+    \emph{An Efficient TDOA-Based Localization Algorithm without Synchronization between Base Stations}, 2015
+
+\bibitem{recurrent-tdoa}
+    Igor Olegovych Tovkach, Serhii Yakovych Zhuk.
+    \emph{Recurrent Algorithm for TDOA Localization in Sensor Networks}, 2017
+
+\bibitem{acoustic-tdoa}
+    Peter W. Boettcher, Gary A. Shaw.
+    \emph{A Distributed Time-Difference of Arrival Algorithm for Acoustic Bearing Estimation}
+
+\bibitem{async-tdoa}
+    Shuai He, Xiaodai Dong, Wu-Sheng Lu.
+    \emph{Asynchronous Time Difference of Arrival Positioning System}, 2015
 
 \bibitem{mobile-experts}
     Mobile Experts
