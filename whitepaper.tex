@@ -1,4 +1,4 @@
-\documentclass[UTF8, 10pt, nonatbib, nocopyrightspace, reprint]{sigplanconf}
+\documentclass[10pt, nonatbib, nocopyrightspace, reprint]{sigplanconf}
 
 \usepackage[backref=section, linkbordercolor={1 1 1}, urlbordercolor={1 1 1}, citebordercolor={1 1 1}]{hyperref}
 \usepackage[ruled, vlined]{algorithm2e}
@@ -382,7 +382,7 @@ If we assume that the ideal verification interval for any miner is close to 240 
 
 Using the above we can now construct a staleness-factor, $\delta$, which would be used in determining the score of the miner $M$.
 
-\begin{equation*} \label{score}
+\begin{equation*} \label{equation:score1}
         \delta{m} = \begin{cases}
         	-(8.h')^{2}&\text{$v'$ = 0}\\
         	v'.(1 - \frac{h'^{2}}{min(0.25, v')})&\text{$v'$ $>$ 0}\\
@@ -432,7 +432,7 @@ The following graph shows the trends for each of the above functions:
 
 Adhering to the above set of rules, we define the following scoring function, which is essentially a variation of a sigmoid curve fluctuating between values (0, 1):
 
-\begin{equation*} \label{score}
+\begin{equation*} \label{equation:score2}
         \phi_m = \frac{\arctan(2.\delta{m}) + 1.58}{3.16}
 \end{equation*}
 
@@ -816,7 +816,7 @@ In this section, we provide a more formal overview of the Helium \verb|DMN| and 
 
 \todo{REMOVE AND FIX ALL THE CHIT AND MINING RELATED PROTOCOL STUFF HERE!}
 
-\subsubsection{Device Cycle}
+\subsection{Device Cycle}
 
 We provide a brief overview of the device cycle and the functions available to devices on the network in \protoref{proto:device}
 
@@ -913,7 +913,7 @@ We provide a brief overview of the device cycle and the functions available to d
 \end{description}
 
 
-\subsubsection{Miner Cycle}\label{mining}
+\subsection{Miner Cycle}\label{mining}
 
 We provide a brief overview of the mining cycle and the functions available to miners on the network in \protoref{proto:miner}.
 
@@ -1186,7 +1186,7 @@ We provide a brief overview of the mining cycle and the functions available to m
 \end{description}
 
 
-\subsubsection{Routing Cycle}\label{cycle:router}
+\subsection{Routing Cycle}\label{cycle:router}
 
 We provide a brief overview of the routing cycle and the functions available to routers on the network in \protoref{proto:router}.
 
@@ -1335,14 +1335,6 @@ We would also like to acknowledge many of the prior works and inventions that ha
     Shawn Fanning.
     \emph{Napster - independent peer-to-peer file sharing}, 1999
 
-\bibitem{mckinsey}
-    James Manyika, Michael Chui, Peter Bisson, Jonathan Woetzel, Richard Dobbs, Jacques Bughin, Dan Aharon.
-    \emph{McKinsey - Unlocking the potential of the Internet of Things}, 2015
-
-\bibitem{ghost}
-    Yonatan Sompolinsky.
-    \emph{Secure High-Rate Transaction Processing in Bitcoin}
-
 \bibitem{nist}
     Mehmet Adalier.
     \emph{Efficient and Secure Elliptic Curve Cryptography Implementation of Curve P-256}
@@ -1354,10 +1346,6 @@ We would also like to acknowledge many of the prior works and inventions that ha
 \bibitem{lora}
     LoRa Alliance.
     \emph{LoRa Alliance - Wide Area Networks for IoT}, 2013
-
-\bibitem{lorawan}
-    LoRa Alliance.
-    \emph{LoRaWAN - LoRa Alliance Technology}, 2014
 
 \bibitem{rpma}
     Ingenu.
@@ -1372,7 +1360,7 @@ We would also like to acknowledge many of the prior works and inventions that ha
     \emph{Bitcoin: A peer-to-peer electronic cash system}, 2008
 
 \bibitem{dijkstra}
-    Dijkstra, E. W.
+    E. W. Dijkstra.
     \emph{A note on two problems in connection with graphs}, 1959
 
 \bibitem{hashing}
@@ -1387,9 +1375,9 @@ We would also like to acknowledge many of the prior works and inventions that ha
     Mehmud Abliz, Taieb Znati.
     \emph{A Guided Tour Puzzle for Denial of Service Prevention}, 2009
 
-\bibitem{tdoa}
-    Regina Kaune, Julian Horst, Wolfgang Koch.
-    \emph{Accuracy Analysis for TDOA Localization in Sensor Networks}, 2011
+\bibitem{mobile-experts}
+    Mobile Experts
+    \emph{Asset Tracking IoT Devices}, 2017
 
 \bibitem{tdoavsrssi}
     Guofang Dong, Bin Yang.
@@ -1423,13 +1411,25 @@ We would also like to acknowledge many of the prior works and inventions that ha
     Shuai He, Xiaodai Dong, Wu-Sheng Lu.
     \emph{Asynchronous Time Difference of Arrival Positioning System}, 2015
 
-\bibitem{mobile-experts}
-    Mobile Experts
-    \emph{Asset Tracking IoT Devices}, 2017
+\bibitem{lorawan}
+    LoRa Alliance.
+    \emph{LoRaWAN - LoRa Alliance Technology}, 2014
 
 \bibitem{iota}
     David Sønstebø, Sergey Ivancheglo, Dominik Schiener, and Serguei Popov.
     \emph{IOTA - Next Generation Blockchain}, 2015
+
+\bibitem{filecoin}
+    Protocol Labs.
+    \emph{Filecoin - A decentralized storage network}, 2017
+
+\bibitem{pos}
+    Wikipedia.
+    \emph{Proof-of-Stake}
+
+\bibitem{byzantine-failures}
+     K Driscoll, B Hall, M Paulitsch, P Zumsteg, H Sivencrona.
+     \emph{The Real Byzantine Generals}, 2004
 
 \bibitem{lightning}
     Joseph Poon, Thaddeus Dryja.
