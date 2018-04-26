@@ -79,17 +79,15 @@ Helium is a \emph{decentralized machine network} that enables devices anywhere i
 Helium's secure and open-source primitives enable developers to build low-power, internet-connected devices quickly and cost-effectively. Helium has a wide variety of applications across industries and is the first decentralized machine network of its kind.
 \end{abstract}
 
-\section*{Preface}
-
-This whitepaper represents a continuous work in progress. We will endeavor to keep this document current with the latest development progress. As a result of the on-going and iterative nature of our development process, the resulting code and implementation is likely to differ from what is represented in this paper.
-
-We invite the interested reader to peruse the Helium GitHub repo at \url{https://github.com/helium} as we continue to open-source various components of the system over time.
-
 \section{Introduction}
 
 The world is becoming decentralized. A multitude of platforms, technologies, and services are moving from centralized proprietary systems to decentralized, open ones. Peer-to-peer networks such as Napster (created by Helium founder Shawn Fanning) \cite{napster} and BitTorrent paved the way for blockchain networks and crypto-currencies to be built. Now Bitcoin, Ethereum, and other blockchain networks have shown the value of decentralized transaction ledgers. Existing internet services such as file storage, identity verification, and the domain name system are being replaced by modern blockchain-based versions. While software-level decentralization has moved quickly, physical networks are taking longer to affect. These networks are more complicated to decentralize as they often require specialized hardware to function.
 
 Helium is a wide-area wireless networking system, a blockchain, and a protocol token. The blockchain runs on a new consensus protocol and a new kind of proof, called \emph{Proof-of-Coverage}. Miners who are providing wireless network coverage in a cryptographically verified physical location and time submit proofs to the network, and the miners submitting the best proofs are elected to an asynchronous byzantine fault tolerant consensus group at a fixed epoch. The members of the consensus group receive encrypted transactions submitted by other miners and forms them into blocks at an extremely high transaction rate. In addition to the blockchain protocol, the Helium Wireless protocol, \emph{WHIP}, provides a bi-directional data transfer system between wireless devices and the Internet via a network of independent providers that does not rely on a single coordinator, where: (1) devices pay to send \& receive data to the internet and geolocate themselves, (2) miners earn tokens for providing network coverage, and (3) miners earn fees from transactions, and for validating the integrity of the network.
+
+\textbf{Note:} This whitepaper represents a continuous work in progress. We will endeavor to keep this document current with the latest development progress. As a result of the on-going and iterative nature of our development process, the resulting code and implementation is likely to differ from what is represented in this paper.
+
+We invite the interested reader to peruse the Helium GitHub repo at \url{https://github.com/helium} as we continue to open-source various components of the system over time.
 
 \subsection{Key Components}
 
@@ -669,6 +667,17 @@ Miners set the price they are willing to accept to transport data to and from th
 
 A devices router pays miners the transport fee on transmission or reception of the data. This means that the miner will receive the transport fee prior to the transaction being mined in a block and recorded into the blockchain. This entails some risk for the miner, as they must believe that the transport payment is not malicious or fraudulent prior to it being confirmed in the blockchain. However, given how low the per-byte transport amount is likely to be, this risk seems tolerable. A miner can \emph{blacklist} a device or organization address if they continually abuse the system.
 
+An example transport fee process is as follows:
+
+\begin{enumerate}
+  \item A miner $M$ hears a packet $P$ broadcast by device $D$
+  \item $M$ uses the address of $D$, attached to $P$, to identify a router $R$ as the owner of $D$
+  \item $M$ sends the signature $K(P)$ of $P$ and an offer of $n$ tokens for transport to $R$
+  \item $R$ receives $K(P)$ and the payment offer and determines if it accepts the packet for the offered price
+  \item Assuming $R$ accepts the packet at the offered price, it constructs an encrypted transaction $T$ of value $n$ payable to $M$ and sends it via the peer-to-peer network to the consensus group
+  \item Once $M$ sees the transaction on the network it delivers $P$ to $R$
+\end{enumerate}
+
 \subsubsection{Transaction Fees} \label{fees}
 
 Transaction fees are an essential part of most blockchain implementations. They incentivize miners to include a transaction in their draft block and ensure that spam transactions do not pollute the blockchain and network.
@@ -807,6 +816,8 @@ Once $\Delta_b$ has elapsed, all members of $C$ run the \verb|TPKE.Enc| function
 \textbf{Conclusion}. We have presented our consensus protocol which combines a modern, asynchronous and highly efficient Byzantine Fault Tolerant consensus protocol with a novel mechanism for substituting permissioned identity with a useful and reusable \emph{Proof-of-Coverage}. The resultant protocol satisfies the design requirements of being permisionless, decentralized, byzantine fault tolerant, based on useful work, and with a very high-rate censor proof transaction mechanism.
 
 We refer the interested reader to \cite{honeybadger} for a detailed breakdown and analysis of the HoneyBadgerBFT protocol.
+
+\iffalse
 
 \section{Network Protocol}
 
@@ -1298,6 +1309,8 @@ We provide a brief overview of the routing cycle and the functions available to 
 
 
 \end{description}
+
+\fi
 
 \section{Future Work}
 
