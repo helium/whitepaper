@@ -22,7 +22,7 @@
 \usepackage{amsmath}
 \usepackage{titlesec}
 \usepackage[printwatermark]{xwatermark}
-\usepackage{gitinfo2}
+\usepackage[local]{gitinfo2}
 \renewcommand{\gitMark}{Release\gitReln{} (\gitAuthorDate)}
 
 \graphicspath{ {images/} }
@@ -95,7 +95,7 @@ Helium is built around the following key components:
 
   \item \textbf{Blockchain Network}: we demonstrate an entirely new purpose-built blockchain network built to service the \emph{Wireless Protocol} and provide a system for authenticating and identifying devices, providing cryptographic guarantees of data transmission and authenticity, offer transaction primitives designed around the wireless protocol, and more.
 
-  \item \textbf{Helium Consensus Protocol}: we present a novel consensus protocol construction that creates a permisionless, high throughput, censor-resistant system by combining an asynchronous Byzantine Fault Tolerant protocol with identities presented via \emph{Proof-of-Coverage}. 
+  \item \textbf{Helium Consensus Protocol}: we present a novel consensus protocol construction that creates a permisionless, high throughput, censor-resistant system by combining an asynchronous Byzantine Fault Tolerant protocol with identities presented via \emph{Proof-of-Coverage}.
 
   \item \textbf{Wireless Protocol}: we introduce a new open-source and standards-compliant wireless network protocol, called \emph{WHIP}, designed for low power devices over vast areas. This protocol is designed to run on existing commodity radio chips available from dozens of manufacturers with no proprietary technologies or modulation schemes required.
 
@@ -112,7 +112,7 @@ Helium is built around the following key components:
     \item Miners join the network by asserting their satellite-derived location, a special type of transaction in the blockchain, and staking a token deposit.
     \item Miners specify the price they are willing to accept for data transport and \emph{Proof-of-Location} services, and devices specify the price they are willing to pay. Miners are paid once they prove they have delivered data to the devices' specified router.
     \item Miners participate in the creation of new blocks in the blockchain by being elected to an asynchronous Byzantine Fault Tolerant consensus group.
-    \item Miners are rewarded with newly minted Helium for blocks that are created while they are part of the consensus group. 
+    \item Miners are rewarded with newly minted Helium for blocks that are created while they are part of the consensus group.
     \item A miner's probability of being elected to the consensus group at a given epoch is based on the quality of the wireless network coverage they provide.
     \item The blockchain employs \emph{Proof-of-Coverage} to guarantee that miners are honestly representing the wireless network coverage they are creating.
 \end{itemize}
@@ -146,7 +146,7 @@ There are three types of participants in the network: Device, Miner, or a Router
 
 The Helium blockchain is a distributed ledger designed to provide a cost-effective way to run application logic core to the operation of a \verb|DMN|, store immutable device data fingerprints, and furnish a transaction system. The Helium blockchain is an immutable append-only list of transactions which achieves consensus using the \emph{Helium Consensus Protocol} \secref{consensus}. Users internal and external to the \verb|DMN| have access to the blockchain, which is a new protocol built from scratch specifically for the \verb|DMN|.
 
-The blockchain consists of blocks which contain a header and a list of transactions. There are several kinds of transactions, outlined in \secref{transactions}. 
+The blockchain consists of blocks which contain a header and a list of transactions. There are several kinds of transactions, outlined in \secref{transactions}.
 
 At a given epoch a given block consists of:
 
@@ -387,13 +387,13 @@ The above conditions strictly adhere to the following principles:
 
 \begin{enumerate}
   \item A negative $v$ indicates that the miner is consistently failing verification.
-  
+
   \item If $v$ = 0, we don't have any trust information, therefore, we use a steep parabolic curve for the decay dependent on $h'$.
-  
+
   \item If $v$ $>$ 0, it implies that the miner has been successfully verified consistently, hence, we use an inverse parabolic curve that crosses the Y axis at 1, where the width of the parabola increases as a factor of $v$ up to 0.25. This implies that the more positive verifications \secref{poc} the miner has accrued, the slower its score decays as a factor of $h'$.
-   
+
   \item Finally, if $v$ $<$ 0, this is the inverse of the above case, wherein, a miner has consistently been failing verification. Therefore, we use a similar parabola as above, however, the width of the parabola decreases as a factor of $v$, leading to a higher score decay for the miner as a factor of $h'$.
-  
+
 \end{enumerate}
 
 The following graph shows the trends for each of the above functions:
@@ -420,7 +420,7 @@ The following graph shows the trends for each of the above functions:
         \end{axis}
     \end{tikzpicture}
     \caption{\emph{Trendlines for the scoring functions}}
-    \label{fig:score-trends}     
+    \label{fig:score-trends}
 \end{figure}
 
 Adhering to the above set of rules, we define the following scoring function, which is essentially a variation of a sigmoid curve fluctuating between values (0, 1):
@@ -449,7 +449,7 @@ This scoring function yields the below graph, which shows the variation of the s
 
 \begin{figure}[ht]
     \begin{center}
-          \includegraphics[width=0.8\columnwidth]{chart.eps}    
+          \includegraphics[width=0.8\columnwidth]{chart.eps}
           \caption{\emph{Snapshot of a random subset of the initial network}}
           \label{fig:score-graph}
      \end{center}
@@ -581,7 +581,7 @@ This section outlines a new geolocation implementation that we describe as \emph
 
 \subsection{Constructing \emph{Proof-of-Location}}
 
-Our goal is to verify the physical geolocation of a given device, $D$, without using GNSS hardware. To do this, we rely on the fact that we have already determined and proven the physical geolocation and cryptographic time consensus of a given miner, $M$, using the \emph{Proof-of-Coverage} and \emph{Proof-of-Serialization} protocols described in \secref{poc}. 
+Our goal is to verify the physical geolocation of a given device, $D$, without using GNSS hardware. To do this, we rely on the fact that we have already determined and proven the physical geolocation and cryptographic time consensus of a given miner, $M$, using the \emph{Proof-of-Coverage} and \emph{Proof-of-Serialization} protocols described in \secref{poc}.
 
 \textbf{Precise timestamping of RF data}. There are a handful of techniques used by positioning systems without the use of GNSS, which include Received Signal Strength Indication (RSSI), Time of Arrival (ToA), and Time Differential of Arrival (TDoA). These techniques use radio frequency transmissions, usually recieved by one or more receivers, combined with various algorithms based on characterstics of those transmissions.
 
@@ -605,7 +605,7 @@ An example timestamping flow is as follows:
      \end{center}
 \end{figure}
 
-Typically it is challenging to accurately record these timestamps as any nanosecond-level variance in the timestamp can lead to significant variance in the resulting location solution. To achieve this level of precision it is necessary to use extremely high-bandwidth raw \emph{in-phase and quadrature (I/Q)} data from the miners radio hardware and a fast enough processor to sample this data, identify an appropriate packet, and record the timestamp. Typically a \emph{Field Programmable Gate Arrays (FPGA)} is used as the processor for this data as these types of processors are able to process data in a deterministic way. However FPGAs are fairly expensive, power hungry, and emit significant heat. Instead, the reference Helium Gateway mining hardware uses a novel technique using commodity low-cost components to process I/Q data and achieve timestamping at this level of precision. As a comparative example, an existing low-cost LoRaWAN \cite{lorawan} access point is only capable of providing timestamp data accurate within several milliseconds of precision - as radio waves travel at the speed of light, each millisecond equates to approximately 300,000 meters of physical distance which we deem practically useless for any accurate geolocation. Further information on the techniques, components and schematics used in the reference Helium Gateway will be released as open source software at network launch. 
+Typically it is challenging to accurately record these timestamps as any nanosecond-level variance in the timestamp can lead to significant variance in the resulting location solution. To achieve this level of precision it is necessary to use extremely high-bandwidth raw \emph{in-phase and quadrature (I/Q)} data from the miners radio hardware and a fast enough processor to sample this data, identify an appropriate packet, and record the timestamp. Typically a \emph{Field Programmable Gate Arrays (FPGA)} is used as the processor for this data as these types of processors are able to process data in a deterministic way. However FPGAs are fairly expensive, power hungry, and emit significant heat. Instead, the reference Helium Gateway mining hardware uses a novel technique using commodity low-cost components to process I/Q data and achieve timestamping at this level of precision. As a comparative example, an existing low-cost LoRaWAN \cite{lorawan} access point is only capable of providing timestamp data accurate within several milliseconds of precision - as radio waves travel at the speed of light, each millisecond equates to approximately 300,000 meters of physical distance which we deem practically useless for any accurate geolocation. Further information on the techniques, components and schematics used in the reference Helium Gateway will be released as open source software at network launch.
 
 \textbf{Using timestamps to derive location}. Now that the devices router, $R$, is in posession of a variety of signed messages which include the precise timestamps $T_n$ it is possible to \emph{solve} for the location of the device $D$. A variety of TDoA algorithms exist such as \cite{recurrent-tdoa}, \cite{acoustic-tdoa}, \cite{efficient-tdoa} and \cite{async-tdoa}. If a sufficient density of $M_n$ and therefore $T_n$ are recorded for a given packet, the location of $D$ can be derived down to a few meters depending on a variety of factors. We encourage the interested reader to read the cited papers for further details on TDoA algorithms, as they are beyond the scope of this document.
 
@@ -617,7 +617,7 @@ Typically it is challenging to accurately record these timestamps as any nanosec
   \item The \emph{Proofs-of-Coverage} and scores \secref{poc} for each miner can be retrieved from the blockchain and inspected
 \end{itemize}
 
-By auditing the above steps the router operator can cryptographically prove (or disprove) the location of each of the miners involved in providing the components for \emph{Proof-of-Location} for a given device $D$. 
+By auditing the above steps the router operator can cryptographically prove (or disprove) the location of each of the miners involved in providing the components for \emph{Proof-of-Location} for a given device $D$.
 
 The accuracy of the proof will depend heavily on the number of $M_n$ involved and therefore $T_n$ received. Additional RF factors such as reflections and multipath can significantly affect the accuracy of the location calculation.
 
@@ -660,7 +660,7 @@ In this section we outline the types of fees needed on the Helium network, and p
 
 Devices using the Helium network to send and receive data to and from the internet must pay miners what is known as a \emph{transport fee}. This fee compensates the miner for delivering data packets between the device and the intended router on the internet, and is unrelated to the \emph{transaction fee} that miners earn for mining transactions as part of blocks that are recorded to the blockchain. The fee is negotiated between the router to which the device belongs, and the miner, as devices are not directly connected to the blockchain.
 
-Miners set the price they are willing to accept to transport data to and from the internet on a per-byte basis. 
+Miners set the price they are willing to accept to transport data to and from the internet on a per-byte basis.
 
 A devices router pays miners the transport fee on transmission or reception of the data. This means that the miner will receive the transport fee prior to the transaction being mined in a block and recorded into the blockchain. This entails some risk for the miner, as they must believe that the transport payment is not malicious or fraudulent prior to it being confirmed in the blockchain. However, given how low the per-byte transport amount is likely to be, this risk seems tolerable. A miner can \emph{blacklist} a device or organization address if they continually abuse the system.
 
@@ -783,7 +783,7 @@ For Helium, we desire a consensus protocol with the following attributes:
 \begin{itemize}
   \item \textbf{Permisionless}: nodes should be able to freely participate in the network without permission or approval from any other entity, as long as those nodes operate in accordance with the consensus rules.
   \item \textbf{Extremely decentralized in nature}: network consensus should be designed such that there is no incentive available for taking advantage of macro-economic factors, such as cheaper access to electricity in certain geographies, and that simply buying more hardware in the same location is either ineffective or cost prohibitive. Additionally, it should be impossible for mining pools to form and for groups to collaborate in mining blocks.
-  \item \textbf{Byzantine Fault Tolerant}: the protocol should be tolerant of Byzantine failures \cite{byzantine-failures} such that consensus can still be reached as long as a threshold of actors are acting honestly. 
+  \item \textbf{Byzantine Fault Tolerant}: the protocol should be tolerant of Byzantine failures \cite{byzantine-failures} such that consensus can still be reached as long as a threshold of actors are acting honestly.
   \item \textbf{Based on useful work}: achieving network consensus should be \emph{useful} and \emph{reusable} to the network. Work performed in Nakamoto Consensus-based systems is only useful for the particular block being mined and is not otherwise useful or resuable on the network. An ideal consensus system would contain work which is both useful and reusable to the network beyond simply securing the blockchain.
   \item \textbf{High confirmed transaction rate}: our ideal consensus protocol would be able to process a very high number of transactions per second, and once a transaction is seen in a block it would be considered confirmed. Many existing blockchains require a lengthy \emph{settlement time} while the network achieves consensus which is not ideal in a system like Helium, which may experience a very high number of transactions and where waiting for a transaction to settle is not tenable.
   \item \textbf{Transactions are censor-resistant}: ideally miners would not be able to censor or otherwise pick and choose transactions prior to mining them. This would not only nullify any attempts to nefariously censor transactions, but would allow for otherwise unattractive transactions (such as fixed-fee transactions) to be included in the blockchain.
@@ -799,7 +799,7 @@ We propose a unique consensus protocol around \emph{Proof-of-Coverage} to captur
 
 The protocol proceeds in epochs, where after each epoch, a new batch of transactions is appended to the blockchain. At the beginning of each epoch, the group choose a subset of the transactions in their buffer, and provide them as input to an instance of a randomized agreement protocol. At the end of the agreement protocol, the final set of transactions for this epoch is chosen.
 
-HBFT relies on a \emph{threshold encryption} scheme that requires transactions be encrypted to a master public key, such that the consensus group must work together to decrypt it. This means that no individual node is able to decrypt or censor a particular transaction without colluding with the majority of the group. 
+HBFT relies on a \emph{threshold encryption} scheme that requires transactions be encrypted to a master public key, such that the consensus group must work together to decrypt it. This means that no individual node is able to decrypt or censor a particular transaction without colluding with the majority of the group.
 
 \textbf{Applying \emph{Proof-of-Coverage} to HBFT}. In Helium, miners are required to submit \emph{Proofs-of-Coverage} to the network at an epoch $\Delta_p$. These proofs are submitted as a special type of transaction, and subsequently recorded to the blockchain. As detailed in \secref{poc}, Helium miners increase their \emph{score} as they submit valid proofs to the network. At an epoch $\Delta_c$ the highest scoring miners, $N$, are elected as the new HBFT consensus group $C$.
 
@@ -807,7 +807,7 @@ By using \emph{Proof-of-Coverage} to elect the members of $C$ we are essentially
 
 \textbf{The consensus group}. During $\Delta_c$, the currently elected consensus group is responsible for creating blocks and appending them to the blockchain. All new transactions on the network are submitted to the current members of the consensus group. New blocks are created by $C$ at a fixed interval $\Delta_b$ and recorded to the blockchain. A token block reward is split among the members of $C$ for every block submitted, along with the sum of all fees contained within valid transactions. In the unusual case that there are no transactions during $\Delta_b$, am empty block is appended to the blockchain.
 
-\textbf{The mining process}. Once the consensus group $C$ has been elected for a given $\Delta_c$ epoch, a key generation phase occurs using a threshold encryption scheme \verb|TPKE|. \verb|TPKE| is a cryptographic primitive that allows any party to encrypt a transaction to a master public key \verb|PK|, such that $C$ must work together to decrypt it. Once $f + 1$\footnote{$f$ is a protocol parameter equal to the number of tolerable byzantine faults} correct members of $C$ compute and reveal decryption shares, $\sigma_i$, the transaction can be recovered. Once \verb|PK| is generated via the \verb|TPKE.Setup| function, a block containing \verb|PK| is immediately submitted to the blockchain. Each member $N_m$ in $C$ receives a \emph{secret key share}, \verb|SK|\textsubscript{i}, of \verb|PK|. 
+\textbf{The mining process}. Once the consensus group $C$ has been elected for a given $\Delta_c$ epoch, a key generation phase occurs using a threshold encryption scheme \verb|TPKE|. \verb|TPKE| is a cryptographic primitive that allows any party to encrypt a transaction to a master public key \verb|PK|, such that $C$ must work together to decrypt it. Once $f + 1$\footnote{$f$ is a protocol parameter equal to the number of tolerable byzantine faults} correct members of $C$ compute and reveal decryption shares, $\sigma_i$, the transaction can be recovered. Once \verb|PK| is generated via the \verb|TPKE.Setup| function, a block containing \verb|PK| is immediately submitted to the blockchain. Each member $N_m$ in $C$ receives a \emph{secret key share}, \verb|SK|\textsubscript{i}, of \verb|PK|.
 
 Miners on the network encrypt new transactions $t$ using the \verb|TPKE.Enc(PK|, $t$) $\rightarrow e$ function and submit them to $C$ to be included in the next block. As members of $C$ receive $e$ they run the \verb|TPKE.DecShare(SK|\textsubscript{i}, $e$) $\rightarrow \sigma_i$ function to produce their decryption share. Members broadcast their $\sigma_i$ to the other members of $C$, and once $f + 1$ members have seen $\sigma_i$ shares they can proceed to the \verb|TPKE.Dec| function using \verb|PK|, $e$ and the $\sigma_i$ shares and attempt to decrypt the transaction. Each member of $C$ appends decrypted transactions to their own instantiation of the next block kept in a local buffer. Double-spend and other malformed transactions are removed from these blocks based on the consensus protocol.
 
@@ -940,7 +940,7 @@ We provide a brief overview of the mining cycle and the functions available to m
 
 \begin{protocol}{Miner Protocol Overview}{proto:miner}
   \SetKwProg{Miner}{\BlankLine Miner}{}{}
-  
+
   \Miner{at every epoch $Delta_p$} {
   	Construct \emph{Proof-of-Coverage}\;
   	Submit \emph{Proof-of-Coverage} to peers\;
@@ -1353,7 +1353,7 @@ We would also like to acknowledge many of the prior works and inventions that ha
 \softraggedright
 
 \bibitem{idc}
-    Marcus Torchia, Monika Kumar. 
+    Marcus Torchia, Monika Kumar.
     \emph{IDC - Worldwide Semiannual Internet of Things Spending Guide}, 2017
 
 \bibitem{napster}
