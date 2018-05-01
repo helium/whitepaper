@@ -2,7 +2,7 @@
 
 
 build: version_info
-	@latexmk -pdf -output-directory=build whitepaper.tex
+	@latexmk -pdf -interaction=nonstopmode -output-directory=build whitepaper.tex
 
 clean:
 	@rm -rf build
