@@ -13,3 +13,4 @@ Install via homebrew cask with: `brew cask install mactex`
 
 Run `make build` (or just `make`). To clean up the generated files, run `make clean`.
 
+
