@@ -5,4 +5,4 @@ before_install:
   - sudo apt-get install -y --no-install-recommends textlive-latex-extra texlive-latex-recommended
 
 script:
-  make
+  make build
