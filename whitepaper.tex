@@ -24,17 +24,6 @@
 
 \SetAlgorithmName{Protocol}{Protocol}{List of Protocols}
 
-%% 'DRAFT' Watermark
-\newsavebox\mybox
-\savebox\mybox{\tikz[color=black,opacity=0.05]\node{DRAFT};}
-\newwatermark*[
- allpages,
- angle=45,
- scale=10,
- xpos=0,
- ypos=0
-]{\usebox\mybox}
-
 % Define the protocol environment
 \newenvironment{protocol}[2]{
   \begin{algorithm}[!htb]
@@ -812,6 +801,14 @@ Miners on the network encrypt new transactions $t$ using the \verb|TPKE.Enc(PK|,
 As members of the group cannot decrypt transactions on their own, it is not possible for a transaction to be censored by a given member prior to its inclusion in their block without $f + 1$ members of $C$ colluding as transactions are received. As the members of $C$ for a $\Delta_c$ epoch are selected based on their submitted \emph{Proofs-of-Coverage}, making the members anonymous, this type of collusion would be extremely challenging to execute.
 
 Once $\Delta_b$ has elapsed, all members of $C$ run the \verb|TPKE.Enc| function on their locally stored block and broadcast the resulting ciphertext to the other members of $C$. Again, the members run \verb|TPKE.DecShare| on the ciphertext of the block, broadcast their decryption share, and once $f + 1$ have been seen, \verb|TPKE.Dec| is run on the block and it is added to the blockchain. If no consensus can be reached on a valid block by $\Delta_b$, an empty block is appended to the blockchain.
+
+\begin{figure}[ht]
+    \begin{center}
+          \includegraphics[width=\columnwidth]{consensus_group.eps}
+          \caption{\emph{The Consensus Group \& Mining}}
+          \label{fig:consensus-group}
+     \end{center}
+\end{figure}
 
 \textbf{Conclusion}. We have presented our consensus protocol which combines a modern, asynchronous and highly efficient Byzantine Fault Tolerant consensus protocol with a novel mechanism for substituting permissioned identity with a useful and reusable \emph{Proof-of-Coverage}. The resultant protocol satisfies the design requirements of being permisionless, decentralized, byzantine fault tolerant, based on useful work, and with a very high-rate censor proof transaction mechanism.
 
