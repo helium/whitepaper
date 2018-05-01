@@ -1,6 +1,12 @@
 \documentclass[10pt, nonatbib, nocopyrightspace, reprint]{sigplanconf}
 
-\usepackage[backref=section, linkbordercolor={1 1 1}, urlbordercolor={1 1 1}, citebordercolor={1 1 1}]{hyperref}
+\usepackage[backref=section, linkbordercolor={1 1 1}, urlbordercolor={1 1 1}, citebordercolor={1 1 1}, pdftex,
+            pdfauthor={Helium Systems Inc},
+            pdftitle={Helium},
+            pdfsubject={A Decentralized Machine Network},
+            pdfkeywords={helium, IoT, DMN, wireless},
+            pdfproducer={Latex with hyperref},
+            pdfcreator={pdflatex}]{hyperref}
 \usepackage[ruled, vlined]{algorithm2e}
 \usepackage{placeins}
 \usepackage{color}
@@ -681,7 +687,8 @@ Due to the censorship-resilience built in to the \emph{Helium Consensus Protocol
 
 The \emph{assert\_location} transaction, mentioned below \secref{primitives}, has a special type of fee calculation; a \emph{dynamic} fee. Because the Helium network reaches maximum \emph{usefulness} at a specific density of gateways, we want the fees to incentivize the network density to be as close to that ideal as possible. To that end, the transaction fee for asserting a location can be thought of as the y coordinate on a curve with the formula: \[\mathit{y = \left(x - D\right)^4 + F}\] where $D$ is the ideal gateway density and $F$ is the unit fee for a location transaction. A sample graph of this function where $D$ = 3 and $F$ = 1 follows:\\
 
-\begin{center}
+\begin{figure}[ht]
+  \centering
   \pgfplotsset{width=11cm,compat=1.9}
   \begin{tikzpicture}[scale=\columnwidth/12cm]
       \begin{axis}[xlabel = Density, ylabel = Fee]
@@ -689,7 +696,7 @@ The \emph{assert\_location} transaction, mentioned below \secref{primitives}, ha
       \end{axis}
   \end{tikzpicture}
   \caption{\emph{Staking fee vs Miner density}}
-\end{center}
+\end{figure}
 
 
 As can be seen, gateways near the ideal network density are cheap to add, but establishing a new network or overpopulating a network gets expensive very quickly. This serves to dis-incentivize gateway deployments that are not beneficial to the network. In particular, \emph{Alternate Reality Attacks} and warehouses full of miners become prohibitively expensive.
