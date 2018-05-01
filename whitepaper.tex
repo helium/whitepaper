@@ -1,4 +1,4 @@
-\documentclass[10pt, nonatbib, nocopyrightspace, preprint]{sigplanconf}
+\documentclass[10pt, nonatbib, nocopyrightspace, reprint]{sigplanconf}
 
 \usepackage[backref=section, linkbordercolor={1 1 1}, urlbordercolor={1 1 1}, citebordercolor={1 1 1}, pdftex,
             pdfauthor={Helium Systems Inc},
@@ -7,7 +7,6 @@
             pdfkeywords={helium, IoT, DMN, wireless},
             pdfproducer={Latex with hyperref},
             pdfcreator={pdflatex}]{hyperref}
-\preprintfooter{v0.1}
 \usepackage[ruled, vlined]{algorithm2e}
 \usepackage{placeins}
 \usepackage{color}
@@ -23,6 +22,8 @@
 \usepackage{amsmath}
 \usepackage{titlesec}
 \usepackage[printwatermark]{xwatermark}
+\usepackage{gitinfo2}
+\renewcommand{\gitMark}{\gitReln{} (\gitAuthorDate)}
 
 \graphicspath{ {images/} }
 
@@ -63,7 +64,7 @@
 
 \title{Helium}
 \subtitle{A Decentralized Machine Network}
-\authorinfo{Amir Haleem\and Andrew Allen \and Andrew Thompson \and Marc Nijdam \and Rahul Garg}{Helium Systems, Inc.}
+\authorinfo{Amir Haleem\and Andrew Allen \and Andrew Thompson \and Marc Nijdam \and Rahul Garg}{Helium Systems, Inc.}{\gitMark}
 
 \maketitle
 
