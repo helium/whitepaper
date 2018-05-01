@@ -784,7 +784,7 @@ We propose a unique consensus protocol around \emph{Proof-of-Coverage} to captur
 
 The protocol proceeds in epochs, where after each epoch, a new batch of transactions is appended to the blockchain. At the beginning of each epoch, the group choose a subset of the transactions in their buffer, and provide them as input to an instance of a randomized agreement protocol. At the end of the agreement protocol, the final set of transactions for this epoch is chosen.
 
-HBFT relies on a \emph{threshold encryption} scheme that requires transactions be encrypted to a master public key, such that the consensus group must work together to decrypt it. This means that no individual node is able to decrypt or censor a particular transaction without colluding with the majority of the group.
+HBFT relies on a \emph{threshold encryption} scheme \cite{threshold-encryption} that requires transactions be encrypted to a master public key, such that the consensus group must work together to decrypt it. This means that no individual node is able to decrypt or censor a particular transaction without colluding with the majority of the group.
 
 \textbf{Applying \emph{Proof-of-Coverage} to HBFT}. In Helium, miners are required to submit \emph{Proofs-of-Coverage} to the network at an epoch $\Delta_p$. These proofs are submitted as a special type of transaction, and subsequently recorded to the blockchain. As detailed in \secref{poc}, Helium miners increase their \emph{score} as they submit valid proofs to the network. At an epoch $\Delta_c$ the highest scoring miners, $N$, are elected as the new HBFT consensus group $C$.
 
@@ -943,8 +943,12 @@ We would also like to acknowledge many of the prior works and inventions that ha
     \emph{Proof-of-Stake}
 
 \bibitem{byzantine-failures}
-     K Driscoll, B Hall, M Paulitsch, P Zumsteg, H Sivencrona.
-     \emph{The Real Byzantine Generals}, 2004
+    K Driscoll, B Hall, M Paulitsch, P Zumsteg, H Sivencrona.
+    \emph{The Real Byzantine Generals}, 2004
+
+\bibitem{threshold-encryption}
+    Joonsang Baek, Yuliang Zheng.
+    \emph{Simple and Efficient Threshold Cryptosystem from the Gap Diffie-Hellman Group}, 2003
 
 \bibitem{lightning}
     Joseph Poon, Thaddeus Dryja.
