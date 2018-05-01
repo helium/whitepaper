@@ -7,4 +7,5 @@
 *.fls
 *.fdb_latexmk
 *.gz
+*.gin
 build

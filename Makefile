@@ -1,6 +1,7 @@
-.PHONY: build clean open
+.PHONY: build clean open version_info
 
-build:
+
+build: version_info
 	@latexmk -pdf -output-directory=build whitepaper.tex
 
 clean:
@@ -8,3 +9,6 @@ clean:
 
 open:
 	@open build/whitepaper.pdf
+
+version_info:
+	scripts/version_info.sh > gitHeadLocal.gin
