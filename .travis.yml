@@ -1,9 +1,10 @@
-sudo: required
+sudo: false
+dist: trusty
 
 before_install:
-  - sudo apt-get -qq update
-  - sudo apt-get install -y --no-install-recommends texlive-full
-  - sudo apt-get install -y latexmk
+  - apt-get -qq update
+  - apt-get install -y --no-install-recommends texlive-full
+  - apt-get install -y latexmk
 
 script:
-  latexmk -pdf -interaction=nonstopmode -outdir=build -auxdir=build whitepaper.tex
+  make build
