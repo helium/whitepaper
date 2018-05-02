@@ -3,7 +3,7 @@ services:
   - docker
 
 script:
-  build.sh
+  ./build.sh
 
 deploy:
   provider: releases
