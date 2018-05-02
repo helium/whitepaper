@@ -2,7 +2,7 @@ sudo: required
 
 before_install:
   - sudo apt-get -qq update
-  - sudo apt-get install -y --no-install-recommends texlive-full texlive-latex-extra
+  - sudo apt-get install -y texlive-full texlive-latex-extra texlive-latex-recommended
   - sudo apt-get install -y latexmk
 
 script:
