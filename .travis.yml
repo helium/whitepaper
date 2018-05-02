@@ -1,0 +1,16 @@
+sudo: required
+services:
+  - docker
+
+script:
+  ./build.sh
+
+deploy:
+  provider: releases
+  api_key:
+    secure: cNVo0bC6FAsGM/wlcRJ1OGGfQDdDSpz4sx3uj9wgRBFWvAaQc+zRKpYCXH4CTWBuwqPg+Eyx6GXHyAKjyHdAoUhZKRrRDQp3hqWxZpo7mrpJju6E36b8qw+h1vv5jpXC2FWR/joVGdQjiWGIavJL/wTa7d/AUtuhtRNQC8sPqL/Bun38sbaL/vcly5lGOPtbBJ24TuwCHSEI87L7/wUwzHAGFaVkqtBnokyz3YkRV95H2cGJqCAflAU0hReFJ2BNsBIsO6cA49mI8A3uItX+EjjpUGMsOsCV8zt9lCTozfTwFWbQkvrntTyNYM6QWAcd0yRalrqhH2t4l3Vzap5qllxQreCC0PVcCmNYnK4GhlpXSXxhWgHw5WmKu4UVQIq+WB1RMP3Ep5Vx5yvxDYZIrsyiSVlge7CC4Vnnn2O+lhqJG8V1fv0DbPFe+Afah2VcI50j5ZBf2h+SQVQWjfn34gl6DRvAcgkQDt4nk4vORl+1sOWBdGnvaXxKNUmgzxiHd480bi1wWshH6vOyBuUxvtl3TBzlRJsPiICpRCmA5Ii2UXI9pxYaoysxyKqNDU9XM3wInDiAiKEJzlvtL3JEh2vOi7TGGrc+WJkrTe1hg42BA9usjtTn3ze5SbGv9h6oJFM1R2J03d61jCslR0KqibMzqrid38rm6r91gva/muE=
+  file: build/whitepaper.pdf
+  skip_cleanup: true
+  on:
+    tags: true
+    repo: helium/whitepaper
