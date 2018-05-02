@@ -1,0 +1,138 @@
+% gitexinfo.sty
+% Copyright 2015 Brent Longborough
+%
+% This work may be distributed and/or modified under the
+% conditions of the LaTeX Project Public License, either version 1.3
+% of this license or (at your option) any later version.
+% The latest version of this license is in
+%   http://www.latex-project.org/lppl.txt
+% and version 1.3 or later is part of all distributions of LaTeX
+% version 2005/12/01 or later.
+%
+% This work has the LPPL maintenance status `maintained'.
+% The Current Maintainer of this work is Brent Longborough.
+%
+% This work consists of these files:
+%     gitinfo2.sty, gitexinfo.sty, gitinfo2.tex, gitinfo2.pdf,
+%     gitinfo2test.tex, post-xxx-sample.txt,
+%     and gitHeadLocal.gin
+% -----------------------------------------------------
+\NeedsTeXFormat{LaTeX2e}
+\ProvidesPackage{gitexinfo}[2015/11/22 v2.0.7 Auxiliary package for gitinfo2]
+\SetupKeyvalOptions{family=gitinfo,prefix=gitInf@}
+\DeclareStringOption{shash}
+\DeclareStringOption{lhash}
+\DeclareStringOption{authname}
+\DeclareStringOption{authemail}
+\DeclareStringOption{authsdate}
+\DeclareStringOption{authidate}
+\DeclareStringOption{authudate}
+\DeclareStringOption{commname}
+\DeclareStringOption{commemail}
+\DeclareStringOption{commsdate}
+\DeclareStringOption{commidate}
+\DeclareStringOption{commudate}
+\DeclareStringOption{refnames}
+\DeclareStringOption{firsttagdescribe}
+\DeclareStringOption{reltag}
+\ProcessKeyvalOptions*
+\renewcommand{\gitAbbrevHash}{\gitInf@shash}
+\renewcommand{\gitHash}{\gitInf@lhash}
+\renewcommand{\gitAuthorName}{\detokenize\expandafter{\gitInf@authname}}
+\renewcommand{\gitAuthorEmail}{\gitWrapEmail{\gitInf@authemail}}
+\renewcommand{\gitAuthorDate}{\gitInf@authsdate}
+\renewcommand{\gitAuthorIsoDate}{\gitInf@authidate}
+\renewcommand{\gitAuthorUnixDate}{\gitInf@authudate}
+\renewcommand{\gitCommitterName}{\detokenize\expandafter{\gitInf@commname}}
+\renewcommand{\gitCommitterEmail}{\gitWrapEmail{\gitInf@commemail}}
+\renewcommand{\gitCommitterDate}{\gitInf@commsdate}
+\renewcommand{\gitCommitterIsoDate}{\gitInf@commidate}
+\renewcommand{\gitCommitterUnixDate}{\gitInf@commudate}
+\renewcommand{\gitFirstTagDescribe}{\detokenize\expandafter{\gitInf@firsttagdescribe}}
+\renewcommand{\gitReferences}{\detokenize\expandafter{\gitInf@refnames}}
+\newcommand{\git@vtag}[1]{%
+    \def\do##1{%
+        \StrCut{##1}{tag: }\lcut\rcut%
+        \IfEq{\rcut}{}{%
+            \IfDecimal{\lcut}{% case where we have decimal e.g. 1.0
+                \renewcommand{\gitVtag}{\lcut}
+                \renewcommand{\gitVtags}{\space\lcut}
+                \renewcommand{\gitVtagn}{\space\lcut}
+                \listbreak
+            }{}%
+        }{%
+            \IfDecimal\rcut{% case where we have string: decimal e.g. tag: 1.0
+                \renewcommand{\gitVtag}{\rcut}
+                \renewcommand{\gitVtags}{\space\rcut}
+                \renewcommand{\gitVtagn}{\space\rcut}
+                \listbreak
+            }{}%
+        }%
+    }%
+    \expandafter\docsvlist\expandafter{#1}%
+    \StrDel{#1}{(}[\bcut]%
+    \StrDel{\bcut}{)}[\bcut]%
+    \IfSubStr{\bcut}{->}{%              git version 2+?
+        \StrBetween{\bcut,}{HEAD -> }{,}[\bcut]%  yes - no problem
+    }{%
+        \StrCount{\bcut}{, }[\xcut]%
+        \IfEq{\xcut}{0}{%               detached head?
+        }{%                             no
+            \StrCut[\xcut]{\bcut}{, }{\lcut}{\bcut}%  git vv < 2 - take last token
+        }%                                            (not always accurate)
+    }
+    \IfEq{\bcut}{}{}{%
+        \IfEq{\bcut}{HEAD}{%            detached head?
+        }{%                             no - we have the branch name
+            \renewcommand{\gitBranch}{\detokenize\expandafter{\bcut}}%
+        }%
+    }%
+}%
+\newcommand{\git@taglist}[1]{%
+    \def\do##1{%
+        \StrCut{##1}{tag: }\llcut\rrcut%
+        \IfEq{\rrcut}{}{%
+            \IfDecimal{\llcut}{% case where we have decimal e.g. 1.0
+                \StrGobbleLeft{\gitTags,\space\llcut}{0}[\gitTags]
+            }{}%
+        }{%
+        \StrGobbleLeft{\gitTags,\space\rrcut}{0}[\gitTags]
+        }%
+    }%
+    \expandafter\docsvlist\expandafter{#1}%
+    \StrGobbleLeft{\gitTags}{2}[\gitTags]
+}%
+\newcommand{\git@rtag}[1]{%
+    \IfEq{#1}{}{}{%
+        \StrRight{#1}{2}[\gitInf@dirtflag]
+        \StrDel{#1}{-*}[\gitInf@describe]
+        \IfEq{\gitInf@dirtflag}{-*}{\renewcommand{\gitDirty}{\gitInf@dirty}}{}
+        \StrGobbleRight{\gitInf@describe}{9}[\gitInf@describe]%   Remove -g<hash>
+        \StrCount{\gitInf@describe}{-}[\gitInf@mcount]%           Find last -
+        \StrCut[\gitInf@mcount]{\gitInf@describe}{-}{\gitInf@rel}{\gitInf@off}
+        \renewcommand{\gitRel}{\detokenize\expandafter{\gitInf@rel}}
+        \renewcommand{\gitRels}{\space\gitRel}
+        \renewcommand{\gitReln}{\space\gitRel}
+        \renewcommand{\gitRoff}{\gitInf@off}
+        \renewcommand{\gitDescribe}{#1}
+    }%
+}%
+\git@vtag{\gitInf@refnames}
+\git@taglist{\gitInf@refnames}
+\git@rtag{\gitInf@reltag}
+\newcommand{\git@tagmark}{}
+\IfEq{\gitTags}{}{%
+    \renewcommand{\gitTags}{\gitInf@notags}
+    \ifbool{gitInf@marknotags}{%
+       \renewcommand{\git@tagmark}{\\Head tags: \gitTags}
+    }{%
+    }
+}{%
+    \renewcommand{\git@tagmark}{\\Head tags: \gitTags}
+}
+\renewcommand{\gitMark}{%
+    Branch: \gitBranch\,@\,\gitAbbrevHash{} 
+    \textbullet{} 
+    Release:\gitReln{} 
+    (\gitAuthorDate)\git@tagmark%
+    }
