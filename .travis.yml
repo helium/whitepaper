@@ -6,4 +6,4 @@ before_install:
   - sudo apt-get install -y latexmk
 
 script:
-  make build
+  latexmk -pdf -interaction=nonstopmode -outdir=build -auxdir=build whitepaper.tex
