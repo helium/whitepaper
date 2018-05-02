@@ -1,18 +1,23 @@
 # Helium Whitepaper
 The Helium Whitepaper
 
-## Installing LaTeX
-
-First make sure you have a copy of LaTeX installed.
-
-### MacOS
-
-Install via homebrew cask with: `brew cask install mactex`
-
-### Ubuntu
-
-Install via aptitude with: `apt-get install textlive-full`
-
 ## How to Build
 
-Run `make build` (or just `make`). To clean up the generated files, run `make clean`.
+### Install Docker
+
+Docker can be installed running the following:
+
+* For [Linux](https://docs.docker.com/linux/step_one/), you can run
+  `curl -fsSL https://get.docker.com/ | sh` on your command line and
+  everything is done automatically (if you have curl installed, which
+  is normally the case),
+* For [Windows](https://docs.docker.com/windows/step_one/)
+* For [Mac OS](https://docs.docker.com/mac/step_one/)
+
+### Build
+
+After installing docker run the build shell script from a unix like command line:
+
+```
+./build.sh
+```
