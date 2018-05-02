@@ -1,10 +1,10 @@
-sudo: false
+sudo: required
 dist: trusty
 
 before_install:
-  - apt-get -qq update
-  - apt-get install -y --no-install-recommends texlive-full
-  - apt-get install -y latexmk
+  - sudo apt-get -qq update
+  - sudo apt-get install -y --no-install-recommends texlive-full
+  - sudo apt-get install -y latexmk
 
 script:
   make build
