@@ -545,7 +545,7 @@ To verify the correct time, it is necessary for $M$ to repeat the time synchroni
      \end{center}
 \end{figure}
 
-\textbf{Utilizing the Proven Time}. Once the correct time $T_t$ has been determined via \emph{Proof-of-Serialization}, it is used by $M$ and included during block construction as described in \secref{blockchain}. The randomness $\eta$ used to compute $O$ and thus obtain the \emph{Proof-of-Coverage} is tied to the previous block, which contains $T_t$. This allows us to prove, with relative certainty, that some piece of data $D$ was created between the time of the previous block $b_t$ and $T_t$. $D$ in this case is the \emph{Proof-of-Coverage}. Thus we know that $D$ must have been constructed between $b_t$ and $T_t$. This ensures that the \emph{Proof-of-Coverage} cannot be pre-computed and that that blocks in the blockchain must have a minimum spacing in time; the \emph{blocktime}. Blocks which do not have at least \emph{blocktime} distance in time from their parent block are considered invalid.
+\textbf{Utilizing the Proven Time}. Once the correct time $T_t$ has been determined via \emph{Proof-of-Serialization}, it is used by $M$ and included during proof construction as described in \secref{blockchain}. The randomness $\eta$ used to compute $O$ and thus obtain the \emph{Proof-of-Coverage} is tied to the previous block, which contains $T_t$. This allows us to prove, with relative certainty, that some piece of data $D$ was created between the time of the previous block $b_t$ and $T_t$. $D$ in this case is the \emph{Proof-of-Coverage}. Thus we know that $D$ must have been constructed between $b_t$ and $T_t$. This ensures that the \emph{Proof-of-Coverage} cannot be pre-computed.
 
 \section{\emph{Proof-of-Location}} \label{geolocation}
 
@@ -622,13 +622,13 @@ Because the Helium blockchain services a specific use, the \verb|DMN|, blocks mu
 
 \subsection{Limitations of Existing Solutions}
 
-Now that we have discussed the requirements of transactions within Helium, we outline the existing solutions for micropayments on a blockchain and address their shortcommings as they apply to our network.
+Now that we have discussed the requirements of transactions within Helium, we outline the existing solutions for micropayments on a blockchain and address their shortcomings as they apply to our network.
 
 \paragraph{Heavyweight Transactions}
 This first option is suitable only for larger transactions as the service fee is smaller than the payment. This method does not work well for very small transactions as whoever pays the transaction fee ends up potentially paying more for the transaction fees than the value being exchanged. This is a similar problem to buying small-value items using credit cards today. The vendor pays a minimum fee on each credit card transaction, and under a certain charge they lose money on the transaction. These heavyweight transactions are clearly not suitable for use as a micro transaction system within Helium.
 
 \paragraph{Zero-fee Transactions}
-While highly desirable from a machine perspective, a true zero-fee blockchain would be frought with spam transactions. It would be trivial to write a script to pollute the blockchain with transactions meant only to waste space on the blockchain and increase congestion on the network. Some ostensibly zero-fee blockchain implementations solve this issue in clever ways, such as offloading the work of processing and verifying transactions to the transactors themselves. However, these implementations have their own issues, for example IOTA \cite{iota} has not yet proved it is capable of operating this type of system without the need for a centralized coordinator.
+While highly desirable from a machine perspective, a true zero-fee blockchain would be fraught with spam transactions. It would be trivial to write a script to pollute the blockchain with transactions meant only to waste space on the blockchain and increase congestion on the network. Some ostensibly zero-fee blockchain implementations solve this issue in clever ways, such as offloading the work of processing and verifying transactions to the transactors themselves. However, these implementations have their own issues, for example IOTA \cite{iota} has not yet proved it is capable of operating this type of system without the need for a centralized coordinator.
 
 \paragraph{State Channels}
 State channels \cite{state-channels} allow two parties to exchange value, usually in small increments at a time, with very limited risk. If one party thinks the other is acting dishonestly, they can publish the final transaction in the state channel to the blockchain and close the channel. At most one payment is usually at risk. However, there are several downsides: the payer has to lock up significant funds for the lifetime of the state channel, meaning they may be unable to open state channels with other parties or pay other dues; transactions in the state channel do not appear on the main chain at all; and these implementations are relatively complex to execute well (note that neither Lightning \cite{lightning} nor Raiden \cite{raiden} have become widely used yet).
@@ -655,15 +655,15 @@ An example transport fee process is as follows:
   \item $M$ uses the address of $D$, attached to $P$, to identify a router $R$ as the owner of $D$
   \item $M$ sends the signature $K(P)$ of $P$ and an offer of $n$ tokens for transport to $R$
   \item $R$ receives $K(P)$ and the payment offer and determines if it accepts the packet for the offered price
-  \item Assuming $R$ accepts the packet at the offered price, it constructs an encrypted transaction $T$ of value $n$ payable to $M$ and sends it via the peer-to-peer network to the consensus group
-  \item Once $M$ sees the transaction on the network it delivers $P$ to $R$
+  \item Assuming $R$ accepts the packet at the offered price, it constructs a transaction $T$ of value $n$ payable to $M$ and sends it to the miner
+  \item Once $M$ sees the transaction in the reply it delivers $P$ to $R$ and submits $T$ to the consensus group for inclusion in the blockchain
 \end{enumerate}
 
 \subsubsection{Transaction Fees} \label{fees}
 
 Transaction fees are an essential part of most blockchain implementations. They incentivize miners to include a transaction in their draft block and ensure that spam transactions do not pollute the blockchain and network.
 
-To determine the appropriate fee for a new transaction, the transactor will take the median of the past $\delta$ packet transport fees, within some margin of error. Until $\delta$ packet transports have occured on the network, the fee will be fixed at a constant value $\alpha$. By anchoring the transaction fee to the current fees being charged for transport on the network, we root them in reality. Helium's primary purpose is to facilitate a network of wireless ineternet coverage. In order to accomplish this in the long term, all of the economics of the system must align to make it practical for the primary users to transact on the network. If one set of fees were to outstrip the other, the network would quickly lose its utility for the key user segment.
+To determine the appropriate fee for a new transaction, the transactor will take the median of the past $\delta$ packet transport fees, within some margin of error. Until $\delta$ packet transports have occured on the network, the fee will be fixed at a constant value $\alpha$. By anchoring the transaction fee to the current fees being charged for transport on the network, we root them in reality. Helium's primary purpose is to facilitate a network of wireless Internet coverage. In order to accomplish this in the long term, all of the economics of the system must align to make it practical for the primary users to transact on the network. If one set of fees were to outstrip the other, the network would quickly lose its utility for the key user segment.
 
 To enable miners and other light clients to determine an appropriate fee, full nodes \secref{full-nodes} will expose a fee suggestion API. This way resource constrained entities that do not maintain a complete copy of the blockchain will not need to compute the fee from the most recent transactions. During the block submission process, miners in the consensus group \secref{consensus} will verify the correctness of the block and ensure that no fee has deviated beyond the acceptable threshold of $\delta$.
 
@@ -702,8 +702,7 @@ Having discussed the philosophy of our transaction system and presented our appr
   \begin{tabularx}{\columnwidth}{l X}
     \toprule
     Property & Description \\ \midrule
-    gateway\_address & the address of the gateway being added to the network \\
-    public\_key & the public key of the gateway being added to the network \\
+    gateway\_address & the public key address of the gateway being added to the network \\
     owner\_address & the address of the owner account \\
     signatures & mutual signatures of the owner and gateway
   \end{tabularx}
@@ -717,7 +716,7 @@ Having discussed the philosophy of our transaction system and presented our appr
       \toprule
       Property & Description \\ \midrule
       gateway\_address & the address asserting its location \\
-      nonce & a monotoically increasing integer \\
+      nonce & a monotonically increasing integer \\
       latitude & the latitude of the gateway \\
       longitude & the longitude of the gateway \\
       altitude & the altitude of the gateway \\
