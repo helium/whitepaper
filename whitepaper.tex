@@ -74,17 +74,17 @@ We invite the interested reader to peruse the Helium GitHub repo at \url{https:/
 
 Helium is built around the following key components:
 
-\begin{enumerate}
-  \item \textbf{\emph{Proof-of-Coverage}}: we present a compu\-tationally-in\-expensive \emph{Proof-of-Coverage} that allows miners to prove they are providing wireless network coverage. We anchor these proofs using a \emph{Proof-of-Serialization} that allows miners to prove they are accurately representing time relative to others on the network in a cryptographically secure way.
+\begin{description}
+  \item [\emph{Proof-of-Coverage}] We present a computationally inexpensive \emph{Proof-of-Coverage} that allows miners to prove they are providing wireless network coverage. We anchor these proofs using a \emph{Proof-of-Serialization} that allows miners to prove they are accurately representing time relative to others on the network in a cryptographically secure way.
 
-  \item \textbf{Blockchain Network}: we demonstrate an entirely new purpose-built blockchain network built to service the \emph{Wireless Protocol} and provide a system for authenticating and identifying machines, providing cryptographic guarantees of data transmission and authenticity, offer transaction primitives designed around the wireless protocol, and more.
+  \item [Blockchain Network] We demonstrate an entirely new purpose-built blockchain network built to service the \emph{Wireless Protocol} and provide a system for authenticating and identifying machines, providing cryptographic guarantees of data transmission and authenticity, offer transaction primitives designed around the wireless protocol, and more.
 
-  \item \textbf{Helium Consensus Protocol}: we present a novel consensus protocol construction that creates a permissionless, high throughput, censor-resistant system by combining an asynchronous Byzantine Fault Tolerant protocol with identities presented via \emph{Proof-of-Coverage}.
+  \item [Helium Consensus Protocol] We present a novel consensus protocol construction that creates a permissionless, high throughput, censor-resistant system by combining an asynchronous Byzantine Fault Tolerant protocol with identities presented via \emph{Proof-of-Coverage}.
 
-  \item \textbf{Wireless Protocol}: we introduce a new open-source and standards-compliant wireless network protocol, called \emph{WHIP}, designed for low power machines over vast areas. This protocol is designed to run on existing commodity radio chips available from dozens of manufacturers with no proprietary technologies or modulation schemes required.
+  \item [Wireless Protocol] We introduce a new open-source and standards-compliant wireless network protocol, called \emph{WHIP}, designed for low power machines over vast areas. This protocol is designed to run on existing commodity radio chips available from dozens of manufacturers with no proprietary technologies or modulation schemes required.
 
-  \item \textbf{\emph{Proof-of-Location}}: we outline a system for interpreting the physical \emph{geolocation} of a machine using WHIP without the need for expensive and power-hungry satellite location hardware. Machines can make immutable, secure, and verifiable claims about their location at a given moment in time which is recorded in the blockchain.
-\end{enumerate}
+  \item [\emph{Proof-of-Location}] We outline a system for interpreting the physical \emph{geolocation} of a machine using WHIP without the need for expensive and power-hungry satellite location hardware. Machines can make immutable, secure, and verifiable claims about their location at a given moment in time which is recorded in the blockchain.
+\end{description}
 
 \subsection{System Overview}
 
@@ -106,8 +106,7 @@ Helium is built around the following key components:
 \begin{figure*}[ht]
     \begin{center}
           \includegraphics[width=\textwidth]{schematic.eps}
-          \caption{\emph{System Overview}}
-          \label{fig:system}
+          \caption{\emph{System Overview}}\label{fig:system}
      \end{center}
 \end{figure*}
 
@@ -120,11 +119,11 @@ We introduce the Helium Decentralized Machine Network (\verb|DMN|). The \verb|DM
 
 There are three types of participants in the network: Machine, Miner, or a Router.
 
-\begin{itemize}
-    \item \emph{Machines} send and receive encrypted data from the Internet using hardware compatible with the Helium wireless protocol, called \emph{WHIP} \secref{whip}. Data sent from machines is \emph{fingerprinted}, and that fingerprint stored in the blockchain.
-    \item \emph{Miners} provide wireless network coverage to the network via purpose-built hardware, called gateways \secref{gateways}, which provide a long-range bridge between WHIP machines and the Internet. Users join the network as miners by purchasing or building a gateway that conforms to the wireless protocol, and \emph{staking} a token deposit proportional to the density of other miners operating in their area \secref{staking}. Miners participate in the \emph{Proof-of-Coverage} \secref{poc} process to prove that they are continuously providing wireless network coverage that machines can use. Miners join the network with a score \secref{scores} that diminishes as blocks pass without valid proofs being submitted. At a given epoch, a new group of miners are elected to a \emph{consensus group} which mine new blocks in the blockchain and receive the block reward and transaction fees for any transactions included in the block once mined. As a miners score drops their probability of being elected to the consensus group and mining blocks diminishes.
-    \item \emph{Routers} are Internet applications that purchase encrypted machine data from miners. In locations with a sufficient number of miners, routers can pay several miners to obtain enough copies of a packet to geolocate a machine without needing satellite location hardware, which we call \emph{Proof-of-Location}.  Routers are the termination point for machine data encryption. Machines record to the blockchain which routers miners should send their data to, such that any gateway on the network can send any machines data to the appropriate router. Routers are responsible for confirming to gateways that machine data was delivered to the correct destination and that the miner should be paid for their service.
-\end{itemize}
+\begin{description}
+    \item [Machines] send and receive encrypted data from the Internet using hardware compatible with the Helium wireless protocol, called \emph{WHIP} \secref{whip}. Data sent from machines is \emph{fingerprinted}, and that fingerprint stored in the blockchain.
+    \item [Miners] provide wireless network coverage to the network via purpose-built hardware, called gateways \secref{gateways}, which provide a long-range bridge between WHIP machines and the Internet. Users join the network as miners by purchasing or building a gateway that conforms to the wireless protocol, and \emph{staking} a token deposit proportional to the density of other miners operating in their area \secref{staking}. Miners participate in the \emph{Proof-of-Coverage} \secref{poc} process to prove that they are continuously providing wireless network coverage that machines can use. Miners join the network with a score \secref{scores} that diminishes as blocks pass without valid proofs being submitted. At a given epoch, a new group of miners are elected to a \emph{consensus group} which mine new blocks in the blockchain and receive the block reward and transaction fees for any transactions included in the block once mined. As a miners score drops their probability of being elected to the consensus group and mining blocks diminishes.
+    \item [Routers] are Internet applications that purchase encrypted machine data from miners. In locations with a sufficient number of miners, routers can pay several miners to obtain enough copies of a packet to geolocate a machine without needing satellite location hardware, which we call \emph{Proof-of-Location}.  Routers are the termination point for machine data encryption. Machines record to the blockchain which routers miners should send their data to, such that any gateway on the network can send any machines data to the appropriate router. Routers are responsible for confirming to gateways that machine data was delivered to the correct destination and that the miner should be paid for their service.
+\end{description}
 
 \subsection{Blockchain} \label{blockchain}
 
@@ -284,8 +283,7 @@ Our goal is to verify whether miners in a physical region are acting honestly an
 \begin{figure}[ht]
     \begin{center}
           \includegraphics[width=\columnwidth]{deconstruction.eps}
-          \caption{\emph{Multi-Layer Data Packet Deconstruction}}
-          \label{fig:poc-deconstruction}
+          \caption{\emph{Multi-Layer Data Packet Deconstruction}}\label{fig:poc-deconstruction}
      \end{center}
 \end{figure}
 
@@ -310,8 +308,7 @@ The resulting $O$ can be visually represented as depicted in \figref{fig:poc-o_c
 \begin{figure}[ht]
     \begin{center}
           \includegraphics[width=\columnwidth]{o_construction.eps}
-          \caption{Construction of $O$}
-          \label{fig:poc-o_construction}
+          \caption{Construction of $O$}\label{fig:poc-o_construction}
      \end{center}
 \end{figure}
 
@@ -335,8 +332,7 @@ Once $T_L$ has delivered receipt to $C$, or $\lambda$ has elapsed, the \emph{Pro
 \begin{figure}[ht]
     \begin{center}
           \includegraphics[width=\columnwidth]{o_propagation.eps}
-          \caption{\emph{Proof-of-Coverage} flow}
-          \label{fig:poc-propogation}
+          \caption{\emph{Proof-of-Coverage} flow}\label{fig:poc-propogation}
      \end{center}
 \end{figure}
 
@@ -404,8 +400,7 @@ The above conditions strictly adhere to the following principles:
             \node [anchor=south, color=gray] at (axis cs:1.38, 3.5)  {$v'<0$};
         \end{axis}
     \end{tikzpicture}
-    \caption{\emph{Trendlines for the scoring functions}}
-    \label{fig:score-trends}
+    \caption{\emph{Trendlines for the scoring functions}}\label{fig:score-trends}
 \end{figure}
 
 Adhering to the above set of rules, we define the following scoring function, which is essentially a variation of a sigmoid curve fluctuating between values (0, 1):
@@ -426,8 +421,7 @@ This scoring function yields \figref{fig:score-stale}, which shows the variation
             \addplot[smooth, color=gray, domain=-10:10, samples=200]{(1.58 + rad(atan(2*x)))/3.16};
         \end{axis}
     \end{tikzpicture}
-    \caption{\emph{Scoring algorithm and the resulting staleness factor}}
-    \label{fig:score-stale}
+    \caption{\emph{Scoring algorithm and the resulting staleness factor}}\label{fig:score-stale}
 \end{figure}
 
 \figref{fig:score-graph} shows a snapshot of a random subset of the network at any blockchain height \textit{h}. The miners represent random locations with an illustrated score, while the edges are calculated using Dijkstra's algorithm\cite{dijkstra}.
@@ -435,8 +429,7 @@ This scoring function yields \figref{fig:score-stale}, which shows the variation
 \begin{figure}[ht]
     \begin{center}
           \includegraphics[width=0.8\columnwidth]{chart.eps}
-          \caption{\emph{Snapshot of a random subset of the initial network}}
-          \label{fig:score-graph}
+          \caption{\emph{Snapshot of a random subset of the initial network}}\label{fig:score-graph}
      \end{center}
 \end{figure}
 
@@ -445,8 +438,7 @@ After 10,000 iterations the network appears as represented in \figref{fig:score-
 \begin{figure}[ht]
     \begin{center}
           \includegraphics[width=0.8\columnwidth]{chart1000.eps}
-          \caption{\emph{Snapshot of a random subset of the network after 10000 iterations}}
-          \label{fig:score-graph10000}
+          \caption{\emph{Snapshot of a random subset of the network after 10000 iterations}}\label{fig:score-graph10000}
      \end{center}
 \end{figure}
 
@@ -519,8 +511,7 @@ With only two servers, $M$ can end up with proof that something is wrong, but no
 \begin{figure}[ht]
     \begin{center}
           \includegraphics[width=\columnwidth]{serialization.eps}
-          \caption{\emph{Creating Proof-of-Serialization}}
-          \label{fig:serialization}
+          \caption{\emph{Creating Proof-of-Serialization}}\label{fig:serialization}
      \end{center}
 \end{figure}
 
@@ -541,8 +532,7 @@ To verify the correct time, it is necessary for $M$ to repeat the time synchroni
 \begin{figure}[ht]
     \begin{center}
           \includegraphics[width=\columnwidth]{verify_serialization.eps}
-          \caption{\emph{Verifying Proof-of-Serialization}}
-          \label{fig:verify-serialization}
+          \caption{\emph{Verifying Proof-of-Serialization}}\label{fig:verify-serialization}
      \end{center}
 \end{figure}
 
@@ -585,8 +575,7 @@ An example timestamping flow is as follows:
 \begin{figure}[H]
     \begin{center}
           \includegraphics[width=\columnwidth]{tdoa.eps}
-          \caption{\emph{Geolocation via TDoA}}
-          \label{fig:tdoa}
+          \caption{\emph{Geolocation via TDoA}}\label{fig:tdoa}
      \end{center}
 \end{figure}
 
@@ -802,8 +791,7 @@ Once $\Delta_b$ has elapsed, all members of $C$ run the \verb|TPKE.Enc| function
 \begin{figure}[ht]
     \begin{center}
           \includegraphics[width=\columnwidth]{consensus_group.eps}
-          \caption{\emph{The Consensus Group \& Mining}}
-          \label{fig:consensus-group}
+          \caption{\emph{The Consensus Group \& Mining}}\label{fig:consensus-group}
      \end{center}
 \end{figure}
 
