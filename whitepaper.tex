@@ -45,25 +45,25 @@
 \setlength{\pdfpageheight}{\paperheight}
 \setlength{\pdfpagewidth}{\paperwidth}
 
-\title{Helium}
+}\title{Helium}
 \subtitle{A Decentralized Machine Network}
 \authorinfo{Amir Haleem\and Andrew Allen \and Andrew Thompson \and Marc Nijdam \and Rahul Garg}{Helium Systems, Inc.}{\gitMark}
 
 \maketitle
 
 \begin{abstract}
-The Internet of Things is an \textdollar800 billion industry, with over 8.4 billion connected devices online, and spending predicted to reach nearly \textdollar1.4 trillion by 2021~\cite{idc}. Most of these devices need to connect to the internet to function. However, current solutions such as cellular, WiFi, and Bluetooth are suboptimal: they are too expensive, too power hungry, or too limited in range.
+The Internet of Things is an \textdollar800 billion industry, with over 8.4 billion connected devices online, and spending predicted to reach nearly \textdollar1.4 trillion by 2021~\cite{idc}. Most of these devices need to connect to the Internet to function. However, current solutions such as cellular, WiFi, and Bluetooth are suboptimal: they are too expensive, too power hungry, or too limited in range.
 
-Helium is a \emph{decentralized machine network} that enables machines anywhere in the world to wirelessly connect to the internet and geolocate themselves without the need for power-hungry satellite location hardware or expensive cellular plans. Powering the network is a blockchain with a native protocol token incentivizing a two-sided marketplace between coverage providers and coverage consumers. With the introduction of a blockchain, Helium injects decentralization into an industry currently controlled by monopolies. The result is that wireless network coverage becomes a commodity, fueled by competition, available anywhere in the world, at a fraction of current costs.
+Helium is a \emph{decentralized machine network} that enables machines anywhere in the world to wirelessly connect to the Internet and geolocate themselves without the need for power-hungry satellite location hardware or expensive cellular plans. Powering the network is a blockchain with a native protocol token incentivizing a two-sided marketplace between coverage providers and coverage consumers. With the introduction of a blockchain, Helium injects decentralization into an industry currently controlled by monopolies. The result is that wireless network coverage becomes a commodity, fueled by competition, available anywhere in the world, at a fraction of current costs.
 
-Helium's secure and open-source primitives enable developers to build low-power, internet-connected machines quickly and cost-effectively. Helium has a wide variety of applications across industries and is the first decentralized machine network of its kind.
+Helium's secure and open-source primitives enable developers to build low-power, Internet-connected machines quickly and cost-effectively. Helium has a wide variety of applications across industries and is the first decentralized machine network of its kind.
 \end{abstract}
 
 \section{Introduction}
 
-The world is becoming decentralized. A multitude of platforms, technologies, and services are moving from centralized proprietary systems to decentralized, open ones. Peer-to-peer networks such as Napster (created by Helium founder Shawn Fanning) \cite{napster} and BitTorrent paved the way for blockchain networks and crypto-currencies to be built. Now Bitcoin, Ethereum, and other blockchain networks have shown the value of decentralized transaction ledgers. Existing internet services such as file storage, identity verification, and the domain name system are being replaced by modern blockchain-based versions. While software-level decentralization has moved quickly, physical networks are taking longer to affect. These networks are more complicated to decentralize as they often require specialized hardware to function.
+The world is becoming decentralized. A multitude of platforms, technologies, and services are moving from centralized proprietary systems to decentralized, open ones. Peer-to-peer networks such as Napster (created by Helium founder Shawn Fanning) \cite{napster} and BitTorrent paved the way for blockchain networks and crypto-currencies to be built. Now Bitcoin, Ethereum, and other blockchain networks have shown the value of decentralized transaction ledgers. Existing Internet services such as file storage, identity verification, and the domain name system are being replaced by modern blockchain-based versions. While software-level decentralization has moved quickly, physical networks are taking longer to affect. These networks are more complicated to decentralize as they often require specialized hardware to function.
 
-Helium is a wide-area wireless networking system, a blockchain, and a protocol token. The blockchain runs on a new consensus protocol and a new kind of proof, called \emph{Proof-of-Coverage}. Miners who are providing wireless network coverage in a cryptographically verified physical location and time submit proofs to the network, and the miners submitting the best proofs are elected to an asynchronous byzantine fault tolerant consensus group at a fixed epoch. The members of the consensus group receive encrypted transactions submitted by other miners and forms them into blocks at an extremely high transaction rate. In addition to the blockchain protocol, the Helium Wireless protocol, \emph{WHIP}, provides a bi-directional data transfer system between wireless machines and the Internet via a network of independent providers that does not rely on a single coordinator, where: (1) machines pay to send \& receive data to the internet and geolocate themselves, (2) miners earn tokens for providing network coverage, and (3) miners earn fees from transactions, and for validating the integrity of the network.
+Helium is a wide-area wireless networking system, a blockchain, and a protocol token. The blockchain runs on a new consensus protocol and a new kind of proof, called \emph{Proof-of-Coverage}. Miners who are providing wireless network coverage in a cryptographically verified physical location and time submit proofs to the network, and the miners submitting the best proofs are elected to an asynchronous byzantine fault tolerant consensus group at a fixed epoch. The members of the consensus group receive encrypted transactions submitted by other miners and forms them into blocks at an extremely high transaction rate. In addition to the blockchain protocol, the Helium Wireless protocol, \emph{WHIP}, provides a bi-directional data transfer system between wireless machines and the Internet via a network of independent providers that does not rely on a single coordinator, where: (1) machines pay to send \& receive data to the Internet and geolocate themselves, (2) miners earn tokens for providing network coverage, and (3) miners earn fees from transactions, and for validating the integrity of the network.
 
 \textbf{Note:} This whitepaper represents a continuous work in progress. We will endeavor to keep this document current with the latest development progress. As a result of the on-going and iterative nature of our development process, the resulting code and implementation is likely to differ from what is represented in this paper.
 
@@ -89,11 +89,11 @@ Helium is built around the following key components:
 
 \begin{itemize}
     \item Helium is a \emph{Decentralized Machine Network} built around a new wireless protocol (WHIP) on a purpose-built blockchain with a native token.
-    \item Machines take the form of hardware containing a radio chip and firmware compatible with WHIP, and spend tokens by paying miners to send data to and from the internet.
-    \item Miners earn tokens by providing wireless network coverage via purpose-built hardware which provides a bridge between WHIP and routers, which are internet applications.
+    \item Machines take the form of hardware containing a radio chip and firmware compatible with WHIP, and spend tokens by paying miners to send data to and from the Internet.
+    \item Miners earn tokens by providing wireless network coverage via purpose-built hardware which provides a bridge between WHIP and routers, which are Internet applications.
     \item Machines store their private keys in commodity key-storage hardware and their public keys in the blockchain.
     \item Miners join the network by asserting their satellite-derived location, a special type of transaction in the blockchain, and staking a token deposit.
-    \item Miners specify the price they are willing to accept for data transport and \emph{Proof-of-Location} services, and machines specify the price they are willing to pay. Miners are paid once they prove they have delivered data to the machines' specified router.
+    \item Miners specify the price they are willing to accept for data transport and \emph{Proof-of-Location} services, and routers specify the price they are willing to pay for that machine's data. Miners are paid once they prove they have delivered data to the machines' specified router.
     \item Miners participate in the creation of new blocks in the blockchain by being elected to an asynchronous Byzantine Fault Tolerant consensus group.
     \item Miners are rewarded with newly minted Helium for blocks that are created while they are part of the consensus group.
     \item A miner's probability of being elected to the consensus group at a given epoch is based on the quality of the wireless network coverage they provide.
@@ -113,16 +113,16 @@ Helium is built around the following key components:
 
 \section{The Helium DMN}
 
-We introduce the Helium Decentralized Machine Network (\verb|DMN|). The \verb|DMN| provides wireless access to the internet for machines by way of multiple independent miners, and outlines a network and wireless protocol specification by which participants in the network should conform. Machines pay this network of miners for sending data to and from the internet, and miners are rewarded with newly minted tokens for providing network coverage and delivering machine data to the internet.
+We introduce the Helium Decentralized Machine Network (\verb|DMN|). The \verb|DMN| provides wireless access to the Internet for machines by way of multiple independent miners, and outlines a network and wireless protocol specification by which participants in the network should conform. Routers pay this network of miners for sending data to and from the Internet, and miners are rewarded with newly minted tokens for providing network coverage and delivering machine data to the Internet.
 
 \subsection{Participants}
 
 There are three types of participants in the network: Machine, Miner, or a Router.
 
 \begin{itemize}
-    \item \emph{Machines} pay miners to send encrypted data to and from the internet using hardware compatible with the Helium wireless protocol, called \emph{WHIP} \secref{whip}. In locations with a sufficient number of miners, machines can pay several miners to geolocate themselves without needing satellite location hardware, which we call \emph{Proof-of-Location}. Data sent from machines is \emph{fingerprinted}, and that fingerprint stored in the blockchain.
-    \item \emph{Miners} provide wireless network coverage to the network via purpose-built hardware, called gateways \secref{gateways}, which provide a long-range bridge between WHIP machines and the internet. Users join the network as miners by purchasing or building a gateway that conforms to the wireless protocol, and \emph{staking} a token deposit proportional to the density of other miners operating in their area \secref{staking}. Miners participate in the \emph{Proof-of-Coverage} \secref{poc} process to prove that they are continuously providing wireless network coverage that machines can use. Miners join the network with a score \secref{scores} that diminishes as blocks pass without valid proofs being submitted. At a given epoch, a new group of miners are elected to a \emph{consensus group} which mine new blocks in the blockchain and receive the block reward and transaction fees for any transactions included in the block once mined. As a miners score drops their probability of being elected to the consensus group and mining blocks diminishes.
-    \item \emph{Routers} are internet applications that receive encrypted machine data from miners. Routers are the termination point for machine data encryption. Machines record to the blockchain which routers miners should send their data to, such that any gateway on the network can send any machines data to the appropriate router. Routers are responsible for confirming to gateways that machine data was delivered to the correct destination and that the miner should be paid for their service.
+    \item \emph{Machines} send and receive encrypted data from the Internet using hardware compatible with the Helium wireless protocol, called \emph{WHIP} \secref{whip}. Data sent from machines is \emph{fingerprinted}, and that fingerprint stored in the blockchain.
+    \item \emph{Miners} provide wireless network coverage to the network via purpose-built hardware, called gateways \secref{gateways}, which provide a long-range bridge between WHIP machines and the Internet. Users join the network as miners by purchasing or building a gateway that conforms to the wireless protocol, and \emph{staking} a token deposit proportional to the density of other miners operating in their area \secref{staking}. Miners participate in the \emph{Proof-of-Coverage} \secref{poc} process to prove that they are continuously providing wireless network coverage that machines can use. Miners join the network with a score \secref{scores} that diminishes as blocks pass without valid proofs being submitted. At a given epoch, a new group of miners are elected to a \emph{consensus group} which mine new blocks in the blockchain and receive the block reward and transaction fees for any transactions included in the block once mined. As a miners score drops their probability of being elected to the consensus group and mining blocks diminishes.
+    \item \emph{Routers} are Internet applications that purchase encrypted machine data from miners. In locations with a sufficient number of miners, routers can pay several miners to obtain enough copies of a packet to geolocate a machine without needing satellite location hardware, which we call \emph{Proof-of-Location}.  Routers are the termination point for machine data encryption. Machines record to the blockchain which routers miners should send their data to, such that any gateway on the network can send any machines data to the appropriate router. Routers are responsible for confirming to gateways that machine data was delivered to the correct destination and that the miner should be paid for their service.
 \end{itemize}
 
 \subsection{Blockchain} \label{blockchain}
@@ -144,25 +144,25 @@ At a given epoch a given block consists of:
          \hline
          Transactions \emph{1..n} Merkle Hash \\
          \hline
-         \emph{Proof-of-Serialization} \\
+         Threshold signature by the current consensus group \\
          \hline
     \end{tabular}
 \end{center}
 
 As the \emph{Proof-of-Coverage} \secref{poc} is valuable to the network, miners are required to submit their proofs at regular intervals. All miners have a score which decays over time, and is boosted by submitting \emph{Proofs-of-Coverage} to the blockchain. At a fixed epoch, a \emph{HoneyBadgerBFT} \cite{honeybadger} consensus group of the highest scoring miners is elected. For that epoch, all transactions are encrypted and submitted to the consensus group for inclusion in the blockchain. The consensus group is responsible for decrypting transactions using \emph{threshold decryption}, agreeing on the validity and ordering of transactions, forming them in to blocks, and appending them to the blockchain for which the members of the consensus group receive a reward.
 
-As the consensus group is validating transactions prior to inclusion in the blockchain, there is practically no settlement time, and the transaction throughput is extremely high compared to a \emph{Nakamoto Consensus} blockchain such as Bitcoin or Ethereum. The Helium Consensus Protocol is outlined in detail in \secref{consensus}.
+As the consensus group is validating transactions without having to provide an associated block-proof, beyond a threshold signature, there is practically no settlement time, and the transaction throughput is extremely high compared to a \emph{Nakamoto Consensus} blockchain such as Bitcoin or Ethereum. The Helium Consensus Protocol is outlined in detail in \secref{consensus}.
 
 \subsection{Physical Implementation}
 
 In addition to the blockchain network, Helium is a \emph{physical} wireless network instantiation. The participants in the wireless network can be thought of as follows:
 
 \begin{description}
-    \item [Wireless Protocol] The wireless network uses a new open wireless protocol, called \emph{WHIP}. WHIP is a long-range, low-power, wireless network protocol suitable for use with commodity open-standards hardware. WHIP compatible hardware can communicate over many square miles in dense urban environments or hundreds of square miles in rural settings. WHIP compatible hardware can also last for several years using standard batteries. WHIP uses strong public key cryptography and authentication occurs using the Helium blockchain, and data is encrypted end-to-end between the machine and corresponding internet-hosted router.
+    \item [Wireless Protocol] The wireless network uses a new open wireless protocol, called \emph{WHIP}. WHIP is a long-range, low-power, wireless network protocol suitable for use with commodity open-standards hardware. WHIP compatible hardware can communicate over many square miles in dense urban environments or hundreds of square miles in rural settings. WHIP compatible hardware can also last for several years using standard batteries. WHIP uses strong public key cryptography and authentication occurs using the Helium blockchain, and data is encrypted end-to-end between the machine and corresponding Internet-hosted router.
 
-    \item [Gateways] Gateways are physical network machines that provide wide-area wireless coverage and participate in the blockchain network. Gateways transmit data back and forth between routers on the internet and machines while generating \emph{Proofs-of-Coverage} for the blockchain network \secref{poc}. Gateways are manufactured using commodity open-standards components with no proprietary hardware. Gateways can co-operate and geolocate machines using the wireless network without any additional required hardware. Each Gateway can support thousands of connected machines, and provide coverage over many square miles. Miners operating gateways specify the price they are willing to accept for transport and \emph{Proof-of-Location} services for machines.
+    \item [Gateways] Gateways are physical network machines that provide wide-area wireless coverage and participate in the blockchain network. Gateways transmit data back and forth between routers on the Internet and machines while generating \emph{Proofs-of-Coverage} for the blockchain network \secref{poc}. Gateways are manufactured using commodity open-standards components with no proprietary hardware. Gateways can co-operate and geolocate machines using the wireless network without any additional required hardware. Each Gateway can support thousands of connected machines, and provide coverage over many square miles. Miners operating gateways specify the price they are willing to accept for transport and \emph{Proof-of-Location} services for machines.
 
-    \item [Machines] Machines exist in the form of hardware products that contain a WHIP-compatible radio transceiver and communicate with gateways on the wireless network. WHIP is designed to facilitate low power data transmission and reception, so typically machines exist in the form of battery-powered sensors that can oeprate for several years using standard batteries (although mains-powered machines also work quite well). Machines can exist in a variety of forms, depending on the product or use case, and a variety of transmission and reception strategies can be employed to optimize for transmission/reception frequency or battery life. Machine manufacturers are encouraged to use hardware-based key storage which can securely generate, store, and authenticate public/private key pairs without leaking the private key.
+    \item [Machines] Machines exist in the form of hardware products that contain a WHIP-compatible radio transceiver and communicate with gateways on the wireless network. WHIP is designed to facilitate low power data transmission and reception, so typically machines exist in the form of battery-powered sensors that can operate for several years using standard batteries (although mains-powered machines also work quite well). Machines can exist in a variety of forms, depending on the product or use case, and a variety of transmission and reception strategies can be employed to optimize for transmission/reception frequency or battery life. Machine manufacturers are encouraged to use hardware-based key storage which can securely generate, store, and authenticate public/private key pairs without leaking the private key.
 \end{description}
 
 In this section, we expand on the components of the wireless network.
@@ -170,7 +170,7 @@ In this section, we expand on the components of the wireless network.
 \subsection{Wireless Protocol (\emph{WHIP})}\label{whip}
 
 \begin{description}
-    \item [Motivation] Several Low Power Wide Area Network (LPWAN) technologies are available today. These wireless technologies focus on creating long-range, low-power internet communication for sensors and other smart machines. Typically these technologies trade throughput for range, with data rates as low as 18~bits~per~second (bps) and range measured in miles. In comparison, a typical WiFi network has significantly higher data rates but ranges limited to only a few dozen feet. Several of these new technologies, such as LoRa~\cite{lora} and RPMA~\cite{rpma}, have gained good traction and there are many commercial products available compatible with these systems. However, we believe a decentralized machine network should use non-proprietary protocols and modulation schemes and that participants in this ecosystem should have the freedom to choose between competing hardware vendors. We do not consider an open alliance built on top of proprietary hardware to be an acceptable compromise. While there are many open-standard wireless networking stacks, such as IEEE~802.15.4~\cite{ieee802_15_4} used in the first generation of Helium wireless products, none meet our extremely long range and low power criteria. It is this lack of open solutions that drove the creation of a new protocol.
+    \item [Motivation] Several Low Power Wide Area Network (LPWAN) technologies are available today. These wireless technologies focus on creating long-range, low-power Internet communication for sensors and other smart machines. Typically these technologies trade throughput for range, with data rates as low as 18~bits~per~second (bps) and range measured in miles. In comparison, a typical WiFi network has significantly higher data rates but ranges limited to only a few dozen feet. Several of these new technologies, such as LoRa~\cite{lora} and RPMA~\cite{rpma}, have gained good traction and there are many commercial products available compatible with these systems. However, we believe a decentralized machine network should use non-proprietary protocols and modulation schemes and that participants in this ecosystem should have the freedom to choose between competing hardware vendors. We do not consider an open alliance built on top of proprietary hardware to be an acceptable compromise. While there are many open-standard wireless networking stacks, such as IEEE~802.15.4~\cite{ieee802_15_4} used in the first generation of Helium wireless products, none meet our extremely long range and low power criteria. It is this lack of open solutions that drove the creation of a new protocol.
 
     \item [Outline] We introduce a new open-source Low Power Wide Area Network (LPWAN) protocol called \emph{WHIP}. WHIP is a highly secure, long range, low power, bi-directional wireless network protocol that is compatible with a wide range of existing radio transceivers operating in the sub-GHz unlicensed frequency spectrum. Authentication with the wireless network uses modern public-key encryption and NIST~P-256 ECC key pairs, with the public keys for all participants stored in the blockchain.
 
@@ -209,7 +209,7 @@ It is recommended that each machine use the Microchip ECC508A or equivalent hard
 
 \subsection{Routers}
 
-Routers are internet-deployed applications that receive packets from machines via gateways and route them to appropriate destinations such as an HTTP or MQTT endpoint. Routers also act as \emph{full nodes} for the blockchain network \secref{full-nodes}.
+Routers are Internet-deployed applications that receive packets from machines via gateways and route them to appropriate destinations such as an HTTP or MQTT endpoint. Routers also act as \emph{full nodes} for the blockchain network \secref{full-nodes}.
 
 Routers serve several functions on the network, including:
 
@@ -232,7 +232,7 @@ The protocol specification required for implementing a router is defined in the 
 
 \section{\emph{Proof-of-Coverage} \& \emph{Proof-of-Serialization}}\label{poc}
 
-In the Helium network, miners must prove that they are providing wireless network coverage that machines are able to use to communicate with the internet. Miners do this by complying with the \emph{Proof-of-Coverage} protocol which the blockchain network and other miners audit and verify. We use a \emph{Proof-of-Serialization} to ensure that miners are correctly representing their time in relation to others on the network, and obtain cryptographic proof of dishonest behavior. Several components of the Helium network, such as blocks in the blockchain, use \emph{Proof-of-Serialization} as a cryptographic ``anchor'' that root those occurrences  with a cryptographic time proof. With a combination of \emph{Proof-of-Coverage} and \emph{Proof-of-Serialization} we can obtain cryptographic proof of the approximate location and time of events occurring within the Helium network.
+In the Helium network, miners must prove that they are providing wireless network coverage that machines are able to use to communicate with the Internet. Miners do this by complying with the \emph{Proof-of-Coverage} protocol which the blockchain network and other miners audit and verify. We use a \emph{Proof-of-Serialization} to ensure that miners are correctly representing their time in relation to others on the network, and obtain cryptographic proof of dishonest behavior. Several components of the Helium network, such as \emph{Proof-of-Coverage}, use \emph{Proof-of-Serialization} as a cryptographic ``anchor'' that root those occurrences  with a cryptographic time proof. With a combination of \emph{Proof-of-Coverage} and \emph{Proof-of-Serialization} we can obtain cryptographic proof of the approximate location and time of events occurring within the Helium network.
 
 In this section we outline the motivation and implementation for \emph{Proof-of-Coverage} and \emph{Proof-of-Serialization}.
 
@@ -270,10 +270,11 @@ We combine \emph{Proof-of-Coverage} with \emph{Proof-of-Serialization}---a proof
 
 This section describes the construction of the \emph{Proof-of-Coverage} protocol.
 
-We aim to construct a proof that takes advantage of the following characteristics of radio frequency (RF) communication that are unique and different to internet communication:
+We aim to construct a proof that takes advantage of the following characteristics of radio frequency (RF) communication that are unique and different to Internet communication:
 
 \begin{enumerate}
     \item RF has limited physical propagation and therefore distance
+    \item The strength of a received RF signal is inversely proportional to the square of the distance from the transmitter
     \item RF travels at the speed of light with (effectively) no latency
 \end{enumerate}
 
@@ -313,20 +314,20 @@ The resulting $O$ can be visually represented as depicted in \figref{fig:poc-o_c
      \end{center}
 \end{figure}
 
-\textbf{Creating the Proof}. Once $O$ has been constructed, it is delivered to $T_1$ via the internet peer-to-peer network and immediately broadcast by $T_1$ via the wireless network. The Helium wireless protocol is not a point-to-point system, so several miners within proximity of $T_1$ will hear $O$. As described prior, each layer $O_l$ of $O$ contains the three-tuple ${E\left(S, \psi, R\right)}$ where $E$ is a secure encryption function using the ECDH-derived key, $S$ is a nonce, $\psi$ is a time at which to transmit the next layer of the packet and $R$ is the remainder of $O$ consisting of recursive three-tuples. In this example, only the specific target $T$ will be able to decrypt $E$ and send a valid receipt back to the challenger, $C$.
+\textbf{Creating the Proof}. Once $O$ has been constructed, it is delivered to $T_1$ via the Internet peer-to-peer network and immediately broadcast by $T_1$ via the wireless network. The Helium wireless protocol is not a point-to-point system, so several miners within proximity of $T_1$ will hear $O$. As described prior, each layer $O_l$ of $O$ contains the three-tuple ${E\left(S, \psi, R\right)}$ where $E$ is a secure encryption function using the ECDH-derived key, $S$ is a nonce, $\psi$ is a time at which to transmit the next layer of the packet and $R$ is the remainder of $O$ consisting of recursive three-tuples. In this example, only the specific target $T$ will be able to decrypt $E$ and send a valid receipt back to the challenger, $C$.
 
 We describe the approximate flow of \emph{Proof-of-Coverage} creation as follows:
 
 \begin{enumerate}
-  \item $T_1$ receives $O$ from $C$ via the peer-to-peer internet network, decrypts the outermost layer and immediately broadcasts it $R$ via the wireless network
+  \item $T_1$ receives $O$ from $C$ via the peer-to-peer Internet network, decrypts the outermost layer and immediately broadcasts it $R$ via the wireless network
   \item $T$ hears $O$ and attempts to decrypt the value of $E$ by using its private key $pk:\ E_{pk}\left(S, \psi, R\right)$
   \item $T$ records both the time of arrival $\beta$ and the signal strength $\upsilon$ of $O$
   \item If successful, $T$ then creates signed receipt $K_s$, \\${K_s = \left(S || \beta || \upsilon\right)}$ signed by the private key of $T$
-  \item $T$ submits $K_s$ to $C$ via the peer-to-peer internet network, removes the outer most layer, and wirelessly broadcasts the remainder $O$
+  \item $T$ submits $K_s$ to $C$ via the peer-to-peer Internet network, removes the outer most layer, and wirelessly broadcasts the remainder $O$
   \item These steps repeat for $T_1$..$T$..$T_L$, with $T_L$ being the last target in the graph
 \end{enumerate}
 
-$C$ expects to hear responses from $T_g$ within a time threshold $\lambda$, otherwise it considers the \emph{Proof-of-Coverage} to have concluded. Because $C$ is the only party with complete knowledge of $O$, upper bounds of the values for $\beta$ and $\upsilon$ are assigned by $C$ which are used to verify that each layer of $O$ was transmitted approximately where and when it was expected. The upper bound for $\beta$ ls limited by the speed of light $\tau$ between $T_n$ and $T_n-1$. Thus we know that, subject to some slight delays from reflection or multipath, the packet should not arrive at $T_g$ later than $\tau$ multiplied by the geographical distance $D$ plus some small episilon value, $\upsilon = \tau \times \Big(D + \epsilon\Big)$. For $\upsilon$, because of the inverse-square law, we can calculate the maximum RSSI possible for a packet transmitted, $\mu$, from $T_g-1$ to $T_g$ as $\mu = \frac{1}{D^2}$. Gateways that are closer than expected, or which are transmitting at a higher power to mask their location disparity, are unlikely to get $\mu$ correct, given that they do not know who the next layer of $O$ is addressed to.
+$C$ expects to hear responses from $T_g$ within a time threshold $\lambda$, otherwise it considers the \emph{Proof-of-Coverage} to have concluded. Because $C$ is the only party with complete knowledge of $O$, upper bounds of the values for $\beta$ and $\upsilon$ are assigned by $C$ which are used to verify that each layer of $O$ was transmitted approximately where and when it was expected. The upper bound for $\beta$ ls limited by the speed of light $\tau$ between $T_n$ and $T_n-1$. Thus we know that, subject to some slight delays from reflection or multipath, the packet should not arrive at $T_g$ later than $\tau$ multiplied by the geographical distance $D$ plus some small episilon value, $\upsilon = \tau \times \Big(D + \epsilon\Big)$. For $\upsilon$, because of the inverse-square law, we can calculate the maximum RSSI (Received Signal Strength Indication) possible for a packet transmitted, $\mu$, from $T_g-1$ to $T_g$ as $\mu = \frac{1}{D^2}$. Gateways that are closer than expected, or which are transmitting at a higher power to mask their location disparity, are unlikely to get $\mu$ correct, given that they do not know who the next layer of $O$ is addressed to.
 
 Once $T_L$ has delivered receipt to $C$, or $\lambda$ has elapsed, the \emph{Proof-of-Coverage} is completed. The collection of signed receipts, $K_s$, constitute the \emph{Proof-of-Coverage} that $C$ will submit to the network.
 
@@ -379,7 +380,7 @@ The above conditions strictly adhere to the following principles:
 
 \end{enumerate}
 
-The following graph shows the trends for each of the above functions:
+\figref{fig:score-trends} shows the trends for each of the above functions.
 
 \begin{figure}[ht]
     \pgfplotsset{width=7cm, compat=newest}
@@ -412,7 +413,7 @@ Adhering to the above set of rules, we define the following scoring function, wh
         \phi_m = \frac{\arctan(2.\delta{m}) + 1.58}{3.16}
 \end{equation*}
 
-This scoring function yields the below graph, which shows the variation of the score with the staleness-factor:
+This scoring function yields \figref{fig:score-stale}, which shows the variation of the score with the staleness-factor.
 
 \begin{figure}[ht]
     \pgfplotsset{width=7cm, compat=newest}
@@ -473,12 +474,12 @@ Furthermore, it also asserts that the probabilities are inversely proportional t
 
 \textbf{Verifying the Proof}. Once $T_L$ has delivered $K_s$, or $\lambda$ has elapsed, the \emph{Proof-of-Coverage} is considered complete. When $C$ submits this proof, via a special type of transaction, all receipts $K_s$ from $T_1$...$T_L$ are included in the transaction published to the blockchain network. As all the steps originally completed by $C$ are deterministic in nature with verifiable and recreatable randomness, it is simple for a verifying miner, $V$, to recreate the original steps and verify that the proof is legitimate.
 
-Verifying miners in the consensus group \secref{consensus} who see the proof transaction are able to verify the \emph{Proof-of-Coverage}by recreating the following steps:
+Verifying miners in the consensus group \secref{consensus} who see the proof transaction are able to verify the \emph{Proof-of-Coverage} by recreating the following steps:
 
 \begin{enumerate}
-        \item The verifying miner, $V$, reconstructs the hash ring of miners $\omega$
+        \item The verifying miner, $V$, reconstructs the set of miners $N$
         \item The random seed $\eta$ can be verified by $V$ to have been created at approximately the correct time by the private key of $C$
-        \item $V$ then selects $T$ from $\omega$, as seeding with $\eta$ will result in the same target selection
+        \item $V$ then selects $T$ from $N$, as seeding with $\eta$ will result in the same target selection
         \item The set of candidate $T_n$ are reconstructed from which $T_1$ and $T_L$ are determined
         \item Dijkstra's algorithm is used to reconstruct the graph $T_g$
         \item The $K_s$ receipts contained in $B_C$ are verified to have been signed by the private keys of $T_1$..$T$..$T_L$
@@ -488,7 +489,7 @@ Assuming these steps are completed successfully, the \emph{Proof-of-Coverage} is
 
 \subsection{Constructing \emph{Proof-of-Serialization}}
 
-To achieve cryptographic time consensus among decentralized clients, we implement a simplified form of Google's Roughtime \cite{roughtime}. Roughtime is a protocol that aims to achieve roughtime synchronization in a secure way that does not depend on any particular time server, and in such a way that, if a time server does misbehave, clients end up with cryptographic proof of that behavior.
+To achieve cryptographic time consensus among decentralized clients, we implement a simplified form of Google's Roughtime \cite{roughtime}. Roughtime is a protocol that aims to achieve rough time synchronization in a secure way that does not depend on any particular time server, and in such a way that, if a time server does misbehave, clients end up with cryptographic proof of that behavior.
 
 This section describes the construction of the \emph{Proof-of-Serialization} protocol.
 
@@ -497,7 +498,7 @@ This section describes the construction of the \emph{Proof-of-Serialization} pro
 \begin{enumerate}
         \item To begin, a miner $M$ pseudo-randomly picks two miners $M_1$ and $M_2$, to prove contact serialization with
         \item It is assumed $M$ has a public key for $M_1$ and $M_2$, otherwise $M$ should obtain it from the blockchain
-        \item $M$ generates a nonce, $R$, which is a SHA512 hash of the block which $M$ has partially constructed
+        \item $M$ generates a nonce, $R$, which is a SHA512 hash of the \emph{Proof-of-Coverage} which $M$ has partially constructed
         \item $M$ then generates a salted hash commitment $K$ called the \emph{proof-kernel} ${K = H\left(R || M_1 || M_2\right)}$
         \item $M$ sends $K$ to $M_1$. $M_1$ replies with $T$, a signed message including the current time $T_1$ and $K$
         \item $M$ knows that the reply from $M_1$ was not pre-generated because it includes the nonce $R$ that $M$ generated
@@ -611,7 +612,7 @@ Transactions in the Helium blockchain provide functionality that enables address
 \subsection{Helium's Need for Microtransactions}
 
 \paragraph{Machines Pay Per Packet}
-The goal of Helium is to provide internet data transport fees (the fees paid by machines to miners) that are an order of magnitude less than anything currently available for this type of service. This transport fee would need to be metered per-packet in order to allow for maximum flexibility --- this way, a machine could transact with any miner, even just to send or receive a single packet without having previously established a relationship with that miner.
+The goal of Helium is to provide Internet data transport fees (the fees paid by machines to miners) that are an order of magnitude less than anything currently available for this type of service. This transport fee would need to be metered per-packet in order to allow for maximum flexibility --- this way, a machine could transact with any miner, even just to send or receive a single packet without having previously established a relationship with that miner.
 
 \paragraph{All Transactions Occur On-Chain}
 Helium is built on the philosophy that all transactions should occur \emph{on-chain}; that is, blocks should be sized and mined with a frequency such that every transaction which occurs on the network should be stored in the blockchain.  To accomplish this goal the cost of mining must be low, blocks must be large enough to encapsulate a large number of transactions, and frequent enough that transactions are processed quickly.
@@ -641,9 +642,9 @@ In this section we outline the types of fees needed on the Helium network, and p
 
 \subsubsection{Transport Fees}
 
-Machines using the Helium network to send and receive data to and from the internet must pay miners what is known as a \emph{transport fee}. This fee compensates the miner for delivering data packets between the machine and the intended router on the internet, and is unrelated to the \emph{transaction fee} that miners earn for mining transactions as part of blocks that are recorded to the blockchain. The fee is negotiated between the router to which the machine belongs, and the miner, as machines are not directly connected to the blockchain.
+Machines using the Helium network to send and receive data to and from the Internet must pay miners what is known as a \emph{transport fee}. This fee compensates the miner for delivering data packets between the machine and the intended router on the Internet, and is unrelated to the \emph{transaction fee} that miners earn for mining transactions as part of blocks that are recorded to the blockchain. The fee is negotiated between the router to which the machine belongs, and the miner, as machines are not directly connected to the blockchain.
 
-Miners set the price they are willing to accept to transport data to and from the internet on a per-byte basis.
+Miners set the price they are willing to accept to transport data to and from the Internet on a per-byte basis.
 
 A machines router pays miners the transport fee on transmission or reception of the data. This means that the miner will receive the transport fee prior to the transaction being mined in a block and recorded into the blockchain. This entails some risk for the miner, as they must believe that the transport payment is not malicious or fraudulent prior to it being confirmed in the blockchain. However, given how low the per-byte transport amount is likely to be, this risk seems tolerable. A miner can \emph{blacklist} a machine or organization address if they continually abuse the system.
 
@@ -778,7 +779,7 @@ The remainder of this section lays out our construction of a consensus protocol 
 
 We propose a unique consensus protocol around \emph{Proof-of-Coverage} to capture the useful work of verifying the network as a replacement for \emph{Proof-of-Work}, combined with a variant of the \emph{HoneyBadgerBFT (HBFT)} \cite{honeybadger} asynchronous byzantine fault tolerant protocol.
 
-\textbf{HBFT}. HBFT is an asynchronous atomic broadcast protocol designed to achieve optimal asymptotic efficiency, initially presented by Miller et al in 2016. In HBFT, the setting assumes a network of $N$ designated nodes with distinct well-known identities ($P_0$ through $P$\textsubscript{N−1}). In our HCP instantiation this network of nodes is known as the consensus group $C$. The consensus group receive transactions as input, and their goal is to reach common agreement on an ordering of these transactions and form them in to blocks to be added to the blockchain.
+\textbf{HBFT}. HBFT is an asynchronous atomic broadcast protocol designed to achieve optimal asymptotic efficiency, initially presented by Miller et al in 2016. In HBFT, the setting assumes a network of $N$ designated nodes with distinct well-known identities ($P_0$ through $P$\textsubscript{N-1}). In our HCP instantiation this network of nodes is known as the consensus group $C$. The consensus group receive transactions as input, and their goal is to reach common agreement on an ordering of these transactions and form them in to blocks to be added to the blockchain.
 
 The protocol proceeds in epochs, where after each epoch, a new batch of transactions is appended to the blockchain. At the beginning of each epoch, the group choose a subset of the transactions in their buffer, and provide them as input to an instance of a randomized agreement protocol. At the end of the agreement protocol, the final set of transactions for this epoch is chosen.
 
