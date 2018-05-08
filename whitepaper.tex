@@ -93,14 +93,14 @@ Helium is built around the following key components:
 
 \begin{itemize}
     \item Helium is a \emph{Decentralized Machine Network} built around a new wireless protocol (WHIP) on a purpose-built blockchain with a native token.
-    \item Machines take the form of hardware containing a radio chip and firmware compatible with WHIP, and spend tokens by paying miners to send data to and from the Internet.
-    \item Miners earn tokens by providing wireless network coverage via purpose-built hardware which provides a bridge between WHIP and routers, which are Internet applications.
+    \item Machines take the form of hardware containing a radio chip and firmware compatible with WHIP, and spend tokens by paying Miners to send data to and from the Internet.
+    \item Miners earn tokens by providing wireless network coverage via purpose-built hardware which provides a bridge between WHIP and Routers, which are Internet applications.
     \item Machines store their private keys in commodity key-storage hardware and their public keys in the blockchain.
     \item Miners join the network by asserting their satellite-derived location, a special type of transaction in the blockchain, and staking a token deposit.
-    \item Miners specify the price they are willing to accept for data transport and \emph{Proof-of-Location} services, and routers specify the price they are willing to pay for that machine's data. Miners are paid once they prove they have delivered data to the machines' specified router.
+    \item Miners specify the price they are willing to accept for data transport and \emph{Proof-of-Location} services, and Routers specify the price they are willing to pay for their Machine's data. Miners are paid once they prove they have delivered data to the Machines' specified Router.
     \item Miners participate in the creation of new blocks in the blockchain by being elected to an asynchronous Byzantine Fault Tolerant consensus group.
     \item Miners are rewarded with newly minted Helium for blocks that are created while they are part of the consensus group.
-    \item A miner's probability of being elected to the consensus group at a given epoch is based on the quality of the wireless network coverage they provide.
+    \item A Miner's probability of being elected to the consensus group at a given epoch is based on the quality of the wireless network coverage they provide.
     \item The blockchain employs \emph{Proof-of-Coverage} to guarantee that miners are honestly representing the wireless network coverage they are creating.
 \end{itemize}
 
@@ -154,7 +154,7 @@ At a given epoch a given block consists of:
 
 As the \emph{Proof-of-Coverage} \secref{poc} is valuable to the network, miners are required to submit their proofs at regular intervals. All miners have a score which decays over time, and is boosted by submitting \emph{Proofs-of-Coverage} to the blockchain. At a fixed epoch, a \emph{HoneyBadgerBFT} \cite{honeybadger} consensus group of the highest scoring miners is elected. For that epoch, all transactions are encrypted and submitted to the consensus group for inclusion in the blockchain. The consensus group is responsible for decrypting transactions using \emph{threshold decryption}, agreeing on the validity and ordering of transactions, forming them into blocks, and appending them to the blockchain for which the members of the consensus group receive a reward.
 
-As the consensus group is validating transactions without having to provide an associated block-proof, beyond a threshold signature, there is practically no settlement time, and the transaction throughput is extremely high compared to a \emph{Nakamoto Consensus} blockchain such as Bitcoin or Ethereum. The Helium Consensus Protocol is outlined in detail in \secref{consensus}.
+As the consensus group is validating transactions without having to provide an associated block-proof (beyond a threshold signature), there is practically no settlement time, and the transaction throughput is extremely high compared to a \emph{Nakamoto Consensus} blockchain such as Bitcoin or Ethereum. The Helium Consensus Protocol is outlined in detail in \secref{consensus}.
 
 \subsection{Physical Implementation}
 
@@ -163,7 +163,7 @@ In addition to the blockchain network, Helium is a \emph{physical} wireless netw
 \begin{description}
     \item [Wireless Protocol] The wireless network uses a new open wireless protocol, called \emph{WHIP}. WHIP is a long-range, low-power, wireless network protocol suitable for use with commodity open-standards hardware. WHIP compatible hardware can communicate over many square miles in dense urban environments or hundreds of square miles in rural settings. WHIP compatible hardware can also last for several years using standard batteries. WHIP uses strong public key cryptography and authentication occurs using the Helium blockchain, and data is encrypted end-to-end between the machine and corresponding Internet-hosted router.
 
-    \item [Gateways] Gateways are physical network machines that provide wide-area wireless coverage and participate in the blockchain network. Gateways transmit data back and forth between routers on the Internet and machines while generating \emph{Proofs-of-Coverage} for the blockchain network \secref{poc}. Gateways are manufactured using commodity open-standards components with no proprietary hardware. Gateways can co-operate and geolocate machines using the wireless network without any additional required hardware. Each Gateway can support thousands of connected machines, and provide coverage over many square miles. Miners operating gateways specify the price they are willing to accept for transport and \emph{Proof-of-Location} services for machines.
+    \item [Gateways] Gateways are physical network devices that provide wide-area wireless coverage and participate in the blockchain network. Gateways transmit data back and forth between routers on the Internet and machines while generating \emph{Proofs-of-Coverage} for the blockchain network \secref{poc}. Gateways are manufactured using commodity open-standards components with no proprietary hardware. Gateways can co-operate and geolocate machines using the wireless network without any additional required hardware. Each Gateway can support thousands of connected machines, and provide coverage over many square miles. Miners operating gateways specify the price they are willing to accept for transport and \emph{Proof-of-Location} services for machines.
 
     \item [Machines] Machines exist in the form of hardware products that contain a WHIP-compatible radio transceiver and communicate with gateways on the wireless network. WHIP is designed to facilitate low power data transmission and reception, so typically machines exist in the form of battery-powered sensors that can operate for several years using standard batteries (although mains-powered machines also work quite well). Machines can exist in a variety of forms, depending on the product or use case, and a variety of transmission and reception strategies can be employed to optimize for transmission/reception frequency or battery life. Machine manufacturers are encouraged to use hardware-based key storage which can securely generate, store, and authenticate public/private key pairs without leaking the private key.
 \end{description}
@@ -182,7 +182,7 @@ We introduce a new open-source Low Power Wide Area Network (LPWAN) protocol call
 
 The modulation format is simple and widely supported, easy to implement and has excellent resistance to RF noise. There are dozens of vendors implementing radio transceivers compatible with WHIP, such as Texas Instruments, Microchip, and Silicon Labs.
 
-WHIP is a \emph{narrowband} wireless protocol which creates several channels within the unlicensed spectrum and employs frequency hopping to hop between channels. Typically frequency hopping requires a complex time-synchronized system that is limited in capacity. However, machines using WHIP do not need to coordinate with gateways on channel selection as gateways are capable of hearing all channels within the available spectrum at any time. We choose narrow-band to accomplish the following goals:
+WHIP is a \emph{narrowband} wireless protocol which creates several channels within the unlicensed spectrum and employs frequency hopping to switch between channels. Typically frequency hopping requires a complex time-synchronized system that is limited in capacity. However, machines using WHIP do not need to coordinate with gateways on channel selection as gateways are capable of hearing all channels within the available spectrum at any time. We choose narrow-band to accomplish the following goals:
 
 \begin{description}
 
@@ -300,7 +300,7 @@ Our goal is to verify whether miners in a physical region are acting honestly an
 
 \subsubsection{Selecting the Initial Target}
 
-We aim to deterministically locate a geographic reference target, $T$, for the challenger, $C$. Both $C$ and $T$ are miners in the network. $T$ does not need to be geographically proximate to $C$. To do so, $C$ initially seeds verifiable entropy, $\eta$, into the selection process by signing the current block hash with their private key. Since the probabilities associated to each miner form a discrete probability distribution \eqref{eq:target-selection-probability}, therefore to locate $T$, $C$ uses the probability associated to each eligible miner and applies the inverse cumulative distribution function using a uniform random number generated via $\eta$. This allows us to ensure that we always target potentially dishonest miners as they have a low score thus increasing their probability of being targeted by $C$. Given that a miners score is diminishing linearly over time \secref{scores}, it is necessary to create this inverse relationship to give low-scoring miners an opportunity to participate in the process and increase their score. This diminishing score also incentivizes all the participants to send receipts to the challenger and broadcast the remainder of $O$.
+We aim to deterministically locate a geographic reference target, $T$, for the challenger, $C$. Both $C$ and $T$ are miners in the network. $T$ does not need to be geographically proximate to $C$. To do so, $C$ initially seeds verifiable entropy, $\eta$, into the selection process by signing the current block hash with their private key. Since the probabilities associated to each miner form a discrete probability distribution \eqref{eq:target-selection-probability}, $C$ uses the probability associated to each eligible miner to locate $T$ and applies the inverse cumulative distribution function using a uniform random number generated via $\eta$. This allows us to ensure that we always target potentially dishonest miners as they have a lower score, thus increasing their probability of being targeted by $C$. Given that a miners score is diminishing linearly over time \secref{scores}, it is necessary to create this inverse relationship to give low-scoring miners an opportunity to participate in the process and increase their score. This diminishing score also incentivizes all the participants to send receipts to the challenger and broadcast the remainder of $O$.
 
 \subsubsection{Constructing the multi-layer challenge}
 
@@ -355,9 +355,9 @@ Once $T_L$ has delivered receipt to $C$, or $\lambda$ has elapsed, the \emph{Pro
 
 \subsubsection{Scoring}\label{scores}
 
-The score allocated to a miner, and therefore the resulting score of the \emph{Proof-of-Coverage}, is an integral part of the consensus protocol, further outlined in \secref{consensus}. When miners join the Helium network, they are assigned a score, $\phi_m$, with a value of \textbf{0.500}. We consider any miner with a score greater than 0.500 to be an honest miner, $\eta$. This score depreciates according to the number of verifications the miner has as well as the height since their last successful verfication. As $\phi_m$ decreases the probability of the miner $M$ being the target for $C$ increases such that the network continually attempts to prove that the lowest scoring miners are acting honestly, and giving miners a reasonable chance to improve their score.
+The score allocated to a miner, and therefore the resulting score of the \emph{Proof-of-Coverage}, is an integral part of the consensus protocol, further outlined in \secref{consensus}. When miners join the Helium network, they are assigned a score, $\phi_m$. We consider any miner with a score greater than $\phi_m$ to be an \emph{honest miner}. This score depreciates according to the number of verifications the miner has as well as the height since their last successful verfication. As $\phi_m$ decreases the probability of the miner $M$ being the target for $C$ increases such that the network continually attempts to prove that the lowest scoring miners are acting honestly, and giving miners a reasonable chance to improve their score.
 
-In order to achieve such behavior we define the following invariants:
+In order to achieve this behavior we define the following invariants:
 
 \begin{tabular}{l l}
         $M$, & miner                                         \\
@@ -366,7 +366,7 @@ In order to achieve such behavior we define the following invariants:
         $h$,          & height since the last successful verification for $M$\\
 \end{tabular}
 
-If we assume that the ideal verification interval for any miner is close to 240 blocks (4 hours if we assume a 60 second block time), we scale the defined invariants to fit the scoring functions:
+If we assume that the ideal verification interval for any miner is close to 240 blocks (4 hours if we assume a 60 second block time), we scale these invariants to fit the scoring functions:
 
 \begin{tabular}{l l}
         $v'$, &$v/10.0$\\
@@ -428,7 +428,7 @@ Adhering to the above set of rules, we define the following scoring function, wh
         \phi_m = \frac{\arctan(2.\delta{m}) + 1.58}{3.16}
 \end{equation*}
 
-This scoring function yields \figref{fig:score-stale}, which shows the variation of the score with the staleness-factor.
+This scoring function yields \figref{fig:score-stale}, which shows the variation of the score with the staleness-factor:
 
 \begin{figure}[ht]
     \pgfplotsset{width=7cm, compat=newest}
@@ -840,9 +840,9 @@ During $\Delta_c$, the currently elected consensus group is responsible for crea
 
 Once the consensus group $C$ has been elected for a given $\Delta_c$ epoch, a distributed key generation phase occurs to bootstrap a threshold encryption key \verb|TPKE|. \verb|TPKE| is a cryptographic primitive that allows any party to encrypt a transaction to a master public key \verb|PK|, such that $C$ must work together to decrypt it. Once $f + 1$\footnote{$f$ is a protocol parameter equal to the number of tolerable byzantine faults} correct members of $C$ compute and reveal decryption shares, $\sigma_i$, the transaction can be recovered. Once \verb|PK| is generated via the \verb|TPKE.Setup| function, a block containing \verb|PK| is immediately submitted to the blockchain. Each member $N_m$ in $C$ receives a \emph{secret key share}, \verb|SK|\textsubscript{i}, of \verb|PK|.
 
-Miners on the network submit new transactions $t$ to $C$. Each member of $C$ takes a random subset of the first $B$ transactions in its queue and applies the \verb|TPKE.Enc(PK|, $t$) $\rightarrow e$ function and submits them to the other member of $C$. Once the members of $C$ receive at least $N-f$ $e$ they run the \verb|TPKE.DecShare(SK|\textsubscript{i}, $e$) $\rightarrow \sigma_i$ function to produce their decryption share. Members broadcast their $\sigma_i$ to the other members of $C$, and once $f + 1$ members have seen $\sigma_i$ shares they can proceed to the \verb|TPKE.Dec| function using \verb|PK|, $e$ and the $\sigma_i$ shares and attempt to decrypt the transaction. Each member of $C$ appends decrypted transactions to their own instantiation of the next block kept in a local buffer. Double-spend and other malformed transactions are removed from these blocks based on the consensus protocol.
+Miners on the network submit new transactions $t$ to $C$. Each member of $C$ takes a random subset of the first $B$ transactions in its queue and applies the \verb|TPKE.Enc(PK|, $t$) $\rightarrow e$ function and submits them to the other member of $C$. Once the members of $C$ receive at least $N-f$ $e$ they run the \verb|TPKE.DecShare(SK|\textsubscript{i}, $e$) $\rightarrow \sigma_i$ function to produce their decryption share. Members broadcast their $\sigma_i$ to the other members of $C$, and once $f + 1$ members have seen $\sigma_i$ shares they can proceed to the \verb|TPKE.Dec| function using \verb|PK|, $e$ and the $\sigma_i$ shares and attempt to decrypt the transaction. Each member of $C$ appends decrypted transactions to their own instantiation of the next block kept in a local buffer. Double-spend and other malformed transactions are removed from these blocks at this stage.
 
-As members of the group cannot decrypt $e$ on their own, it is not possible for a transaction to be censored by a given member prior to its inclusion in the candidate block without $f + 1$ members of $C$ colluding as transactions are received. Any honest member of $C$ that has $t$ in the first $B$ of its transaction queue will eventually be able to include $t$ in a block as the other members of $C$ can't decrypt the transaction until it's been agreed to, which is too late to censor it. As the members of $C$ for a $\Delta_c$ epoch are selected based on their submitted \emph{Proofs-of-Coverage}, making the members unpredictable, this type of collusion would be extremely challenging to execute.
+As members of the group cannot decrypt $e$ on their own, it is not possible for a transaction to be censored by a given member prior to its inclusion in the candidate block without $f + 1$ members of $C$ colluding as transactions are received. Any honest member of $C$ that has $t$ in the first $B$ of its transaction queue will eventually be able to include $t$ in a block as the other members of $C$ can't decrypt the transaction until it has been agreed to, at which point it is too late to censor it. As the members of $C$ for a $\Delta_c$ epoch are selected based on their submitted \emph{Proofs-of-Coverage}, making the members unpredictable, this type of collusion would be extremely challenging to execute.
 
 Once $f+1$ nodes have agreed on the transactions for the block, a \verb|TPKE| threshold signature is obtained over the block. This certifies that enough nodes to exceed the Byzantine fault threshold have agreed on a block. Members of $C$ which are censoring or disagreeing on the contents of the block will produce an incompatible signature share that cannot be used to count towards the signature threshold. This block is then gossiped out over the peer-to-peer network to all miners and added to the blockchain.
 
@@ -900,6 +900,10 @@ We would also like to acknowledge many of the prior works and inventions that ha
 \bibitem{nist}
     Mehmet Adalier.
     \emph{Efficient and Secure Elliptic Curve Cryptography Implementation of Curve P-256}
+
+\bibitem{honeybadger}
+    Andrew Miller and Yu Xia and Kyle Croman and Elaine Shi and Dawn Song.
+    \emph{The Honey Badger of BFT Protocols}, 2016
 
 \bibitem{ethereum}
     Vitalik Buterin.
@@ -1008,10 +1012,6 @@ We would also like to acknowledge many of the prior works and inventions that ha
 \bibitem{state-channels}
     Jeff Coleman.
     \emph{State Channels}, 2015
-
-\bibitem{honeybadger}
-    Andrew Miller and Yu Xia and Kyle Croman and Elaine Shi and Dawn Song.
-    \emph{The Honey Badger of BFT Protocols}, 2016
 
 \end{thebibliography}
 
