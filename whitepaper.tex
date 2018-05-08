@@ -609,14 +609,15 @@ Transactions in the Helium blockchain provide functionality that enables address
 
 \subsection{Helium's Need for Microtransactions}
 
-\paragraph{Machines Pay Per Packet}
-The goal of Helium is to provide Internet data transport fees (the fees paid by machines to miners) that are an order of magnitude less than anything currently available for this type of service. This transport fee would need to be metered per-packet in order to allow for maximum flexibility --- this way, a machine could transact with any miner, even just to send or receive a single packet without having previously established a relationship with that miner.
+\begin{description}
 
-\paragraph{All Transactions Occur On-Chain}
-Helium is built on the philosophy that all transactions should occur \emph{on-chain}; that is, blocks should be sized and mined with a frequency such that every transaction which occurs on the network should be stored in the blockchain.  To accomplish this goal the cost of mining must be low, blocks must be large enough to encapsulate a large number of transactions, and frequent enough that transactions are processed quickly.
+\item [Machines Pay Per Packet] The goal of Helium is to provide Internet data transport fees (the fees paid by machines to miners) that are an order of magnitude less than anything currently available for this type of service. This transport fee would need to be metered per-packet in order to allow for maximum flexibility --- this way, a machine could transact with any miner, even just to send or receive a single packet without having previously established a relationship with that miner.
 
-\paragraph{Allow Machines to Persist Data to the Blockchain}
-Because the Helium blockchain services a specific use, the \verb|DMN|, blocks must additionally be able store fingerprints of data sent from machines along with the transaction which pays a miner for their transport service.  We believe that this holistic \emph{tamper-proof} data trail will enable entirely new use cases where the authenticity and veracity of sensor data is critical.
+\item [All Transactions Occur On-Chain] Helium is built on the philosophy that all transactions should occur \emph{on-chain}; that is, blocks should be sized and mined with a frequency such that every transaction which occurs on the network should be stored in the blockchain.  To accomplish this goal the cost of mining must be low, blocks must be large enough to encapsulate a large number of transactions, and frequent enough that transactions are processed quickly.
+
+\item [Allow Machines to Persist Data to the Blockchain] Because the Helium blockchain services a specific use, the \verb|DMN|, blocks must additionally be able store fingerprints of data sent from machines along with the transaction which pays a miner for their transport service.  We believe that this holistic \emph{tamper-proof} data trail will enable entirely new use cases where the authenticity and veracity of sensor data is critical.
+
+\end{description}
 
 \subsection{Limitations of Existing Solutions}
 
@@ -762,14 +763,20 @@ More recently there has been increased momentum around making blockchain consens
 
 For Helium, we desire a consensus protocol with the following attributes:
 
-\begin{itemize}
-  \item \textbf{Permissionless}: nodes should be able to freely participate in the network without permission or approval from any other entity, as long as those nodes operate in accordance with the consensus rules.
-  \item \textbf{Extremely decentralized in nature}: network consensus should be designed such that there is no incentive available for taking advantage of macro-economic factors, such as cheaper access to electricity in certain geographies, and that simply buying more hardware in the same location is either ineffective or cost prohibitive. Additionally, it should be impossible for mining pools to form and for groups to collaborate in mining blocks.
-  \item \textbf{Byzantine Fault Tolerant}: the protocol should be tolerant of Byzantine failures \cite{byzantine-failures} such that consensus can still be reached as long as a threshold of actors are acting honestly.
-  \item \textbf{Based on useful work}: achieving network consensus should be \emph{useful} and \emph{reusable} to the network. Work performed in Nakamoto Consensus-based systems is only useful for the particular block being mined and is not otherwise useful or resuable on the network. An ideal consensus system would contain work which is both useful and reusable to the network beyond simply securing the blockchain.
-  \item \textbf{High confirmed transaction rate}: our ideal consensus protocol would be able to process a very high number of transactions per second, and once a transaction is seen in a block it would be considered confirmed. Many existing blockchains require a lengthy \emph{settlement time} while the network achieves consensus which is not ideal in a system like Helium, which may experience a very high number of transactions and where waiting for a transaction to settle is not tenable.
-  \item \textbf{Transactions are censor-resistant}: ideally miners would not be able to censor or otherwise pick and choose transactions prior to mining them. This would not only nullify any attempts to nefariously censor transactions, but would allow for otherwise unattractive transactions (such as fixed-fee transactions) to be included in the blockchain.
-\end{itemize}
+\begin{description}
+\item [Permissionless] Nodes should be able to freely participate in the network without permission or approval from any other entity, as long as those nodes operate in accordance with the consensus rules.
+
+\item [Extremely decentralized in nature] Network consensus should be designed such that there is no incentive available for taking advantage of macro-economic factors, such as cheaper access to electricity in certain geographies, and that simply buying more hardware in the same location is either ineffective or cost prohibitive. Additionally, it should be impossible for mining pools to form and for groups to collaborate in mining blocks.
+
+\item [Byzantine Fault Tolerant] The protocol should be tolerant of Byzantine failures \cite{byzantine-failures} such that consensus can still be reached as long as a threshold of actors are acting honestly.
+
+\item [Based on useful work] Achieving network consensus should be \emph{useful} and \emph{reusable} to the network. Work performed in Nakamoto Consensus-based systems is only useful for the particular block being mined and is not otherwise useful or resuable on the network. An ideal consensus system would contain work which is both useful and reusable to the network beyond simply securing the blockchain.
+
+\item [High confirmed transaction rate] Our ideal consensus protocol would be able to process a very high number of transactions per second, and once a transaction is seen in a block it would be considered confirmed. Many existing blockchains require a lengthy \emph{settlement time} while the network achieves consensus which is not ideal in a system like Helium, which may experience a very high number of transactions and where waiting for a transaction to settle is not tenable.
+
+\item [Transactions are censor-resistant] Ideally miners would not be able to censor or otherwise pick and choose transactions prior to mining them. This would not only nullify any attempts to nefariously censor transactions, but would allow for otherwise unattractive transactions (such as fixed-fee transactions) to be included in the blockchain.
+
+\end{description}
 
 The remainder of this section lays out our construction of a consensus protocol with these design goals in mind that we refer to as the \emph{Helium Consensus Protocol (HCP)}.
 
