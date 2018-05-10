@@ -22,5 +22,6 @@ deploy:
     bucket: helium-media
     region: us-west-2
     local_dir: build
+    acl: public_read
     on:
       repo: helium/whitepaper
