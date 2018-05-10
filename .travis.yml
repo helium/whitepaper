@@ -20,6 +20,7 @@ deploy:
     secret_access_key:
       secure: IojiIQPTm4R5GDewM73OvQF4xoiXd33ICOOPqYhBq+O7rXwjCHeAkFP0jQxZIcEOZz2ZEVuFRYiG4NhoX9Eb27z0vH5c7eIKAe6mzWD/iSKSd42yFWOtcsOzhsyKvKwBD8d2J8Ryomb6Gu7uz50XazkbjjcxC2nQjAl4KNiFCPTo9IgCO8QXr0ID3BeUHYY7gHzKtl7e38GdQ2pDb+jhD2xScuvqFTULw5b9t17wOGrjFluFv2PuWtBmSY7LWhkBLq6EXj/KCc3XyjMv142wjzb7b7DWVp/L5e42wgGx85+agmdqw7AwVoKzRKXGRyssnS5OCfK+VsoBqtHJPZE2lIN6ijj6gO0C3gr8yqonjDqnNkkMNOa4HFKK6XpNHo+Z+t7s4XMFe31TiSiDurfJ3jBUs4mihWce57ZY9yMDjtE6JkE9Mb9JpZbMSvq4ByaK9KejxCnGrmxE9WzNly9Jv6jxrZJbz+xici3kN8gLYvb03dwSDZ162uyCkPpl6bqD9nSNZmUk1gJo42xq0wzN6gOBIrA4Hpj1T+j1bEpg5WuM+2ySnsDNqqmG0RfrTu2D5JbZCrsuvgKdKnYaTJLXxZwOIkXxbfi+m/u5/PUb0Q9rX1ECf2FTQcyVxP/aAmDXqPHGvq6yLn0LR5HAWzdLit+KpgzYeTMow2xAktUepOk=
     bucket: helium-media
-    file: build/whitepaper.pdf
+    region: us-west-2
+    local_dir: build
     on:
       repo: helium/whitepaper
