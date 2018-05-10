@@ -6,11 +6,20 @@ script:
   ./build.sh
 
 deploy:
-  provider: releases
-  api_key:
-    secure: cNVo0bC6FAsGM/wlcRJ1OGGfQDdDSpz4sx3uj9wgRBFWvAaQc+zRKpYCXH4CTWBuwqPg+Eyx6GXHyAKjyHdAoUhZKRrRDQp3hqWxZpo7mrpJju6E36b8qw+h1vv5jpXC2FWR/joVGdQjiWGIavJL/wTa7d/AUtuhtRNQC8sPqL/Bun38sbaL/vcly5lGOPtbBJ24TuwCHSEI87L7/wUwzHAGFaVkqtBnokyz3YkRV95H2cGJqCAflAU0hReFJ2BNsBIsO6cA49mI8A3uItX+EjjpUGMsOsCV8zt9lCTozfTwFWbQkvrntTyNYM6QWAcd0yRalrqhH2t4l3Vzap5qllxQreCC0PVcCmNYnK4GhlpXSXxhWgHw5WmKu4UVQIq+WB1RMP3Ep5Vx5yvxDYZIrsyiSVlge7CC4Vnnn2O+lhqJG8V1fv0DbPFe+Afah2VcI50j5ZBf2h+SQVQWjfn34gl6DRvAcgkQDt4nk4vORl+1sOWBdGnvaXxKNUmgzxiHd480bi1wWshH6vOyBuUxvtl3TBzlRJsPiICpRCmA5Ii2UXI9pxYaoysxyKqNDU9XM3wInDiAiKEJzlvtL3JEh2vOi7TGGrc+WJkrTe1hg42BA9usjtTn3ze5SbGv9h6oJFM1R2J03d61jCslR0KqibMzqrid38rm6r91gva/muE=
-  file: build/whitepaper.pdf
-  skip_cleanup: true
-  on:
-    tags: true
-    repo: helium/whitepaper
+  - provider: releases
+    skip_cleanup: true
+    api_key:
+      secure: cNVo0bC6FAsGM/wlcRJ1OGGfQDdDSpz4sx3uj9wgRBFWvAaQc+zRKpYCXH4CTWBuwqPg+Eyx6GXHyAKjyHdAoUhZKRrRDQp3hqWxZpo7mrpJju6E36b8qw+h1vv5jpXC2FWR/joVGdQjiWGIavJL/wTa7d/AUtuhtRNQC8sPqL/Bun38sbaL/vcly5lGOPtbBJ24TuwCHSEI87L7/wUwzHAGFaVkqtBnokyz3YkRV95H2cGJqCAflAU0hReFJ2BNsBIsO6cA49mI8A3uItX+EjjpUGMsOsCV8zt9lCTozfTwFWbQkvrntTyNYM6QWAcd0yRalrqhH2t4l3Vzap5qllxQreCC0PVcCmNYnK4GhlpXSXxhWgHw5WmKu4UVQIq+WB1RMP3Ep5Vx5yvxDYZIrsyiSVlge7CC4Vnnn2O+lhqJG8V1fv0DbPFe+Afah2VcI50j5ZBf2h+SQVQWjfn34gl6DRvAcgkQDt4nk4vORl+1sOWBdGnvaXxKNUmgzxiHd480bi1wWshH6vOyBuUxvtl3TBzlRJsPiICpRCmA5Ii2UXI9pxYaoysxyKqNDU9XM3wInDiAiKEJzlvtL3JEh2vOi7TGGrc+WJkrTe1hg42BA9usjtTn3ze5SbGv9h6oJFM1R2J03d61jCslR0KqibMzqrid38rm6r91gva/muE=
+    file: build/whitepaper.pdf
+    on:
+      tags: true
+      repo: helium/whitepaper
+  - provider: s3
+    skip_cleanup: true
+    access_key_id: AKIAJIJNJCIFGJP4VROQ
+    secret_access_key:
+      secure: IojiIQPTm4R5GDewM73OvQF4xoiXd33ICOOPqYhBq+O7rXwjCHeAkFP0jQxZIcEOZz2ZEVuFRYiG4NhoX9Eb27z0vH5c7eIKAe6mzWD/iSKSd42yFWOtcsOzhsyKvKwBD8d2J8Ryomb6Gu7uz50XazkbjjcxC2nQjAl4KNiFCPTo9IgCO8QXr0ID3BeUHYY7gHzKtl7e38GdQ2pDb+jhD2xScuvqFTULw5b9t17wOGrjFluFv2PuWtBmSY7LWhkBLq6EXj/KCc3XyjMv142wjzb7b7DWVp/L5e42wgGx85+agmdqw7AwVoKzRKXGRyssnS5OCfK+VsoBqtHJPZE2lIN6ijj6gO0C3gr8yqonjDqnNkkMNOa4HFKK6XpNHo+Z+t7s4XMFe31TiSiDurfJ3jBUs4mihWce57ZY9yMDjtE6JkE9Mb9JpZbMSvq4ByaK9KejxCnGrmxE9WzNly9Jv6jxrZJbz+xici3kN8gLYvb03dwSDZ162uyCkPpl6bqD9nSNZmUk1gJo42xq0wzN6gOBIrA4Hpj1T+j1bEpg5WuM+2ySnsDNqqmG0RfrTu2D5JbZCrsuvgKdKnYaTJLXxZwOIkXxbfi+m/u5/PUb0Q9rX1ECf2FTQcyVxP/aAmDXqPHGvq6yLn0LR5HAWzdLit+KpgzYeTMow2xAktUepOk=
+    bucket: helium-media
+    file: build/whitepaper.pdf
+    on:
+      repo: helium/whitepaper
