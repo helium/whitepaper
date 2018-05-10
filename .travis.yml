@@ -24,4 +24,5 @@ deploy:
     local_dir: build
     acl: public_read
     on:
+      tags: true
       repo: helium/whitepaper
