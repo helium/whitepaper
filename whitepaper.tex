@@ -50,7 +50,7 @@
 \setlength{\pdfpagewidth}{\paperwidth}
 
 \title{Helium}
-\subtitle{A Decentralized Wireless Network}
+\subtitle{A Peer-to-Peer Wireless Network}
 \authorinfo{Amir Haleem\and Andrew Allen \and Andrew Thompson \and Marc Nijdam \and Rahul Garg}{Helium Systems, Inc.}{\gitMark}
 
 \maketitle
@@ -58,16 +58,16 @@
 \begin{abstract}
 The Internet of Things is an \textdollar800 billion industry, with over 8.4 billion connected devices online, and spending predicted to reach nearly \textdollar1.4 trillion by 2021~\cite{idc}. Most of these devices need to connect to the Internet to function. However, current solutions such as cellular, WiFi, and Bluetooth are suboptimal: they are too expensive, too power hungry, or too limited in range.
 
-The Helium network is a \emph{decentralized wireless network} that enables devices anywhere in the world to wirelessly connect to the Internet and geolocate themselves without the need for power-hungry satellite location hardware or expensive cellular plans. Powering the Helium network is a blockchain with a native protocol token incentivizing a two-sided marketplace between coverage providers and coverage consumers. With the introduction of a blockchain, we inject decentralization into an industry currently controlled by monopolies. The result is that wireless network coverage becomes a commodity, fueled by competition, available anywhere in the world, at a fraction of current costs.
+The Helium network is a \emph{peer-to-peer wireless network} that enables devices anywhere in the world to wirelessly connect to the Internet and geolocate themselves without the need for power-hungry satellite location hardware or expensive cellular plans. Powering the Helium network is a blockchain with a native protocol token and a dedicated bandwidth token, incentivizing a two-sided marketplace between coverage providers and coverage consumers. With the introduction of a blockchain, we inject decentralization into an industry currently controlled by monopolies. The result is that wireless network coverage becomes a commodity, fueled by competition, available anywhere in the world, at a fraction of current costs.
 
-Our secure and open-source primitives enable developers to build low-power, Internet-connected devices quickly and cost-effectively. The Helium network has a wide variety of applications across industries and is the first decentralized wireless network of its kind.
+Our secure and open-source primitives enable developers to build low-power, Internet-connected devices quickly and cost-effectively. The Helium network has a wide variety of applications across industries and is the first peer-to-peer wireless network of its kind.
 \end{abstract}
 
 \section{Introduction}
 
 The world is becoming decentralized. A multitude of platforms, technologies, and services are moving from centralized proprietary systems to decentralized, open ones. Peer-to-peer networks such as Napster (created by one of our founders Shawn Fanning) \cite{napster} and BitTorrent paved the way for blockchain networks and crypto-currencies to be built. Now Bitcoin, Ethereum, and other blockchain networks have shown the value of decentralized transaction ledgers. Existing Internet services such as file storage, identity verification, and the domain name system are being replaced by modern blockchain-based versions. While software-level decentralization has moved quickly, physical networks are taking longer to affect. These networks are more complicated to decentralize as they often require specialized hardware to function.
 
-The Helium network is a wide-area wire\-less net\-working system, a block\-chain, and a protocol token. The blockchain runs on a new consensus protocol, called the Helium Consensus Protocol, and a new kind of proof, called \emph{Proof-of-Coverage}. The Miners who are providing wireless network coverage in a cryptographically verified physical location and time submit proofs to the Helium network, and the Miners submitting the best proofs are elected to an asynchronous byzantine fault tolerant consensus group at a fixed epoch. The members of the consensus group receive encrypted transactions submitted by other Miners and forms them into blocks at an extremely high transaction rate. In addition to the blockchain protocol, the Helium Wireless protocol, \emph{WHIP}, provides a bi-directional data transfer system between wireless Devices and the Internet via a network of independent providers that does not rely on a single coordinator, where: (1) Devices pay to send \& receive data to the Internet and geolocate themselves, (2) Miners earn tokens for providing network coverage, and (3) Miners earn fees from transactions, and for validating the integrity of the Helium network.
+The Helium network is a wide-area wire\-less net\-working system, a block\-chain, and a burn-and-mint equillibrium economic token model. The blockchain runs on a new consensus protocol, called the Helium Consensus Protocol, and a new kind of proof, called \emph{Proof-of-Coverage}. The Miners who are providing wireless network coverage in a cryptographically verified physical location and time submit proofs to the Helium network, and the Miners submitting the best proofs are elected to an asynchronous byzantine fault tolerant consensus group at a fixed epoch. The members of the consensus group receive encrypted transactions submitted by other Miners and forms them into blocks at an extremely high transaction rate. In addition to the blockchain protocol, the Helium Wireless protocol, \emph{LongFi}, provides a bi-directional data transfer system between wireless Devices and the Internet via a network of independent providers that does not rely on a single coordinator, where: (1) Devices pay to send \& receive data to the Internet and geolocate themselves, (2) Miners earn tokens for providing network coverage, and (3) Miners earn fees from transactions, and for validating the integrity of the Helium network.
 
 \textbf{Note:} This whitepaper represents a continuous work in progress. We will endeavor to keep this document current with the latest development progress. As a result of the on-going and iterative nature of our development process, the resulting code and implementation is likely to differ from what is represented in this paper.
 
@@ -78,32 +78,32 @@ We invite the interested reader to peruse our GitHub repo at \url{https://github
 The Helium network is built around the following key components:
 
 \begin{description}
-  \item [\emph{Proof-of-Coverage}] We present a computationally inexpensive \emph{Proof-of-Coverage} that allows Miners to prove they are providing wireless network coverage. We anchor these proofs using a \emph{Proof-of-Serialization} that allows miners to prove they are accurately representing time relative to others on the network in a cryptographically secure way.
+  \item [\emph{Proof-of-Coverage}] We present a computationally inexpensive \emph{Proof-of-Coverage} that allows Miners to prove they are providing wireless network coverage in a cryptographically secure way.
 
-  \item [Helium Network] We demonstrate an entirely new purpose-built block\-chain network built to service WHIP and provide a system for authenticating and identifying devices, providing cryptographic guarantees of data transmission and authenticity, offer transaction primitives designed around WHIP, and more.
+  \item [Helium Network] We demonstrate an entirely new purpose-built block\-chain network built to service LongFi and provide a system for authenticating and identifying devices, providing cryptographic guarantees of data transmission and authenticity, offer transaction primitives designed around LongFi, and more.
 
   \item [Helium Consensus Protocol] We present a novel consensus protocol construction that creates a permissionless, high throughput, censor-resistant system by combining an asynchronous byzantine fault tolerant protocol with identities presented via \emph{Proof-of-Coverage}.
 
-  \item [WHIP] We introduce a new open-source and standards-compliant wireless network protocol, called \emph{WHIP}, designed for low power Devices over vast areas. This protocol is designed to run on existing commodity radio chips available from dozens of manufacturers with no proprietary technologies or modulation schemes required.
+  \item [LongFi] We introduce a new open-source and standards-compliant wireless network protocol, called \emph{LongFi}, designed for low power Devices over vast areas. This protocol is designed to run on existing commodity radio chips available from a variety of manufacturers.
 
-  \item [\emph{Proof-of-Location}] We outline a system for interpreting the physical \emph{geolocation} of a Device using WHIP without the need for expensive and power-hungry satellite location hardware. Devices can make immutable, secure, and verifiable claims about their location at a given moment in time which is recorded in the blockchain.
+  \item [\emph{Proof-of-Location}] We outline a system for interpreting the physical \emph{geolocation} of a Device using LongFi without the need for expensive and power-hungry satellite location hardware. Devices can make immutable, secure, and verifiable claims about their location at a given moment in time which is recorded in the blockchain.
 
-  \item [DWN] We present a decentralized wireless network (DWN) that provides wireless access to the Internet for Devices by way of multiple independent Miners and outlines the Helium network and WHIP specification by which participants in the Helium network should conform. Routers pay this network of Miners for sending data to and from the Internet, and Miners are rewarded with newly-minted tokens for providing network coverage and delivering Device data to the Internet.
+  \item [Peer-to-Peer Wireless Network] We present a peer-to-peer wireless network that provides wireless access to the Internet for Devices by way of multiple independent Miners and outlines the Helium network and LongFi specification by which participants in the Helium network should conform. Routers pay this network of Miners for sending data to and from the Internet, and Miners are rewarded with newly-minted tokens for providing network coverage and delivering Device data to the Internet.
 \end{description}
 
 \subsection{System Overview}
 
 \begin{itemize}
-    \item The Helium network is a \emph{decentralized wireless network} built around WHIP on a purpose-built blockchain with a native token.
-    \item Devices take the form of hardware containing a radio chip and firmware compatible with WHIP, and spend tokens by paying Miners to send data to and from the Internet.
-    \item Miners earn tokens by providing wireless network coverage via purpose-built hardware which provides a bridge between WHIP and Routers, which are Internet applications.
-    \item Devices store their private keys in commodity key-storage hardware and their public keys in the blockchain.
-    \item Miners join the network by asserting their satellite-derived location, a special type of transaction in the blockchain, and staking a token deposit.
-    \item Miners specify the price they are willing to accept for data transport and \emph{Proof-of-Location} services, and Routers specify the price they are willing to pay for their Device's data. Miners are paid once they prove they have delivered data to the Device's specified Router.
-    \item Miners participate in the creation of new blocks in the blockchain by being elected to an asynchronous byzantine fault tolerant consensus group.
-    \item Miners are rewarded with newly minted protocol tokens for blocks that are created while they are part of the consensus group.
+    \item The Helium network is a \emph{peer-to-peer wireless network} built around LongFi on a purpose-built blockchain with three token types.
+    \item Devices take the form of hardware containing a radio chip and firmware compatible with LongFi, and spend \emph{Data Credits} to send data to and from the Internet.
+    \item Miners earn Helium tokens by providing wireless network coverage via comoodity hardware which provides a bridge between LongFi and Servers, which are Internet applications.
+    \item Devices store their private keys in secure hardware elements and their public keys in the blockchain.
+    \item Miners join the network by asserting their satellite-derived location and burning a number of Data Credits.
+    \item Wireless data transmission costs are fixed and priced in Data Credits, which have a value targeting a fixed USD value. Each wireless data transmission (approximately 37 bytes of data) costs 1 Data Credit.
+    \item Miners participate in the creation of new blocks in the blockchain by being periodically elected to an asynchronous byzantine fault tolerant consensus group.
     \item A Miner's probability of being elected to the consensus group at a given epoch is based on the quality of the wireless network coverage they provide.
     \item The blockchain employs \emph{Proof-of-Coverage} to guarantee that Miners are honestly representing the wireless network coverage they are creating.
+    \item Miners are rewarded with newly minted Helium tokens based on the quality of the \emph{Proofs-of-Coverage} they submit to the network.
 \end{itemize}
 
 \figref{fig:system} shows a visual representation of the Helium network.
@@ -116,45 +116,51 @@ The Helium network is built around the following key components:
 \end{figure*}
 
 
-\section{The Helium DWN}
+\section{The Helium Peer-to-Peer Wireless Network}
 
-We introduce the core conmponents of the DWN.
+We introduce the core conmponents of the Peer-to-Peer Wireless Network.
 
 \subsection{Participants}
 
-There are three types of participants in the Helium network: Device, Miner, or a Router.
+There are three types of participants in the Helium network: Devices, Miners, and Servers.
 
 \begin{description}
-    \item [Devices] send and receive encrypted data from the Internet using hardware compatible with WHIP \secref{whip}. Data sent from Devices is \emph{fingerprinted}, and that fingerprint stored in the blockchain.
-    \item [Miners] provide wireless network coverage to the Helium network via purpose-built hardware, called Hotspots \secref{hotspots}, which provide a long-range bridge between WHIP devices and the Internet. Users join the Helium network as Miners by purchasing or building a Hotspot that conforms to WHIP, and \emph{staking} a token deposit proportional to the density of other Miners operating in their area \secref{staking}. Miners participate in the \emph{Proof-of-Coverage} \secref{poc} process to prove that they are continuously providing wireless network coverage that Device can use. Miners join the Helium network with a score \secref{scores} that diminishes as blocks pass without valid proofs being submitted. At a given epoch, a new group of Miners are elected to a \emph{consensus group} which mine new blocks in the blockchain and receive the block reward and transaction fees for any transactions included in the block once mined. As a Miner's score drops their probability of being elected to the consensus group and mining blocks diminishes.
-    \item [Routers] are Internet applications that purchase encrypted Device data from Miners. In locations with a sufficient number of Miners, Routers can pay several Miners to obtain enough copies of a packet to geolocate a Device without needing satellite location hardware, which we call \emph{Proof-of-Location}.  Routers are the termination point for Device data encryption. Devices record to the blockchain to which Routers a given Miner should send their data, such that any Hotspot on the Helium network can send any Device data to the appropriate Router. Routers are responsible for confirming to Hotspots that Device data was delivered to the correct destination and that the Miner should be paid for their service.
+    \item [Devices] send and receive encrypted data from the Internet using hardware compatible with LongFi \secref{longfi}. There are hundreds of thousands of devices in the wild today capable of supporting LongFi. These devices can be updated via a firmware updated to communicate with the LongFi peer-to-peer wireless network.
+    \item [Miners] provide wireless network coverage to the Helium network via purpose-built hardware, called Hotspots \secref{hotspots}, which provide a long-range bridge between LongFi devices and the Internet. Users join the Helium network as Miners by purchasing or building a Hotspot that conforms to the speciification, and \emph{burning} a number of Data Credits \secref{staking}. Miners participate in the \emph{Proof-of-Coverage} \secref{poc} process to prove that they are continuously providing wireless network coverage that Devices can use. Miners join the Helium network with a score \secref{scores} that diminishes as blocks pass without valid proofs being submitted. At a given epoch, a new group of Miners are elected to an asynchronous byzantine fault tolerant \emph{consensus group} which mines new blocks. As a Miner's score drops their probability of being elected to the consensus group diminishes.
+    \item [Servers] are Internet applications that purchase encrypted Device data from Miners. In locations with a sufficient number of Miners, Servers can pay several Miners to obtain enough copies of a packet to geolocate a Device without needing satellite location hardware, which we call \emph{Proof-of-Location}. Servers are the termination point for Device data encryption. Devices record to the blockchain to which Servers a given Miner should send their data, such that any Hotspot on the Helium network can send any Device data to the appropriate Server. Servers are responsible for confirming to Hotspots that Device data was delivered to the correct destination and that the Miner should be paid for their service.
 \end{description}
 
 \subsection{Blockchain} \label{blockchain}
 
-The Helium network is a distributed ledger designed to provide a cost-effective way to run application logic core to the operation of a \verb|DWN|, store immutable Device data fingerprints, and furnish a transaction system. The Helium network is an immutable append-only list of transactions which achieves consensus using the \emph{Helium Consensus Protocol} \secref{consensus}. Users internal and external to the \verb|DWN| have access to the blockchain, which is a new protocol built from scratch specifically for the \verb|DWN|.
+The Helium network is a distributed ledger designed to provide a cost-effective way to run application logic core to the operation of the wireless network, store immutable Device data fingerprints, and furnish a transaction system. The Helium network is an immutable append-only list of transactions which achieves consensus using the \emph{Helium Consensus Protocol} \secref{consensus}. Users internal and external to the network have access to the blockchain, which is a new implementation built from scratch specfically for this purpose.
 
-The blockchain consists of blocks which contain a header and a list of transactions. There are several kinds of transactions, outlined in \secref{transactions}.
+The blockchain consists of blocks which contain a header and a list of transactions. There are several kinds of transactions, outlined in \secref{transactions}. There is no general purpose scripting or smart contract language; all transaction types are implemented natively.
 
-At a given epoch a given block consists of:
+At a given epoch a block consists of:
 
 \begin{center}
     \begin{tabular}{|c|}
          \hline
-         Block Version \\
+         Height \\
          \hline
-         Block Height \\
+         Time \\
+         \hline
+         HoneyBadgerBFT Round \\
          \hline
          Previous Block Hash \\
          \hline
-         Transactions \emph{1..n} Merkle Hash \\
+         Transactions \emph{1..n} \\
          \hline
-         Threshold signature by the current consensus group \\
+         Consensus Group Signatures \emph{1..n} \\
+         \hline
+         Election Epoch Number \\
+         \hline
+         Epoch Start Time \\
          \hline
     \end{tabular}
 \end{center}
 
-As the \emph{Proof-of-Coverage} \secref{poc} is valuable to the network, Miners are required to submit their proofs at regular intervals. All Miners have a score, which decays over time, and is boosted by submitting \emph{Proofs-of-Coverage} to the blockchain. At a fixed epoch, a \emph{HoneyBadgerBFT} \cite{honeybadger} consensus group of the highest scoring Miners is elected. For that epoch, all transactions are encrypted and submitted to the consensus group for inclusion in the blockchain. The consensus group is responsible for decrypting transactions using \emph{threshold decryption}, agreeing on the validity and ordering of transactions, forming them into blocks, and appending them to the blockchain for which the members of the consensus group receive a reward.
+As the \emph{Proof-of-Coverage} \secref{poc} is valuable to the network, Miners are required to submit their proofs at regular intervals. All Miners have a score, which decays over time, and is boosted by submitting \emph{Proofs-of-Coverage} to the blockchain. At a fixed epoch, a \emph{HoneyBadgerBFT} \cite{honeybadger} consensus group of the highest scoring Miners is elected. For that epoch, all transactions are encrypted and submitted to the consensus group for inclusion in the blockchain. The consensus group is responsible for decrypting transactions using \emph{threshold decryption}, agreeing on the validity and ordering of transactions, forming them into blocks, and appending them to the blockchain.
 
 As the consensus group is validating transactions without having to provide an associated block-proof (beyond a threshold signature), there is practically no settlement time, and the transaction throughput is extremely high compared to a \emph{Nakamoto Consensus} blockchain such as Bitcoin or Ethereum. The Helium Consensus Protocol is outlined in detail in \secref{consensus}.
 
@@ -163,68 +169,56 @@ As the consensus group is validating transactions without having to provide an a
 The Helium network is also a \emph{physical} wireless network instantiation. The participants in the Helium network can be thought of as follows:
 
 \begin{description}
-    \item [WHIP] The Helium network uses a new open wireless protocol, called \emph{WHIP}. WHIP is a long-range, low-power, wireless network protocol suitable for use with commodity open-standards hardware. WHIP compatible hardware can communicate over many square miles in dense urban environments or hundreds of square miles in rural settings. WHIP compatible hardware can also last for several years using standard batteries. WHIP uses strong public key cryptography and authentication occurs using the Helium blockchain, and data is encrypted end-to-end between the device and corresponding Internet-hosted router.
+    \item [LongFi] The Helium network uses a new open wireless protocol, called \emph{LongFi}. LongFi is a long-range, low-power, wireless network protocol suitable for use with commodity hardware. LongFi compatible hardware can communicate over many square miles in dense urban environments or hundreds of square miles in rural settings. LongFi compatible hardware can also last for several years using standard batteries. LongFi uses strong public key cryptography and authentication occurs using the Helium blockchain, and data is encrypted end-to-end between the device and corresponding Internet-hosted server.
 
-    \item [Hotspots] are physical network devices that provide wide-area wireless coverage and participate in the Helium network. Hotspots transmit data back and forth between Routers on the Internet and Devices while generating \emph{Proofs-of-Coverage} for the Helium network \secref{poc}. Hotspots are manufactured using commodity open-standards components with no proprietary hardware. Hotspots can co-operate and geolocate Devices using the Helium network without any additional required hardware. Each Hotspot can support thousands of connected Devices, and provide coverage over many square miles. Miners operating Hotspots specify the price they are willing to accept for transport and \emph{Proof-of-Location} services for Devices.
+    \item [Hotspots] are physical network devices that provide wide-area wireless coverage and participate as Miners in the Helium network. Hotspots transmit data back and forth between Servers on the Internet and Devices while generating \emph{Proofs-of-Coverage} for the Helium network \secref{poc}. Hotspots are manufactured using commodity components. Hotspots can co-operate and geolocate Devices using the Helium network without the Device requiring any additional hardware. Each Hotspot can support thousands of connected Devices, and provide coverage over many square miles.
 
-    \item [Devices] exist in the form of hardware products that contain a WHIP-compatible radio transceiver and communicate with Hotspots on the Helium network. WHIP is designed to facilitate low power data transmission and reception, so typically Devices exist in the form of battery-powered sensors that can operate for several years using standard batteries (although mains-powered Devices also work quite well). Devices can exist in a variety of forms, depending on the product or use case, and a variety of transmission and reception strategies can be employed to optimize for transmission/reception frequency or battery life. Device manufacturers are encouraged to use hardware-based key storage which can securely generate, store, and authenticate public/private key pairs without leaking the private key.
+    \item [Devices] exist in the form of hardware products that contain a LongFi-compatible radio transceiver and communicate with Hotspots on the Helium network. LongFi is designed to facilitate low power data transmission and reception, so typically Devices exist in the form of battery-powered sensors that can operate for several years using standard batteries (although mains-powered Devices also work quite well). Devices can exist in a variety of forms, depending on the product or use case, and a variety of transmission and reception strategies can be employed to optimize for transmission/reception frequency or battery life. Device manufacturers are encouraged to use hardware-based key storage which can securely generate, store, and authenticate public/private key pairs without leaking the private key.
 \end{description}
 
 In this section, we expand on the components of the wireless network.
 
-\subsection{Wireless Protocol (\emph{WHIP})}\label{whip}
+\subsection{Wireless Protocol (\emph{LongFi})}\label{longfi}
 
 \subsubsection{Motivation}
 
-Several Low Power Wide Area Network (LPWAN) technologies are available today. These wireless technologies focus on creating long-range, low-power Internet communication for sensors and other smart Devices. Typically these technologies trade throughput for range, with data rates as low as 18~bits~per~second (bps) and range measured in miles. In comparison, a typical WiFi network has significantly higher data rates but ranges limited to only a few dozen feet. Several of these new technologies, such as LoRa~\cite{lora} and RPMA~\cite{rpma}, have gained good traction and there are many commercial products available compatible with these systems. However, we believe a decentralized wireless network should use non-proprietary protocols and modulation schemes and that participants in the Helium network should have the freedom to choose between competing hardware vendors. We do not consider an open alliance built on top of proprietary hardware to be an acceptable compromise. While there are many open-standard wireless networking stacks, such as IEEE~802.15.4~\cite{ieee802_15_4} used in the first generation of our wireless products, none meet our extremely long range and low power criteria. It is this lack of open solutions that drove the creation of a new protocol.
+Several Low Power Wide Area Network (LPWAN) technologies and protocols are available today. These solutions focus on creating long-range, low-power Internet communication for sensors and other smart devices. Typically they trade throughput for range, with data rates as low as 18~bits~per~second (bps) and range measured in miles. In comparison, a typical WiFi network has significantly higher data rates but ranges limited to only a few dozen feet. Several of these new technologies, such as LoRaWAN~\cite{lora} and RPMA~\cite{rpma}, have gained good traction and there are many commercial products available compatible with these systems. While there are many open-standard wireless networking stacks, such as IEEE~802.15.4~\cite{ieee802_15_4} used in the first generation of our wireless products, none meet our decentralized routing, security, long range and low power criteria. It is this lack of open solutions that drove the creation of a new protocol.
 
 \subsubsection{Outline}
 
-We introduce \emph{WHIP}. WHIP is a highly secure, long range, low power, bi-directional wireless network protocol that is compatible with a wide range of existing radio transceivers operating in the sub-GHz unlicensed frequency spectrum. Authentication with the wireless network uses modern public-key encryption and NIST~P-256 ECC key pairs, with the public keys for all participants stored in the blockchain.
+We introduce \emph{LongFi}. LongFi is a highly secure, long range, low power, bi-directional wireless network protocol that is compatible with a wide range of existing radio transceivers operating in the sub-GHz unlicensed frequency spectrum. Authentication with the wireless network uses modern public-key encryption and NIST~P-256 ECC key pairs, with the public keys for all participants stored in the blockchain.
 
-The modulation format is simple and widely supported, easy to implement and has excellent resistance to RF noise. There are dozens of vendors implementing radio transceivers compatible with WHIP, such as Texas Instruments, Microchip, and Silicon Labs.
+LongFi is built on the LoRa physical modulation format, which is widely supported and has excellent resistance to RF noise. There are dozens of vendors implementing radio transceivers compatible with LongFi, such as Microchip, Semtech, and HopeRF.
 
-WHIP is a \emph{narrowband} wireless protocol which creates several channels within the unlicensed spectrum and employs frequency hopping to switch between channels. Typically frequency hopping requires a complex time-synchronized system that is limited in capacity. However, devices using WHIP do not need to coordinate with Hotspots on channel selection as Hotspots are capable of hearing all channels within the available spectrum at any time. We choose narrow-band to accomplish the following goals:
+LongFi is a \emph{narrowband} wireless protocol which creates dozens of channels within the unlicensed spectrum and employs frequency hopping to switch between them. Typically frequency hopping requires a complex time-synchronized system that is limited in capacity. However, devices using LongFi do not need to coordinate with Hotspots on channel selection as Hotspots are capable of hearing multiple channels within the available spectrum at any time.
 
-\begin{description}
+LongFi requires no centralized server architecture, and as such no "roaming" specification is required. Organizations deploying Devices create a special type of blockchain transaction and create an \emph{Organizationally Unique Identifier (OUI)}, which issues a serialized unique identifier to the creator. Each OUI stored on the blockchain contains one or many destination protocol/address pairs. LongFi devices owned by an organization use this OUI as a prefix to their own address and includes it in the header transmitted along with every packet. Devices send encrypted data packets, but send the header unencrypted, and Hotspots inspect the blockchain to determine where those data packets should be delivered based on the OUI prefix and an inspection of the current state of the blockchain ledger. 
 
-\item [Spectral Efficiency] It is necessary to operate within unlicensed RF spectrum very efficiently. RF is a shared, limited resource, and therefore a focus on efficiency to increase capacity and improve robustness is necessary.
-
-\item [Co-Existence Performance] As the number of Devices and networks increase, the ability to operate in \emph{noisy} RF environments without interference is a critical consideration.
-
-\item [Range] Narrowband allows for extremely long-range communications, with data rates that scale both up and down depending on the density of Hotspots.
-
-\end{description}
-
-\subsubsection{Implementation}
-
-WHIP supports several data rates, channel bandwidths, and error-correction techniques. Hotspots and Devices dynamically negotiate the combination of these options using a \emph{signalling packet} delivered at the lowest bandwidth and symbol rate to ensure maximum range for the initial communication.
-
-The full WHIP specification will be made available by the Decentralized Device Network Alliance.
+The full LongFi specification will be made available in the near future.
 
 \subsection{Hotspots}\label{hotspots}
 
-Hotspots are physical network devices operated by Miners that create wireless RF coverage over wide areas. They transmit data back and forth between Routers on the Internet and Devices on the network, process blockchain transactions, and create \emph{Proofs-of-Coverage} for the Helium network \secref{poc}. Hotspots can connect to the Internet using any TCP/IP capable backhaul, such as Ethernet, WiFi or Cellular. Each Hotspot contains a radio frontend chip capable of listening to several MHz of radio spectrum at a time and can hear all wireless traffic transmitted within that spectrum. In this configuration modulation and demodulation is done in software, which is typically referred to as a \emph{Software Defined Radio (SDR)}. The benefit of this structure is that Hotspots can hear any Device traffic transmitted within the frequency range, and no synchronization between the Hotspot and Device needs to occur. This allows Devices to remain inexpensive and relatively simple and reduces wireless protocol overhead. If a Miner wishes to minimize their Hotspot hardware costs, synchronized frequency hopping schemes are also permitted within the specification as a cheaper alternative to a more expensive radio frontend.
+Hotspots are physical network devices operated by Miners that create LongFi wireless coverage over wide areas. They transmit data back and forth between Servers on the Internet and Devices on the network, process blockchain transactions, and create \emph{Proofs-of-Coverage} for the Helium network \secref{poc}. Hotspots can connect to the Internet using any TCP/IP capable backhaul, such as Ethernet, WiFi or Cellular. Each Hotspot contains radio frontend chips capable of listening to several MHz of radio spectrum at a time. Hotspots can hear any Device traffic transmitted within the frequency range, and no channel hopping synchronization between the Hotspot and Device needs to occur. This allows Devices to remain inexpensive and relatively simple and reduces wireless protocol overhead.
 
 Hotspots require a GPS or GNSS receiver to obtain accurate position and date/time information. This satellite-derived location is used in conjunction with other techniques to verify that a Hotspot is, in fact, providing wireless network coverage in the location it claims. Because satellite location messages are easy to fabricate and do not necessarily prove that wireless RF coverage is being created, multiple mechanisms are required to validate this work as described in more detail in \secref{poc}.
 
-Satellite location information is also correlated with packet arrival events to provide \emph{Proof-of-Location} for Devices if multiple Hotspots observe the same packet. This allows devices to locate themselves without requiring a GPS/GNSS transceiver physically, and therefore provide accurate location data at a fraction of the battery life and cost of competing methods. This method is described in detail in \secref{geolocation}.
+Satellite location information is also correlated with packet arrival events and can be used, in conjuction with other Hotspots who observe the same packet, to \emph{geolocate} devices that are not explicitly sending location information via GPS or some other means. This allows devices to locate themselves without requiring a GPS/GNSS transceiver, and therefore provide location data at a fraction of the battery life and cost of competing methods. More information on this method is described in \secref{geolocation}.
 
-We will make both a complete open-source reference design and a finished product available at launch of the Heilum network.
+We will make both a complete open-source reference design and a finished Hotspot product available at launch of the Heilum network.
 
 \subsection{Devices}\label{devices}
 
-A \emph{Device} is any wireless hardware capable of communicating with Hotspots via WHIP. WHIP is designed to facilitate low power data transmission and reception, so typically devices would exist in the form of battery-powered sensors that can function for several years using standard batteries.
+A \emph{Device} is any wireless hardware capable of communicating with Hotspots via LongFi. LongFi is designed to facilitate low power data transmission and reception, so typically devices would exist in the form of battery-powered sensors that can function for several years using standard batteries.
 
-WHIP is designed such that Devices can be manufactured using commodity hardware available from a wide variety of vendors with a very low-cost bill of materials (BOM). The technology in modern radio transceivers, such as the Texas Instruments CC1125 or STMicroelectronics S2-LP, enables exceptionally long-range network systems that can be built without the need for proprietary modulation schemes or physical layers. Some of these radios are available for around \$1 at reasonable volumes.
+LongFi is designed such that Devices can be manufactured using commodity hardware available from a wide variety of vendors with a very low-cost bill of materials (BOM). The technology in modern radio transceivers, such as the Semtech SX1262, enables exceptionally long-range network systems that can be built without the need for licensed spectrum operation or expensive association membership fees. Some of these radios are available for around \$1 at reasonable volumes.
 
-It is recommended that each Device use the Microchip ECC508A or equivalent hardware-based key storage device, which can securely generate, store, and authenticate public/private \emph{NIST P-256 ECC} \cite{nist} key pairs without leaking the private key. Also, a wide array of defense mechanisms prevent logical attacks on the encrypted data between the key storage device and its host MacDevicehine, along with physical protections on the security device itself. Users program their key storage device as part of the onboarding process defined in the WHIP wireless specification using a defined API\@.
+It is recommended that each Device use the Microchip ECC608A or equivalent hardware-based key storage device, which can securely generate, store, and authenticate public/private \emph{NIST P-256 ECC} \cite{nist} key pairs without leaking the private key. Also, a wide array of defense mechanisms prevent logical attacks on the encrypted data between the key storage device and its host Device, along with physical protections on the security device itself. Users program their key storage device as part of the onboarding process defined in the LongFi wireless specification using a defined API\@.
 
-\subsection{Routers}
+\subsection{Servers}
 
-Routers are Internet-deployed applications that receive packets from Devices via Hotspots and route them to appropriate destinations such as an HTTP or MQTT endpoint.
+Servers are Internet-deployed applications that receive packets from Devices via Hotspots and route them to appropriate destinations such as an HTTP or MQTT endpoint.
 
-Routers serve several functions on the Helium network, including:
+Servers serve several functions on the Helium network, including:
 
 \begin{itemize}
     \item Authenticating Devices with the Helium network;
@@ -235,17 +229,17 @@ Routers serve several functions on the Helium network, including:
     \item Storing and making available a full copy of the blockchain ledger by acting as a \emph{full node} \secref{full-nodes}
 \end{itemize}
 
-When a Hotspot receives a data packet from a Device on the Helium network, it queries the blockchain to determine which Router to use given the Device's Helium network address. Anyone is free to host their own Router and define their Devices' traffic to be delivered there by any Hotspot on the Helium network. This ability allows users of the Helium network to create VPN-like functionality whereby encrypted data is delivered only to a Router (or set of Routers) that they specify and can optionally host themselves.
+When a Hotspot receives a data packet from a Device on the Helium network, it queries the blockchain to determine which Server to use given the Device's Helium network address. Anyone is free to host their own Server and define their Devices' traffic to be delivered there by any Hotspot on the Helium network. This ability allows users of the Helium network to create VPN-like functionality whereby encrypted data is delivered only to a Server (or set of Servers) that they specify and can optionally host themselves.
 
-Routers can implement a system called a \emph{channel} which handles the authentication and routing of data to a specific third party Internet application, such as \emph{Google Cloud Platform IoT Core}. These channel implementations can take advantage of a Device's onboard hardware security to create a secure, hardware-authenticated connection to a third party which would otherwise be difficult to implement directly on an embedded microcontroller. We will make available an open source reference implementation of a Channel that can be used to build additional interfaces to Internet services.
+Routers can implement a system called a \emph{Channel} which handles the authentication and routing of data to a specific third party Internet application, such as \emph{Google Cloud Platform IoT Core}. These Channel implementations can take advantage of a Device's onboard hardware security to create a secure, hardware-authenticated connection to a third party which would otherwise be difficult to implement directly on an embedded microcontroller. We will make available an open source reference implementation of a Channel that can be used to build additional interfaces to Internet services.
 
-We will also host a high-availability cloud router for anyone to use and also provides and maintains an open-source router that is available either as source code or a binary package for a variety of operating systems and distributions.
+Helium Inc hosts a high-availability cloud Server for anyone to use and also provides and maintains an open-source Server that is available either as source code or a binary package for a variety of operating systems and distributions.
 
-The protocol specification required for implementing a router is defined in the WHIP Wireless Specification document that will be made available by the Decentralized Device Network Alliance.
+The protocol specification required for implementing a Server is defined in the LongFi Wireless Specification document that will be made available shortly.
 
-\section{\emph{Proof-of-Coverage} and \emph{Proof-of-Serialization}}\label{poc}
+\section{\emph{Proof-of-Coverage}}\label{poc}
 
-In the Helium network, Miners must prove that they are providing wireless network coverage that Devices are able to use to communicate with the Internet. Miners do this by complying with the \emph{Proof-of-Coverage} protocol which the Helium network and other Miners audit and verify. We use a \emph{Proof-of-Serialization} to ensure that Miners are correctly representing their time in relation to others on the network, and obtain cryptographic proof of dishonest behavior. Several components of the Helium network, such as \emph{Proof-of-Coverage}, use \emph{Proof-of-Serialization} as a cryptographic ``anchor'' that root those occurrences  with a cryptographic time proof. With a combination of \emph{Proof-of-Coverage} and \emph{Proof-of-Serialization} we can obtain cryptographic proof of the approximate location and time of events occurring within the Helium network.
+In the Helium network, Miners must prove that they are providing wireless network coverage that Devices are able to use to communicate with the Internet. Miners do this by complying with the \emph{Proof-of-Coverage} protocol which the Helium network and other Miners audit, verify and use to obtain cryptographic proof of dishonest behavior. With \emph{Proof-of-Coverage} we can obtain cryptographic proof of the approximate location and time of events occurring within the Helium network.
 
 \subsection{Motivation}
 
@@ -259,23 +253,21 @@ We later propose the Helium Consensus Protocol \secref{consensus} that uses \emp
 
 \subsection{Inspiration}
 
-\emph{Proof-of-Coverage} is an innovative proof that allows Miners to prove that they are providing wireless network coverage $W$ in a specific region to a challenger, $C$. Proof-of-Coverage is an interactive protocol where a set of targets $T_n$ assert that $W$ exists in a specific GPS location $L$ and then convinces $C$ that $T_n$ are in fact creating $W$ and that said coverage must have been created using the wireless RF network. Proof-of-Coverage is the first such protocol that attempts to prove the veracity of miners in a physical space, and then use it to achieve consensus on a blockchain network.
+\emph{Proof-of-Coverage} is a novel proof that allows Miners to prove that they are providing wireless network coverage in a specific region to a challenger. Proof-of-Coverage is an interactive protocol where a set of targets assert that wireless coverage exists in a specific GPS location, and then convinces the challenger via a cryptographic receipt system that the coverage does in fact exist. Proof-of-Coverage is the first such protocol that attempts to prove the veracity of miners in a physical space, and then use it to achieve consensus on a blockchain network.
 
 With Proof-of-Coverage we aim to solve for the following:
 
 \begin{itemize}
-    \item Prove that Miners are operating RF hardware and firmware compatible with WHIP;
+    \item Prove that Miners are operating RF hardware and firmware compatible with LongFi;
     \item Prove that Miners are located in the geography they claim by having them communicate via RF; and
     \item Correctly identify which version of reality is correct when there is a conflict
 \end{itemize}
 
-\emph{Proof-of-Coverage} is inspired by the \emph{Guided Tour Protocol (GTP)}~\cite{gtp} which devises a system for denial of service prevention by requiring a client $c$ to make a request to a variety of ``tour guide'' computers $G_n$ in order to gain access to a server $s$. The tour guides must be visited in a specific order and a hash of data exchanged which reveals the location of the next $G_n$ in order. Only after every $G_n$ has been visited can $c$ gain access to $s$.
+\emph{Proof-of-Coverage} is inspired by the \emph{Guided Tour Protocol (GTP)}~\cite{gtp} which devises a system for denial of service prevention by requiring a client to make a request to a variety of ``tour guide'' computers in order to gain access to a server. The tour guides must be visited in a specific order and a hash of data exchanged which reveals the location of the next tour guide computer in order. Only after every tour guide has been visited can the client gain access to the server.
 
-Once $c$ gets to the last stop of the tour, it submits evidence of the first and last stop to $s$ who is able to verify that the first and last stops of the tour are correct without needing to contact $G_n$, and that $c$ could only know the first and last stops if it had completed the tour correctly.
+Once the client gets to the last stop of the tour, it submits evidence of the first and last stop to the server who is able to verify that the first and last stops of the tour are correct without needing to contact the tour guides, and that the client could only know the first and last stops if it had completed the tour correctly.
 
 While an extremely clever and innovative system, GTP is not directly suitable as a proof in the Helium network as RF networking has limited range and therefore cannot communicate with peers anywhere on the Helium network. We aim to construct a proof loosely based on the ideas presented in GTP, but applicable to our protocol.
-
-We combine \emph{Proof-of-Coverage} with \emph{Proof-of-Serialization}---a proof that allows Miners on the Helium network to achieve cryptographic time consensus among decentralized clients. We aim to achieve rough time synchronization in a secure way that does not depend on any particular time server, and in such a way that, if a time server does misbehave, then clients end up with cryptographic proof of that behavior.
 
 \subsection{Constructing \emph{Proof-of-Coverage}}
 
@@ -287,7 +279,7 @@ With the Proof-of-Coverage protocol, we aim to construct a proof that takes adva
     \item RF travels at the speed of light with (effectively) no latency
 \end{enumerate}
 
-Our goal is to verify whether Miners in a physical region are acting honestly and creating wireless network coverage compatible with WHIP. To do this, a challenger $C$ deterministically constructs a multi-layer data packet $O$ which begins at an initial target, $T_1$, and is broadcast wirelessly to a set of sequential targets, $T_n$, each of which are only able to decrypt the outer-most layer of $O$ if they were the intended recipient. Each target signs a receipt, $K_s$, delivers it to $C$, removes their layer of $O$, and broadcasts it for the next target. Essentially an ``envelope of envelopes'' only decipherable by the intended recipient.
+Our goal is to verify whether Miners in a physical region are acting honestly and creating wireless network coverage compatible with LongFi. To do this, a challenger $C$ deterministically constructs a multi-layer data packet $O$ which begins at an initial target, $T_1$, and is broadcast wirelessly to a set of sequential targets, $T_n$, each of which are only able to decrypt the outer-most layer of $O$ if they were the intended recipient. Each target signs a receipt, $K_s$, delivers it to $C$ and broadcasts it for the next target. Essentially an ``envelope of envelopes'' only decipherable by the intended recipient.
 
 \begin{figure}[ht]
     \begin{center}
@@ -298,11 +290,11 @@ Our goal is to verify whether Miners in a physical region are acting honestly an
 
 \subsubsection{Selecting the Initial Target}
 
-We aim to deterministically locate a geographic reference target, $T$, for the challenger, $C$. Both $C$ and $T$ are Miners in the Helium network. $T$ does not need to be geographically proximate to $C$. To locate $T$, $C$ initially seeds verifiable entropy, $\eta$, into the selection process by signing the current block hash with its private key. Since the probabilities associated to each miner form a discrete probability distribution \eqref{eq:target-selection-probability}, $C$ uses the probability associated to each eligible Miner to locate $T$ and applies the inverse cumulative distribution function using a uniform random number generated via $\eta$. This allows us to ensure that we always target potentially dishonest Miners as they have a lower score, thus increasing their probability of being targeted by $C$. Given that a Miners score is diminishing linearly over time \secref{scores}, it is necessary to create this inverse relationship to give low-scoring Miners an opportunity to participate in the process and increase their score. This diminishing score also incentivizes all the participants to send receipts to $C$ and broadcast the remainder of $O$.
+We aim to deterministically locate a geographic reference target, $T$, for the challenger, $C$. Both $C$ and $T$ are Miners in the Helium network. $T$ does not need to be geographically proximate to $C$. To locate $T$, $C$ initially seeds verifiable entropy, $\eta$, into the selection process by signing the current block hash with its private key. Since the probabilities associated to each miner form a discrete probability distribution \eqref{eq:target-selection-probability}, $C$ uses the probability associated to each eligible Miner to locate $T$ and applies an inverse cumulative distribution function using a uniform random number generated via $\eta$. This allows us to ensure that we always target potentially dishonest Miners as they have a lower score, thus increasing their probability of being targeted by $C$. Given that a Miners score is diminishing linearly over time \secref{scores}, it is necessary to create this inverse relationship to give low-scoring Miners an opportunity to participate in the process and increase their score. This diminishing score also incentivizes all the participants to participate in the process.
 
 \subsubsection{Constructing the multi-layer challenge}
 
-Once $T$ has been selected, $C$ must construct a multi-layer challenge, $O$. $O$ is a data packet broadcast over the Helium network and received by geographically proximate targets $T_n$. Geographically proximate is defined as within a radius of $T$, a network value $T$\textsubscript{radius}. Each layer of $O$, $O_l$, consists of a three-tuple of $E\left(S, \psi, R\right)$, where $E$ is a secure encryption function using the Elliptic-Curve Diffie-Hellman (ECDH) derived symmetric key, $S$ is a nonce, $\psi$ is the time to broadcast the next layer of the challenge and $R$ is the remainder of $O$ consisting of recursive three-tuples. The maximum number of $O_l$ is bounded by a network value, $O$\textsubscript{max}.
+Once $T$ has been selected, $C$ must construct the multi-layer challenge packet, $O$. $O$ is a data packet broadcast wirelessly using LongFi and received by geographically proximate targets $T_n$. Geographically proximate is defined as within a radius of $T$, a network value $T$\textsubscript{radius} initially set at 1 mile. Each layer of $O$, $O_l$, consists of a three-tuple of $E\left(S, \psi, R\right)$, where $E$ is a secure encryption function using the Elliptic-Curve Diffie-Hellman (ECDH) derived symmetric key, $S$ is a nonce, $\psi$ is the time to broadcast the next layer of the challenge and $R$ is the remainder of $O$ consisting of recursive three-tuples. The maximum number of layers $O_l$ is bounded by a network value, $O$\textsubscript{max}, initially set at 7.
 
 The construction logic of $O$ by $C$ is as follows:
 
@@ -327,16 +319,16 @@ The resulting $O$ can be visually represented as depicted in \figref{fig:poc-o_c
 
 \subsubsection{Creating the Proof}
 
-Once $O$ has been constructed, it is delivered to $T_1$ via the Helium network and immediately broadcast by $T_1$ via the Helium network. WHIP is not a point-to-point system, so several Miners within proximity of $T_1$ will hear $O$. In this example, only the specific target $T$ will be able to decrypt $E$ and send a valid receipt back to the challenger, $C$.
+Once $O$ has been constructed, it is delivered to $T_1$ via the peer-to-peer network and immediately broadcast by $T_1$ via the LongFi network. LongFi is not a point-to-point system, so several Miners within proximity of $T_1$ will hear $O$. In this example, only the specific target $T$ will be able to decrypt $E$ and send a valid receipt back to the challenger, $C$.
 
 We describe the approximate flow of \emph{Proof-of-Coverage} creation as follows:
 
 \begin{enumerate}
-  \item $T_1$ receives $O$ from $C$ via the Helium network, decrypts the outermost layer and immediately broadcasts it $R$ via the Helium network;
+  \item $T_1$ receives $O$ from $C$ via the peer-to-peer network, decrypts the outermost layer and immediately broadcasts it $R$ via the LongFi network;
   \item $T$ hears $O$ and attempts to decrypt the value of $E$ by using its private key where $pk:\ E_{pk}\left(S, \psi, R\right)$;
   \item $T$ records both the time of arrival $\beta$ and the signal strength $\upsilon$ of $O$;
   \item If successful, $T$ then creates signed receipt $K_s$, where \\${K_s = \left(S || \beta || \upsilon\right)}$ signed by the private key of $T$;
-  \item $T$ submits $K_s$ to $C$ via the Helium network, removes the outer most layer, and wirelessly broadcasts the remainder $O$; and
+  \item $T$ submits $K_s$ to $C$ via the peer-to-peer network, and broadcasts $O$ via LongFi; and
   \item These steps repeat for $T_1$..$T$..$T_L$, with $T_L$ being the last target in the graph
 \end{enumerate}
 
@@ -350,6 +342,10 @@ Once $T_L$ has delivered receipt to $C$, or $\lambda$ has elapsed, the \emph{Pro
           \caption{\emph{Proof-of-Coverage} flow}\label{fig:poc-propogation}
      \end{center}
 \end{figure}
+
+\subsubsection{Witnesses}
+
+\todo{EXPLAIN MORE ABOUT HOW WITNESSES WORK HERE}
 
 \subsubsection{Scoring}\label{scores}
 
@@ -493,9 +489,9 @@ Another valuable aspect of assigning the probability as shown above is that all 
 
 \subsubsection{Verifying the Proof}
 
-Once $T_L$ has delivered $K_s$, or $\lambda$ has elapsed, the \emph{Proof-of-Coverage} is considered complete. When $C$ submits this proof, via a special type of transaction, all receipts $K_s$ from $T_1$...$T_L$ are included in the transaction published to the Helium network. As all the steps originally completed by $C$ are deterministic in nature with verifiable and recreatable randomness, it is simple for a verifying Miner, $V$, to recreate the original steps and verify that the proof is legitimate.
+Once $T_L$ has delivered $K_s$, or $\lambda$ has elapsed, the \emph{Proof-of-Coverage} is considered complete. When $C$ submits this proof, via a receipt transaction, all receipts $K_s$ from $T_1$...$T_L$ are included in the transaction published to the Helium network. As all the steps originally completed by $C$ are deterministic in nature with verifiable and recreatable randomness, it is simple for a verifying Miner, $V$, to recreate the original steps and verify that the proof is legitimate.
 
-Verifying Miners in the consensus group \secref{consensus} who see the proof transaction are able to verify the \emph{Proof-of-Coverage} by recreating the following steps:
+Verifying Miners in the consensus group \secref{consensus} who see the receipt transaction are able to verify the \emph{Proof-of-Coverage} by recreating the following steps:
 
 \begin{enumerate}
         \item The verifying Miner, $V$, reconstructs the set of Miners $N$;
@@ -506,75 +502,11 @@ Verifying Miners in the consensus group \secref{consensus} who see the proof tra
         \item The $K_s$ receipts contained in $B_C$ are verified to have been signed by the private keys of $T_1$..$T$..$T_L$
 \end{enumerate}
 
-Assuming these steps are completed successfully, the \emph{Proof-of-Coverage} is verified the score of $C$ is adjusted appropriately.
-
-\subsection{Constructing \emph{Proof-of-Serialization}}
-
-To achieve cryptographic time consensus among decentralized clients, we implement a simplified form of Google's Roughtime \cite{roughtime}. Roughtime is a protocol that aims to achieve rough time synchronization in a secure way that does not depend on any particular time server, and in such a way that, if a time server does misbehave, clients end up with cryptographic proof of that behavior.
-
-This section describes the construction of the \emph{Proof-of-Serialization} protocol.
-
-\subsubsection{Creating the Proof}
-
-We outline the approximate process to achieve cryptographically secure time as follows:
-
-\begin{enumerate}
-        \item To begin, a Miner $M$ pseudo-randomly picks two Miners $M_1$ and $M_2$, with whom to prove contact serialization;
-        \item It is assumed $M$ has a public key for $M_1$ and $M_2$, otherwise $M$ should obtain it from the blockchain;
-        \item $M$ generates a nonce, $R$, which is a SHA512 hash of the \emph{Proof-of-Coverage}, which $M$ has partially constructed;
-        \item $M$ then generates a salted hash commitment, $K$, called the \emph{proof-kernel}, where ${K = H\left(R || M_1 || M_2\right)}$;
-        \item $M$ sends $K$ to $M_1$. $M_1$ replies with $T$, a signed message including the current time $T_1$ and $K$; and
-        \item $M$ knows that the reply from $M_1$ was not pre-generated because it includes the nonce $R$ that $M$ generated
-\end{enumerate}
-
-Because $M$ can not trust $M_1$, it will ask for another time from $M_2$:
-
-\begin{enumerate}
-        \item For the second request, a new nonce $R$ is generated using $T$ truncated to 512-bits, blinded by XOR'ing a randomly generated 512-bit number;
-        \item $M$ then generates a sub-proof-kernel, $L = H\left(R || T || K\right)$, and sends it to $M_2$;
-        \item $M_2$ replies with $U$, a signed message including the current time $T_2$ and $L$; and
-        \item $U$ is now a proof artifact that shows that $M$ desired and then proved a serialization between $M_1$ and $M_2$
-\end{enumerate}
-
-With only two servers, $M$ can end up with proof that something is wrong, but no idea of the correct time But with half a dozen or more independent servers, $M$ will end up with chain of proof of any server's misbehaviour, signed by several others, and enough accurate replies to establish the correct time, $T_t$.
-
-\begin{figure}[ht]
-    \begin{center}
-          \includegraphics[width=\columnwidth]{serialization.eps}
-          \caption{\emph{Creating Proof-of-Serialization}}\label{fig:serialization}
-     \end{center}
-\end{figure}
-
-\subsubsection{Verifying the Proof}
-
-If we assume that the times from $M_1$ and $M_2$ are significantly different, and the time from $M_2$ is before $M_1$, then $M$ has proof of misbehaviour. The reply from $M_2$ implicitly shows that it was created later because of the way that $M$ constructed the nonce. If the time from $M_2$ is after $M_1$, then $M$ can reverse the roles of $M_1$ and $M_2$ and repeat the process to obtain, assuming steady clocks, a misordered proof as in the other case.
-
-To verify the correct time, it is necessary for $M$ to repeat the time synchronization process with enough Miners to gain consensus on the correct time:
-
-\begin{enumerate}
-    \item A Miner $M$ again pseudo-randomly selects $n$ Miners $M_1$...$M_n$;
-    \item $M$ generates a salted hash commitment, $K$, and delivers it to $M_1$, where ${K = H\left(R || M_1 || M_2\right)}$;
-    \item $M_1$ again responds with $T$, a signed message containing the current time $T_1$ and $K$;
-    \item $M$ generates a sub-proof-kernel, $L = H\left(R || T || K\right)$, and sends it to the next Miner $M_n$;
-    \item The next Miner replies with $U$, a signed message including the current time and $L$;
-    \item These steps repeat through $M_n$ until at least three time responses, $T_n$, are monotonic; and
-    \item $T_n$ can then be confirmed to be $T_t$, the correct time
-\end{enumerate}
-
-\begin{figure}[ht]
-    \begin{center}
-          \includegraphics[width=\columnwidth]{verify_serialization.eps}
-          \caption{\emph{Verifying Proof-of-Serialization}}\label{fig:verify-serialization}
-     \end{center}
-\end{figure}
-
-\subsubsection{Utilizing the Proven Time}
-
-Once the correct time, $T_t$, has been determined via \emph{Proof-of-Serialization}, it is used by $M$ and included during proof construction as described in \secref{blockchain}. The randomness, $\eta$, used to compute $O$ and, thus, obtain the \emph{Proof-of-Coverage} is tied to the previous block, which contains $T_t$. This allows us to prove, with relative certainty, that some piece of data $D$ was created between the time of the previous block $b_t$ and $T_t$. $D$ in this case is the \emph{Proof-of-Coverage}. Thus, we know that $D$ must have been constructed between $b_t$ and $T_t$. This ensures that the \emph{Proof-of-Coverage} cannot be pre-computed.
+Assuming these steps are completed successfully, the \emph{Proof-of-Coverage} is verified the scores of $T_n$ are adjusted appropriately.
 
 \section{\emph{Proof-of-Location}} \label{geolocation}
 
-Using \emph{Proof-of-Coverage} and \emph{Proof-of-Serialization}, we achieve cryptographic proof of a Miners location and cryptographic time consensus among Miners. We can take advantage of these proofs to determine the physical \emph{geolocation} of WHIP-compatible Devices and generate a new type of proof based on the Devices geolocations. We call this \emph{Proof-of-Location}.
+Using \emph{Proof-of-Coverage} we achieve cryptographic proof of a Miners location. We can take advantage of these proofs to determine the physical \emph{geolocation} of LongFi Devices and generate a new type of proof based on the Devices geolocations. We call this \emph{Proof-of-Location}.
 
 \subsection{Motivation}
 
@@ -582,9 +514,11 @@ Location tracking is one of the most valuable use cases for low power Devices. I
 
 Today, Global Navigation Satellite Systems (GNSS) are used by the majority of Devices which require geolocation services, with GPS being the most popular implementation. GPS systems use a technique called \emph{Time of Arrival (TOA)} to determine the location of a receiver in relation to 20 or so satellites orbiting the earth. GPS satellites synchronize their time using a high precision on-board clock and regular synchronization with control servers on the ground. GPS receivers receive precisely timestamped data from a number of satellites overhead and use a technique called \emph{trilateration} to provide a precise location on earth.
 
-GPS has matured into an extraordinarily reliable service used in a wide range of applications for providing both location and time services. However, there are significant drawbacks to GPS particularly in the realm of low power Devices that the Helium network is designed to facilitate. It can take around 2 minutes for a GPS receiver to achiehve \emph{lock} with sufficient satellites, which translates to drastically reduced battery life. As an example, a Device transmitting its location around 25 times a day may only last a month on a AA battery compared with several years of life on the same battery without GPS. Using GPS indoors is generally impossible, as the GPS receiver typically needs line of sight with the sky in order to see the 3-4 satellites required to calculate an accurate location. GPS data is also delivered unencrypted, which leaves the system extremely vulnerable to spoofing, jamming, and other attack vectors.
+GPS has matured into an extraordinarily reliable service used in a wide range of applications for providing both location and time services. Several GPS transceivers are available at reasonable prices, some of which provide additional functionality oriented around low power applications. These include pre-loading the satellite location \emph{almanac} for faster location locks and improved low current operation. Additionally, it is possible with the correct Device hardware to \emph{sniff} WiFi base station MAC addresses and derive an approximate location via several publicly accessible databases. 
 
-We are interested in low power implementations of location services that, in conjunction with an immutable distributed ledger, can be used to verify location and time. Given the above factors, we conclude that GPS is an unacceptable mechanism for these requirements.
+Lastly, we are able to employ a similiar GPS trilateration technique as described above, but in reverse using ground-based Hotspots with precise packet arrival timestamping to determine a Devices physical location. This last approach, commonly known as \emph{Time Differential of Arrival (TDoA)} has the benefit of the Device not requiring any additional location hardware. The Device simply sends a data packet using LongFi and its location can be derived by comparing the precise timestamps and known locations of multiple Hotspots who observe the same packet. This technique, however, is hindered by the presence of \emph{multipath propogation} where radio waves are reflected or refracted prior to arriving at their destination. Sources of multipath propogation in ground-based applications include buildings, cars, trees, humans and glass. Even with incredibly precise timestamping of 10 nanoseconds or below, such as the hardware available in the Helium Inc Hotspot v2 (arriving Q1 2020), multipath propogation creates a margin of error that can be anywhere from 30-300 meters depending on the density of Hotspots and clear line of sight to the Device.
+
+\emph{Proof-of-Location} therefore intends to use the availability of multiple potential location techniques and the evidence obtained through \emph{Proof-of-Coverage} to provide cryptographic proof of a Devices location at the time a packet was received.
 
 \subsection{Constructing \emph{Proof-of-Location}}
 
